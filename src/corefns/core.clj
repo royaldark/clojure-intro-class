@@ -1,11 +1,10 @@
 (ns corefns.core
 (:refer-clojure :exclude [map]))
 
-(defn is-function? [x]
-(fn? x))
-
-(defn is-collection? [x]
-(coll? x))
+; A few function aliases to increase the readability of
+; error messages caused by failed assertions
+(def is-function? fn?)
+(defn is-collection? coll?)
 
 (defn map [argument1 argument2]
   {:pre [(is-collection? argument2) (is-function? argument1)]}
