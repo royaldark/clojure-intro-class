@@ -5,9 +5,11 @@
         [seesaw.core]))
 
 (defn- get-pretty-message [e]
-  (when-let [entry (some #(when (instance? (:class %) e) %) error-dictionary)]
-    (when-let [pretty-message (clojure.string/replace (.getMessage e) (:match entry) (:replace entry))]
-      pretty-message)))
+  (if-let [entry (some #(when (instance? (:class %) e) %) error-dictionary)]
+    (if-let [pretty-message (clojure.string/replace (.getMessage e) (:match entry) (:replace entry))]
+      pretty-message
+    (.getMessage e))
+  (.getMessage e)))
 
 (defn- show-error [msg]
   (invoke-later
