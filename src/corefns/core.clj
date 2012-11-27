@@ -4,7 +4,7 @@
 ; A few function aliases to increase the readability of
 ; error messages caused by failed assertions
 (def is-function? fn?)
-(defn is-collection? coll?)
+(def is-collection? coll?)
 
 (defn map [argument1 argument2]
   {:pre [(is-collection? argument2) (is-function? argument1)]}
