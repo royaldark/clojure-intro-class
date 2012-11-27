@@ -1,10 +1,24 @@
 (ns errors.core
   (:require [clj-stacktrace.core :as stacktrace])
-  (:use [clojure.string :only [join]]))
+  (:use [clojure.string :only [join]]
+        [errors.dictionaries]
+        [seesaw.core]))
+
+(defn- get-pretty-message [e]
+  (when-let [entry (some #(when (instance? (:class %) e) %) error-dictionary)]
+    (when-let [pretty-message (clojure.string/replace (.getMessage e) (:match entry) (:replace entry))]
+      pretty-message)))
+
+(defn- show-error [msg]
+  (invoke-later
+    (native!)
+    (let [d (dialog :title "Clojure Error",
+                   :content (text :multi-line? true :editable? false :text msg))]
+      (-> d pack! show!))))
 
 (defn prettify-exception [e]
   (let [info (stacktrace/parse-exception e)
         cljerrs (filter #(and (:clojure %)
                               (not (re-matches #"(clojure|java)\..*" (:ns %)))) (:trace-elems info))
         errstrs (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") cljerrs)]
-    (str "ERROR: " (:message info) "\nPossible causes:\n" (join "\n" errstrs))))
+    (show-error (str "ERROR: " (get-pretty-message e) "\nPossible causes:\n" (join "\n" errstrs)))))
