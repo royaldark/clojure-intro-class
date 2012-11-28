@@ -4,6 +4,8 @@
         [errors.dictionaries]
         [seesaw.core]))
 
+(def ignore-nses #"(clojure|java)\..*")
+
 (defn- get-pretty-message [e]
   (if-let [entry (some #(when (instance? (:class %) e) %) error-dictionary)]
     (if-let [pretty-message (clojure.string/replace (.getMessage e) (:match entry) (:replace entry))]
@@ -28,7 +30,7 @@
 
 (defn prettify-exception [e]
   (let [info (stacktrace/parse-exception e)
-        cljerrs (filter #(and (:clojure %)
-                              (not (re-matches #"(clojure|java)\..*" (:ns %)))) (:trace-elems info))
+        cljerrs (filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %))))
+                        (:trace-elems info))
         errstrs (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") cljerrs)]
     (show-error (str "ERROR: " (get-pretty-message e) "\nPossible causes:\n" (join "\n" errstrs)))))
