@@ -44,5 +44,8 @@
     ;(map 2 [1 2 3])
     ;(filter is-odd? [1 2 3 4]) ; throws a gigantic exception
     ;(filter 1 [1 2 3 4]) ; does something somewhat reasonable
-    (filter #(+ % 2) [1 2 3 4]) ; apparently it's not an error, but perhaps should be for new students? How do we deal with that? 
+    (filter #(+ % 2) [1 2 3 4]) ; apparently it's not an error, but perhaps should be for new students? How do we deal with that?
+					;(< 'a 8) ;now gives a reasonable message
+    (defn myfunc [x] (+ x 2))
+    (< myfunc +)
     (catch Throwable e (println (errors/prettify-exception e)))))
