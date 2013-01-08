@@ -39,7 +39,8 @@
 
 (defn -main [& args]
   (try
-    (basic-seesaw-frame)
-    (turtle-demo)
-    (map 2 [1 2 3])
+    ;(basic-seesaw-frame)
+    ;(turtle-demo)
+    ;(map 2 [1 2 3])
+    (filter is-odd? [1 2 3 4]) ; throws a gigantic exception 
     (catch Throwable e (println (errors/prettify-exception e)))))
