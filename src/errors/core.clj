@@ -4,7 +4,9 @@
         [errors.dictionaries]
         [seesaw.core]))
 
-(def ignore-nses #"(clojure|java)\..*")
+;;(def ignore-nses #"(clojure|java)\..*")
+;; Elena changed for now: 
+(def ignore-nses #"(clojure|java|user)\..*")
 
 (defn- get-pretty-message [e]
   (if-let [entry (some #(when (instance? (:class %) e) %) error-dictionary)]

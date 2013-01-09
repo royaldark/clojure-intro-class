@@ -47,5 +47,6 @@
     (filter #(+ % 2) [1 2 3 4]) ; apparently it's not an error, but perhaps should be for new students? How do we deal with that?
 					;(< 'a 8) ;now gives a reasonable message
     (defn myfunc [x] (+ x 2))
-    (< myfunc +)
+					;(< myfunc +)
+    (reduce + 7)
     (catch Throwable e (println (errors/prettify-exception e)))))
