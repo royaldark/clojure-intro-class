@@ -50,3 +50,5 @@
 					;(< myfunc +)
     (reduce + 7)
     (catch Throwable e (println (errors/prettify-exception e)))))
+
+;; write test functions, call those from main

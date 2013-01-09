@@ -6,7 +6,7 @@
 
 ;;(def ignore-nses #"(clojure|java)\..*")
 ;; Elena changed for now: 
-(def ignore-nses #"(clojure|java|user)\..*")
+(def ignore-nses #"(user|clojure|java)\..*")
 
 (defn- get-pretty-message [e]
   (if-let [entry (some #(when (instance? (:class %) e) %) error-dictionary)]
