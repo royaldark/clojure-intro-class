@@ -36,6 +36,23 @@
   (fib turtle 10)
   (show turtle)))
 
+(defn test-and-continue [quoted-exp]
+  (try
+    (eval quoted-exp)
+    (catch Throwable e (println (errors/prettify-exception e)))))
+
+(defn test-all-and-continue [quoted-exps]
+       (doall (map test-and-continue quoted-exps))) 
+
+(defn test-arithmetic-expressions []
+  ;; 3 exceptions thrown:
+  (test-all-and-continue '((+ \a 2) (< 'a 8) (/ 5 0)))) 
+
+(defn test-sequences []
+  (test-all-and-continue '( (nth 0 [1 2 3]) ;; Throws an exception that a number cannot be converted into a collection
+			    (nth '(1 2 3) 7) ;; Throws an empty error. I am confused. Should be IndexOutOfBoundsException.
+			      
+			    )))
 
 (defn -main [& args]
   (try
@@ -48,6 +65,8 @@
 					;(< 'a 8) ;now gives a reasonable message
     (defn myfunc [x] (+ x 2))
 					;(< myfunc +)
+    ;(test-arithmetic-expressions)
+    (test-sequences)
     (reduce + 7)
     (catch Throwable e (println (errors/prettify-exception e)))))
 

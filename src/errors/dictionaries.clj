@@ -4,6 +4,8 @@
 ;; potentially we can have multiple dictionaries, depending on the level
 (def type-dictionary {:java.lang.String "string"
                       :java.lang.Number "number"
+		      :clojure.lang.Keyword "keyword"
+		      :java.lang.Boolean "boolean"
 		      ;; I think this is better for new students to lump all numbers together
 		      :java.lang.Long "number"
 		      :java.lang.Integer "number"
@@ -11,7 +13,6 @@
 		      :java.lang.Float "number"
 		      :java.lang.Short  "number"
 		      ;; perhaps add big ints and such
-		      :java.lang.Boolean "boolean"
 		      :java.lang.Character "symbol" ;; simplifying things for a new student
 		      :clojure.lang.Symbol "symbol"
 		      ;; to short-cut processing of error messages for
@@ -23,11 +24,12 @@
 (defn unknown-type-string [t]
   "returns a string representation of a type t not listed in the type-dictionary for user-friendly error messages"
   ;; collections - must go before functions since some seqs implement the IFn interface
-  
-  ;; functions
-  (if (isa? (resolve (symbol t)) clojure.lang.IFn) "function"
-  ;; if all else fails: 
-  (str "unrecognized type " t)))
+  (if (isa? (resolve (symbol t)) clojure.lang.ISeq) "sequence"
+      (if (isa? (resolve (symbol t)) clojure.lang.IPersistentCollection) "collection" ;; the same test as in coll?
+	  ;; functions
+	  (if (isa? (resolve (symbol t)) clojure.lang.IFn) "function"
+	      ;; if all else fails: 
+	      (str "unrecognized type " t)))))
 
 ;; The best approximation of a type we can get if it's not listed in the type-dictionary
 (defn other-type [t]
