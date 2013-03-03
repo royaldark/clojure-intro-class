@@ -47,12 +47,12 @@
 
 (defn test-arithmetic-expressions []
   ;; 3 exceptions thrown:
-  (test-all-and-continue '((+ \a 2) (< 'a 8) (/ 5 0)))) 
+  (test-all-and-continue '((+ \a 2) (< 'a 8) (/ 5 0))))
 
 ;; Some of the error messages below would change once we create enough preconditions
 (defn test-sequences []
   (test-all-and-continue '( (nth 0 [1 2 3]) ;; attempted to use collection but number was expected 
-			    (nth '(1 2 3) 7) ;; Throws an empty error. I am confused. Should be IndexOutOfBoundsException.
+			    (nth '(1 2 3) 7) ;; An index in a vector or a list is out of bounds
 			    (into 6 [1 2]) ;; attempted to use number but collection was expected
 			    (into {} [1 2 3]) ;; don't know how to create sequence from number. into on a hashmap requires a collection of pairs.
 			    (into {} [1 2 3 4]) ;; same as above. A correct one would be (into {} [[1 2] [3 4]])
@@ -72,5 +72,6 @@
 					;(< myfunc +)
     ;(test-arithmetic-expressions)
     (test-sequences)
-    (reduce + 7)
+					;(reduce + 7)
+    (throw (new IndexOutOfBoundsException "10"))
     (catch Throwable e (println (errors/prettify-exception e)))))

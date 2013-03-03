@@ -49,6 +49,11 @@
 			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))}
 		       {:class IllegalArgumentException
 			:match #"Don't know how to create (.*) from: (.*)"
-			:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))}])
+			:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))}
+		       ;; need another case for IndexOutOfBoundsException that just has a number as a message
+		       {:class IndexOutOfBoundsException ;; NullPointerException also can do this
+			:match #"(\d+)"
+			:replace "An index in a vector or a list is out of bounds: $1"
+			:emptyMessage "An index in a vector or a list is out of bounds"}])
 
 
