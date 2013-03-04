@@ -18,20 +18,21 @@
 		      ;; to short-cut processing of error messages for
 		      ;; "Don't know how to create a sequence from ..."
 		      :clojure.lang.ISeq "a sequence"
-		      :ISeq "sequence"
+		      :ISeq "a sequence"
 		      ;; Refs come up in turtle graphics
 		      :clojure.lang.Ref "a mutable object"})
 
 ;; A string representation of a type t not listed in the type-dictionary
-(defn unknown-type-string [t]
+(defn unknown-type-string [type]
   "returns a string representation of a type t not listed in the type-dictionary for user-friendly error messages"
   ;; collections - must go before functions since some seqs implement the IFn interface
-  (if (isa? (resolve (symbol t)) clojure.lang.ISeq) "sequence"
-      (if (isa? (resolve (symbol t)) clojure.lang.IPersistentCollection) "collection" ;; the same test as in coll?
+  (let [t (resolve (symbol type))]
+    (if (isa? t clojure.lang.ISeq) "a sequence"
+	(if (isa? t clojure.lang.IPersistentCollection) "a collection" ;; the same test as in coll?
 	  ;; functions
-	  (if (isa? (resolve (symbol t)) clojure.lang.IFn) "function"
+	  (if (isa? t clojure.lang.IFn) "a function"
 	      ;; if all else fails: 
-	      (str "unrecognized type " t)))))
+	      (str "unrecognized type " t))))))
 
 ;; The best approximation of a type we can get if it's not listed in the type-dictionary
 (defn other-type [t]
