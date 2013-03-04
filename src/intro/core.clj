@@ -59,6 +59,13 @@
 			    (conj "a" 2) ;; Attempted to use string, but collection was expected.
 			    )))
 
+
+(defn test-turtle []
+  (test-all-and-continue '((in-ns 'turtle.core) ; needed because otherwise eval operates in its own namespace and can't access turtle stuff
+			   (pen-up turtle) ; using an unitialized turtle
+					; strangely the exception is that a function cannot be converted into a ref
+			    )))
+
 (defn -main [& args]
   (try
     ;(basic-seesaw-frame)
@@ -71,7 +78,8 @@
     (defn myfunc [x] (+ x 2))
 					;(< myfunc +)
     ;(test-arithmetic-expressions)
-    (test-sequences)
+    ;(test-sequences)
 					;(reduce + 7)
-    (throw (new IndexOutOfBoundsException "10"))
+					;(throw (new IndexOutOfBoundsException "10"))
+    (test-turtle)
     (catch Throwable e (println (errors/prettify-exception e)))))

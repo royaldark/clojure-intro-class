@@ -2,23 +2,25 @@
 
 ;; A dictionary of known types and their user-friendly representations
 ;; potentially we can have multiple dictionaries, depending on the level
-(def type-dictionary {:java.lang.String "string"
-                      :java.lang.Number "number"
-		      :clojure.lang.Keyword "keyword"
-		      :java.lang.Boolean "boolean"
+(def type-dictionary {:java.lang.String "a string"
+                      :java.lang.Number "a number"
+		      :clojure.lang.Keyword "a keyword"
+		      :java.lang.Boolean "a boolean"
 		      ;; I think this is better for new students to lump all numbers together
-		      :java.lang.Long "number"
-		      :java.lang.Integer "number"
-		      :java.lang.Double "number"
-		      :java.lang.Float "number"
-		      :java.lang.Short  "number"
+		      :java.lang.Long "a number"
+		      :java.lang.Integer "a number"
+		      :java.lang.Double "a number"
+		      :java.lang.Float "a number"
+		      :java.lang.Short  "a number"
 		      ;; perhaps add big ints and such
-		      :java.lang.Character "symbol" ;; simplifying things for a new student
-		      :clojure.lang.Symbol "symbol"
+		      :java.lang.Character "a symbol" ;; simplifying things for a new student
+		      :clojure.lang.Symbol "a symbol"
 		      ;; to short-cut processing of error messages for
 		      ;; "Don't know how to create a sequence from ..."
-		      :clojure.lang.ISeq "sequence"
-		      :ISeq "sequence"})
+		      :clojure.lang.ISeq "a sequence"
+		      :ISeq "sequence"
+		      ;; Refs come up in turtle graphics
+		      :clojure.lang.Ref "a mutable object"})
 
 ;; A string representation of a type t not listed in the type-dictionary
 (defn unknown-type-string [t]
