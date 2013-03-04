@@ -64,7 +64,13 @@
   (test-all-and-continue '((in-ns 'turtle.core) ; needed because otherwise eval operates in its own namespace and can't access turtle stuff
 			   (pen-up turtle) ; using an unitialized turtle
 					; strangely the exception is that a function cannot be converted into a ref
-			    )))
+			   )))
+
+(defn test-exceptions []
+  (test-all-and-continue '((throw (new IndexOutOfBoundsException))
+			   (throw (new IndexOutOfBoundsException "10"))
+			   (throw (new NullPointerException))
+			   (throw (new NullPointerException "some message")))))
 
 (defn -main [& args]
   (try
@@ -79,7 +85,6 @@
 					;(< myfunc +)
     ;(test-arithmetic-expressions)
     ;(test-sequences)
-					;(reduce + 7)
-					;(throw (new IndexOutOfBoundsException "10"))
     (test-turtle)
+    (test-exceptions)
     (catch Throwable e (println (errors/prettify-exception e)))))
