@@ -23,3 +23,4 @@
 ;(defn add-first [argument1 argument2]	 	
 ;   {:pre [(or (vector? argument2) (list? argument2)) ]}
 ;   (clojure.core/reverse argument2 (clojure.core/conj (clojure.core/reverse argument2) argument1))) 
+;; need conj, into. Careful: there may be different cases. Can we have a complex pre-cond (with cases)?

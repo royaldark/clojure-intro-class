@@ -60,18 +60,30 @@
 
 (defn test-arithmetic-expressions []
   ;; 3 exceptions thrown:
-  (test-all-and-continue '((+ \a 2) (< 'a 8) (/ 5 0)))) 
+  (test-all-and-continue '((+ \a 2) (< 'a 8) (/ 5 0))))
 
 ;; Some of the error messages below would change once we create enough preconditions
 (defn test-sequences []
   (test-all-and-continue '( (nth 0 [1 2 3]) ;; attempted to use collection but number was expected 
-			    (nth '(1 2 3) 7) ;; Throws an empty error. I am confused. Should be IndexOutOfBoundsException.
+			    (nth '(1 2 3) 7) ;; An index in a vector or a list is out of bounds
 			    (into 6 [1 2]) ;; attempted to use number but collection was expected
 			    (into {} [1 2 3]) ;; don't know how to create sequence from number. into on a hashmap requires a collection of pairs.
 			    (into {} [1 2 3 4]) ;; same as above. A correct one would be (into {} [[1 2] [3 4]])
 			    (conj "a" 2) ;; Attempted to use string, but collection was expected.
 			    )))
 
+
+(defn test-turtle []
+  (test-all-and-continue '((in-ns 'turtle.core) ; needed because otherwise eval operates in its own namespace and can't access turtle stuff
+			   (pen-up turtle) ; using an unitialized turtle
+					; strangely the exception is that a function cannot be converted into a ref
+			   )))
+
+(defn test-exceptions []
+  (test-all-and-continue '((throw (new IndexOutOfBoundsException))
+			   (throw (new IndexOutOfBoundsException "10"))
+			   (throw (new NullPointerException))
+			   (throw (new NullPointerException "some message")))))
 
 (defn -main [& args]
   (try
@@ -86,6 +98,8 @@
 					;(< myfunc +)
     ;(test-arithmetic-expressions)
     ;(test-sequences)
-    ;(reduce + 7)
     (draw-polygon [100 75])
+    
+    ;(test-turtle)
+    ;(test-exceptions)
     (catch Throwable e (println (errors/prettify-exception e)))))
