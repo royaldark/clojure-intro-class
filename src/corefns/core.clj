@@ -17,3 +17,5 @@
 (defn filter [argument1 argument2]
   {:pre [(is-collection? argument2) (is-function? argument1)]}
   (clojure.core/filter argument1 argument2))
+
+;; need conj, into. Careful: there may be different cases. Can we have a complex pre-cond (with cases)?
