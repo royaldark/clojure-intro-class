@@ -1,4 +1,4 @@
-(ns intro.core
+(ns intro.core ;; Doesn't know the source file for this?
   (:require [errors.core :as errors])
   (:use [corefns.core]
         [seesaw.core]
@@ -10,8 +10,21 @@
     (def f (frame :title "Hello",
                   :content (button :text "Seesaw Rocks!"),
                   :on-close :exit))
-    (-> f pack! show!)))
+    (-> f pack! show!))) 
 
+
+
+(defn draw-polygon [coll]
+	(let [turtle (turtle 400 400)]
+	(pen-up turtle)
+	(conj coll (first coll))
+	(conj coll (second coll))
+	(pen-down turtle)
+	(loop [s coll] 
+	(if (= (count s) 2) (go turtle (first s) (second s))
+		(go turtle (first s) (second s))) 
+		(recur  (drop 2 s) ))
+	(show turtle)))
 
 (defn fib [turtle depth]
   (forward turtle 30)
@@ -31,7 +44,7 @@
   ;(go turtle 0 -100)
     ;Oops! Forgot an argument.
     ;Good thing we have prettify-exception
-  (go turtle 0)
+  ;(go turtle 0) Does not like the turtle to do this, not sure why
   (pen-down turtle)
   (fib turtle 10)
   (show turtle)))
@@ -59,18 +72,20 @@
 			    (conj "a" 2) ;; Attempted to use string, but collection was expected.
 			    )))
 
+
 (defn -main [& args]
   (try
     ;(basic-seesaw-frame)
     ;(turtle-demo)
-    ;(map 2 [1 2 3])
-    ;(filter is-odd? [1 2 3 4]) ; throws a gigantic exception
-    ;(filter 1 [1 2 3 4]) ; does something somewhat reasonable
-    (filter #(+ % 2) [1 2 3 4]) ; apparently it's not an error, but perhaps should be for new students? How do we deal with that?
+    ;(map 2 [1 2 3]) ; Doesn't realize this is a function from the error message.
+    ; (filter is-odd? [1 2 3 4]) ; throws a gigantic exception, lots of compiler errors or lines that aren't there.
+    ;(filter 1 [1 2 3 4]) ; does something somewhat reasonable, also doesn't realize this is a function from the error message
+    ;(filter #(+ % 2) [1 2 3 4]) ; apparently it's not an error, but perhaps should be for new students? How do we deal with that?
 					;(< 'a 8) ;now gives a reasonable message
-    (defn myfunc [x] (+ x 2))
+    ;(defn myfunc [x] (+ x 2))
 					;(< myfunc +)
     ;(test-arithmetic-expressions)
-    (test-sequences)
-    (reduce + 7)
+    ;(test-sequences)
+    ;(reduce + 7)
+    (draw-polygon [100 75])
     (catch Throwable e (println (errors/prettify-exception e)))))
