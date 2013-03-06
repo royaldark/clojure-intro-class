@@ -13,17 +13,18 @@
     (-> f pack! show!))) 
 
 
-
 (defn draw-polygon [coll]
 	(let [turtle (turtle 400 400)]
 	(pen-up turtle)
 	(conj coll (first coll))
 	(conj coll (second coll))
+	(go turtle (first coll) (second coll))
 	(pen-down turtle)
 	(loop [s coll] 
 	(if (= (count s) 2) (go turtle (first s) (second s))
-		(go turtle (first s) (second s))) 
-		(recur  (drop 2 s) ))
+		(do (go turtle (first s) (second s))
+		(recur  (drop 2 s) ))))
+	(go turtle (first coll) (second coll))
 	(show turtle)))
 
 (defn fib [turtle depth]
@@ -98,7 +99,7 @@
 					;(< myfunc +)
     ;(test-arithmetic-expressions)
     ;(test-sequences)
-    (draw-polygon [100 75])
+    (draw-polygon [100 100  100 -100  -100 -100  -100 100])
     
     ;(test-turtle)
     ;(test-exceptions)
