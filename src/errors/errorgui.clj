@@ -8,7 +8,7 @@
       (native!)
       (let [d (dialog :title "Clojure Error",
                       :content (text :multi-line? true :editable? false :text msg))]
-        (-> d pack! show!))) ;; adding request-focus! here doesn't work -- Elena
+        (-> d pack! show! .toFront))) ;; adding request-focus! here doesn't work -- Elena
     (catch java.lang.reflect.InvocationTargetException e
       (if (instance? java.awt.HeadlessException (.getCause e))
         ; If there is no GUI available, this throws an InvocationTargetException
