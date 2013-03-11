@@ -12,7 +12,30 @@
                   :on-close :exit))
     (-> f pack! show!))) 
 
+;;Draws a spiral with the number of revolutions given
+(defn draw-spiral [revolutions]
+	(let [turtle (turtle 400 400)]
+	(pen-up turtle)
+	(go turtle -80 -80)
+	(pen-down turtle)
+	(loop [n (* revolutions 4)]
+		(if (zero? n)
+			(show turtle)
+			(do (if (zero? (mod n 2)) 
+				(if (zero? (mod n 4))
+					(do (go turtle (+ 20 (* -1 (first (:point @turtle)))) (second (:point @turtle))))
+					(do (go turtle (* -1 (first (:point @turtle))) (second (:point @turtle))))
+				)
+				(if (= 3 (mod n 4))
+					(do (go turtle (first (:point @turtle)) (+ 20 (* -1 (second (:point @turtle))))))
+					(do (go turtle (first (:point @turtle)) (* -1 (second (:point @turtle)))))
+				)
+			    )
+			
+		(recur (dec n))) )) ))
+		
 
+;; draws a polygon, given a collection of points (x y)
 (defn draw-polygon [coll]
 	(let [turtle (turtle 400 400)]
 	(pen-up turtle)
@@ -99,7 +122,9 @@
 					;(< myfunc +)
     ;(test-arithmetic-expressions)
     ;(test-sequences)
-    (draw-polygon [100 100  100 -100  -100 -100  -100 100])
+    ;(draw-polygon [100 100  100 -100  -100 -100  -100 100])
+    
+    (draw-spiral 4)
     
     ;(test-turtle)
     ;(test-exceptions)
