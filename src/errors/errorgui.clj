@@ -5,10 +5,11 @@
 (defn show-error [msg]
   (try
     (invoke-now
-      (native!)
-      (let [d (dialog :title "Clojure Error",
-                      :content (text :multi-line? true :editable? false :text msg))]
-        (-> d pack! show! .toFront))) ;; adding request-focus! here doesn't work -- Elena
+     (let [d (dialog :title "Clojure Error",
+		     :content (text :multi-line? true :editable? false :text msg))]
+      (native!)     
+      (.setAlwaysOnTop d true) ;; to make errors pop up on top of other programs
+      (-> d pack! show!)))
     (catch java.lang.reflect.InvocationTargetException e
       (if (instance? java.awt.HeadlessException (.getCause e))
         ; If there is no GUI available, this throws an InvocationTargetException
