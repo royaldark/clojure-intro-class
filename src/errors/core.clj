@@ -26,4 +26,5 @@
         cljerrs (filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %))))
                         (:trace-elems info))
         errstrs (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") cljerrs)]
-    (show-error (str "ERROR: " (get-pretty-message e) "\nPossible causes:\n" (join "\n" errstrs)))))
+    (show-error (str "ERROR: " (get-pretty-message e) "\nPossible causes:\n" (join "\n" errstrs))
+		e)))
