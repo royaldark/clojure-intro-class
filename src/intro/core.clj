@@ -51,13 +51,20 @@
 
 ;; Some of the error messages below would change once we create enough preconditions
 (defn test-sequences []
-  (test-all-and-continue '( (nth 0 [1 2 3]) ;; attempted to use collection but number was expected 
-			    (nth '(1 2 3) 7) ;; An index in a vector or a list is out of bounds
+  (test-all-and-continue '( ;(nth 0 [1 2 3]) ;; attempted to use collection but number was expected 
+			    ;(nth '(1 2 3) 7) ;; An index in a vector or a list is out of bounds
 			    (into 6 [1 2]) ;; attempted to use number but collection was expected
 			    (into {} [1 2 3]) ;; don't know how to create sequence from number. into on a hashmap requires a collection of pairs.
 			    (into {} [1 2 3 4]) ;; same as above. A correct one would be (into {} [[1 2] [3 4]])
 			    (conj "a" 2) ;; Attempted to use string, but collection was expected.
 			    )))
+
+(defn test-nth []
+  (test-all-and-continue '( (nth 3 [1 2 3]) ;; ERROR: Attempted to use a collection, but a number was expected.
+			(nth [1 2 3] 3)
+			(nth [1 2 3] [8 9])
+			(nth #{1 2 3} 1))))
+
 
 
 (defn test-turtle []
@@ -81,10 +88,11 @@
     ;(filter 1 [1 2 3 4]) ; does something somewhat reasonable
     (filter #(+ % 2) [1 2 3 4]) ; apparently it's not an error, but perhaps should be for new students? How do we deal with that?
 					;(< 'a 8) ;now gives a reasonable message
-    (defn myfunc [x] (+ x 2))
+    ;(defn myfunc [x] (+ x 2))
 					;(< myfunc +)
     ;(test-arithmetic-expressions)
-    (test-sequences)
+    ;(test-sequences)
     ;(test-turtle)
-    ;(test-exceptions)
+					;(test-exceptions)
+    (test-nth)
     (catch Throwable e (println (errors/prettify-exception e)))))
