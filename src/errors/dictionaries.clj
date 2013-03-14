@@ -23,7 +23,7 @@
 		      :clojure.lang.Ref "a mutable object"})
 
 ;; A string representation of a type t not listed in the type-dictionary
-(defn unknown-type-string [type]
+(defn best-approximation [type]
   "returns a string representation of a type t not listed in the type-dictionary for user-friendly error messages"
   ;; collections - must go before functions since some seqs implement the IFn interface
   (let [t (resolve (symbol type))]
@@ -37,7 +37,7 @@
 ;; The best approximation of a type we can get if it's not listed in the type-dictionary
 (defn other-type [t]
   "returns the best approximation of a type we can get if it's not listed in the type-dictionary"
-  (unknown-type-string t))
+  (best-approximation t))
 
 (defn get-type [t]
   "returns a user-friendly representation of a type if it exists in the type-dictionary,
@@ -53,7 +53,6 @@
 		       {:class IllegalArgumentException
 			:match #"Don't know how to create (.*) from: (.*)"
 			:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))}
-		       ;; need another case for IndexOutOfBoundsException that just has a number as a message
 		       {:class IndexOutOfBoundsException ; may come with an empty message
 			:match #"(\d+)"
 			:replace "An index in a vector or a list is out of bounds. The index is: $1"
