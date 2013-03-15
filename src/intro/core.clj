@@ -14,6 +14,7 @@
 
 
 (defn test-and-continue [quoted-exp]
+  (in-ns 'intro.core) ; eval by default evaluates in its own namespace
   (try
     (eval quoted-exp)
     (catch Throwable e (println (errors/prettify-exception e)))))
@@ -49,7 +50,7 @@
 			   (throw (new NullPointerException "some message")))))
 
 (defn test-turtle []
-  (test-all-and-continue '((in-ns 'turtle.core) ; needed because otherwise eval operates in its own namespace and can't access turtle stuff
+  (test-all-and-continue '(
 			   (pen-up turtle) ; using an unitialized turtle
 					; strangely the exception is that a function cannot be converted into a ref
 			   )))
@@ -57,22 +58,7 @@
 (defn -main [& args]
   (try
     ;(basic-seesaw-frame)
-    ;(turtle-demo)
-    ;(map 2 [1 2 3]) ; Doesn't realize this is a function from the error message.
-    ; (filter is-odd? [1 2 3 4]) ; throws a gigantic exception, lots of compiler errors or lines that aren't there.
-    ;(filter 1 [1 2 3 4]) ; does something somewhat reasonable, also doesn't realize this is a function from the error message
-    ;(filter #(+ % 2) [1 2 3 4]) ; apparently it's not an error, but perhaps should be for new students? How do we deal with that?
-					;(< 'a 8) ;now gives a reasonable message
-    ;(defn myfunc [x] (+ x 2))
-					;(< myfunc +)
-    ;(test-arithmetic-expressions)
-    ;(test-sequences)
-    ;(draw-polygon [100 100  100 -100  -100 -100  -100 100])
-    
-    ;(draw-spiral 16)
-    ;(draw-spiral2 6 [100 100] 10)
-    ;(draw-spiral3 50)
-    (test-turtle)
-					;(test-exceptions)
-    ;(test-nth)
+    ;(test-turtle)
+    ;(test-exceptions)
+    (test-nth)
     (catch Throwable e (println (errors/prettify-exception e)))))
