@@ -12,9 +12,57 @@
                   :on-close :exit))
     (-> f pack! show!))) 
 
+;; Make turtle
+(defn make-turtle [size]
+	(let [turtle (turtle size size)]))
+
+
+;;Draw spiral crazy time
+(defn draw-spiral3 [number]
+	(let [turtle (turtle 500 500)]
+	(let [coll (take number (cycle [number]))]
+	(let [junk (concat (map (fn [x] (* -1 (last x))) (partition 3 coll)))]
+	(pen-down turtle)
+	(loop [j junk]
+		(if (empty? j)
+			(show turtle)
+			(do (go turtle (first j) (second j)) (recur (drop 2 j)))
+		)
+	)  
+	))))
+;; We got an unmatched delimiter compiler error. I'm not sure that beginning students would understand that, or these:
+;; clojure.lang.Long cannot be cast to clojure.lang.IDeref
+;; Wrong number of args passed to: core$draw-spiral13$fn
+;; Mappable? Filter
+
+;; Draw spiral part 2
+(defn draw-spiral2 [revolutions starting-point size]
+	(let [turtle (turtle 600 600)]
+	(pen-up turtle)
+	(go turtle (first starting-point) (second starting-point))
+	(pen-down turtle)
+	(+ size (second starting-point))
+	(let [p1 (first (:point @turtle))]
+	(let [p2 (second (:point @turtle))]
+	(loop [n (* revolutions 4) s size]
+		(let [dec-s (- s 10)]
+		(if (or (zero? n) (zero? s))
+			(show turtle)
+			(do (if (zero? (mod n 2)) 
+				(if (zero? (mod n 4))
+					(do (go turtle p1 (+ s p2)))
+					(do dec-s (go turtle  p1 (- s p2)))
+				)
+				(if (= 3 (mod n 4))
+					(do (go turtle (+ s p1) p2))
+					(do dec-s (go turtle p1 p2))
+				)
+			    )
+	(recur (dec n) s)) )) ) ))))
+
 ;;Draws a spiral with the number of revolutions given
 (defn draw-spiral [revolutions]
-	(let [turtle (turtle 400 400)]
+	(let [turtle (turtle 600 600)]
 	(pen-up turtle)
 	(go turtle -80 -80)
 	(pen-down turtle)
@@ -124,7 +172,9 @@
     ;(test-sequences)
     ;(draw-polygon [100 100  100 -100  -100 -100  -100 100])
     
-    (draw-spiral 4)
+    ;(draw-spiral 16)
+    ;(draw-spiral2 6 [100 100] 10)
+    ;(draw-spiral3 50)
     
     ;(test-turtle)
     ;(test-exceptions)
