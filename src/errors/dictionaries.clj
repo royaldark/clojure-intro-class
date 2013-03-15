@@ -59,8 +59,8 @@
 			:emptyMessage "An index in a vector or a list is out of bounds"}
 		       {:class NullPointerException  ; may come with an empty message
 			:match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
-			:replace "An attempt to access a non-existing object: $1"
-			:emptyMessage "An attempt to access a non-existing object"
+			:replace "An attempt to access a non-existing object: $1 \n (NullPointerException)"
+			:emptyMessage "An attempt to access a non-existing object \n (NullPointerException)"
 			}])
 
 
