@@ -12,7 +12,6 @@
 ;; Graphics 
 (defn show-error [msg e]
   (try
-    (invoke-now    
      (let [errormsg (text :multi-line? true :editable? false :text msg)
             stacktrace (text :multi-line? true :editable? false :rows 12 :text (format-stacktrace e))
             d (dialog :title "Clojure Error",
@@ -25,6 +24,7 @@
                                                      :tip "The full Java stacktrace of the error"
                                                      :content (scrollable stacktrace)}])
                       )]
+      (invoke-now    
       (native!)
       (scroll! errormsg :to :top) ;; Scrollboxes default to being scrolled to the bottom - not what we want
       (scroll! stacktrace :to :top)
