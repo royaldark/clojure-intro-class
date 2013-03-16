@@ -41,13 +41,19 @@
   (test-all-and-continue '( (nth 3 [1 2 3]) ;; ERROR: Attempted to use a collection, but a number was expected.
 			(nth [1 2 3] 3)
 			(nth [1 2 3] [8 9])
-			(nth #{1 2 3} 1))))
+			(nth #{1 2 3} 1 ))))
 
 (defn test-exceptions []
   (test-all-and-continue '((throw (new IndexOutOfBoundsException))
 			   (throw (new IndexOutOfBoundsException "10"))
 			   (throw (new NullPointerException))
 			   (throw (new NullPointerException "some message")))))
+
+(defn test-concat []
+  (test-all-and-continue '((doall (concat [1 2] :banana)) ; need doall because concat is lazy
+			   (doall (concat [:banana] +))
+			   (doall (concat [:banana] [:banana] [] 4))
+			   )))
 
 (defn test-turtle []
   (test-all-and-continue '(
@@ -60,5 +66,7 @@
     ;(basic-seesaw-frame)
     ;(test-turtle)
     ;(test-exceptions)
-    (test-nth)
+    ;(test-nth)
+					;(reduce + +)
+    (test-concat)
     (catch Throwable e (println (errors/prettify-exception e)))))
