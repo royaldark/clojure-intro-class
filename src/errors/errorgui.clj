@@ -30,6 +30,7 @@
       (scroll! stacktrace :to :top)
       (.setAlwaysOnTop d true) ;; to make errors pop up on top of other programs
       (-> d pack! show!)))
+      ;(.setAlwaysOnTop d false) ;; this doesn't change the status of a window
     (catch java.lang.reflect.InvocationTargetException e
       (if (instance? java.awt.HeadlessException (.getCause e))
         ; If there is no GUI available, this throws an InvocationTargetException
