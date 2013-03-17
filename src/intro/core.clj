@@ -55,6 +55,19 @@
 			   (doall (concat [:banana] [:banana] [] 4))
 			   )))
 
+(defn test-first-rest []
+  (test-all-and-continue '((first 1) ; Don't know how to create a sequence from a number
+			   (rest 1) ; Don't know how to create a sequence from a number
+			   (first []) ;; returns nil
+			   (rest []) ;; returns nil
+			   (empty? 1)))) ;Don't know how to create a sequence from a number
+
+(defn test-conj-into []
+  (test-all-and-continue '((conj 1 [])
+			   (into [2] 3)
+			   (conj + 1)
+			   (into '() *))))
+
 (defn test-turtle []
   (test-all-and-continue '(
 			   (pen-up turtle) ; using an unitialized turtle
@@ -68,5 +81,7 @@
     ;(test-exceptions)
     ;(test-nth)
 					;(reduce + +)
-    (test-concat)
+					;(test-concat)
+					;(test-first-rest)
+    (test-conj-into)
     (catch Throwable e (println (errors/prettify-exception e)))))
