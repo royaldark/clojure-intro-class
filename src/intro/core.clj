@@ -2,7 +2,8 @@
   (:require [errors.core :as errors])
   (:use [corefns.core]
         [seesaw.core]
-        [turtle.core]))
+	[turtle.core]))
+        ;[turtle.extended-turtle]))
 
 (defn basic-seesaw-frame []
   (invoke-later
@@ -113,5 +114,10 @@
 					;(test-conj-into)
 					;(test-add-first-last)
 					;(test-forgetting-a-quote)
-    (add-first-last-examples)
+					;(add-first-last-examples)
+    (def the-turtle (turtle 200 300))
+    (change-background the-turtle)
+    (pen-down the-turtle)
+    (go the-turtle 100 100)
+    (show the-turtle)
     (catch Throwable e (println (errors/prettify-exception e)))))
