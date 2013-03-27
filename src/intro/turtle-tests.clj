@@ -110,3 +110,9 @@
   (fib turtle 10)
   (show turtle)))
 
+(defn -main [& args]
+  (try
+    ;(basic-seesaw-frame)
+    ;(test-turtle)
+    (catch Throwable e (println (errors/prettify-exception e)))))
+

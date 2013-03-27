@@ -43,6 +43,13 @@
 			(nth [1 2 3] [8 9])
 			(nth #{1 2 3} 1 ))))
 
+;; try re-writing using reduce
+;; (reduce f coll) ---> user=> (reduce + [1 2 3 4 5]) == 15
+(defn duplicate-seq [coll] 
+	(loop [s coll result []] ;; result can work with vector or a list
+		(if (empty? s) result
+			(recur (rest s) (add-last (add-last result (first s)) (first s))))))
+
 (defn test-exceptions []
   (test-all-and-continue '((throw (new IndexOutOfBoundsException))
 			   (throw (new IndexOutOfBoundsException "10"))
@@ -67,6 +74,7 @@
     ;(test-turtle)
     ;(test-exceptions)
     ;(test-nth)
+    (duplicate-seq [1 2 3])
 					;(reduce + +)
-    (test-concat)
+    ;(test-concat)
     (catch Throwable e (println (errors/prettify-exception e)))))
