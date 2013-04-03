@@ -4,7 +4,7 @@
 ;; A few function aliases to increase the readability of
 ;; error messages caused by failed assertions
 (def is-function? fn?)
-(def is-collection? coll?)
+(def is-collection? seqable?) ;; coll? does a wrong thing on strings and nil
 (def is-number? number?)
 (def is-vector-or-list? #(or (vector? %) (list? %)))
 

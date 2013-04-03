@@ -100,7 +100,19 @@
 			   (our-map inc [1 2 3])
 			   (our-map inc '(1 2 3)))
 			 
-   ))
+			 ))
+
+(defn test-seq []
+  (test-all-and-continue '((doall (concat [1 2] 5))
+			   (seq 2)
+			   (seq true)
+			   (seq map)
+			   )))
+
+(defn third [coll]
+  "Returns the third element in a collection,
+   or nil if the collection has fewer than three elements"
+  (first (rest (rest coll))))
 
 (defn -main [& args]
   (try
@@ -116,8 +128,11 @@
 					;(test-forgetting-a-quote)
 					;(add-first-last-examples)
     (def the-turtle (turtle 200 300))
-    (change-background the-turtle)
-    (pen-down the-turtle)
-    (go the-turtle 100 100)
-    (show the-turtle)
+    ;(change-background the-turtle)
+    ;(pen-down the-turtle)
+    ;(go the-turtle 100 100)
+					;(show the-turtle)
+    (third [1 2 3 4])
+    (test-seq)
+    
     (catch Throwable e (println (errors/prettify-exception e)))))
