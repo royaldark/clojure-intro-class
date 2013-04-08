@@ -1,13 +1,13 @@
 (ns corefns.core
-  (:refer-clojure :exclude [map filter nth]))
-  ;(:require [clojure.contrib.core]));[map filter nth concat]))
+  (:use [clojure.core.incubator])
+  (:refer-clojure :exclude [map filter nth]));[map filter nth concat]))
 
 ;; Copied from clojure.contrib.core because it's unclear which package
 ;; I am supposed to include now that clojure.contrib has been broken down
 ;; into modules
 ;; The original is here:
 ;; https://github.com/richhickey/clojure-contrib/commit/bc07de7c3b1058f4263bd7b1c424f771fb010005
-(defn seqable?
+(defn sssseqable?
   "Returns true if (seq x) will succeed, false otherwise."
   [x]
   (or (seq? x)
