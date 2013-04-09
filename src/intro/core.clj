@@ -45,10 +45,49 @@
 
 ;; try re-writing using reduce
 ;; (reduce f coll) ---> user=> (reduce + [1 2 3 4 5]) == 15
+;(defn duplicate-seq [coll] 
+;	(loop [s coll result []] ;; result can work with vector or a list
+;		(if (empty? s) result
+;			(recur (rest s) (add-last (add-last result (first s)) (first s))))))
+
+
+
 (defn duplicate-seq [coll] 
-	(loop [s coll result []] ;; result can work with vector or a list
+	(interleave (reduce add-last '() coll) coll))
+
+(defn flatten-seq [coll]
+	(loop [s coll result '()] 
 		(if (empty? s) result
-			(recur (rest s) (add-last (add-last result (first s)) (first s))))))
+		(recur (rest s)(do (if (coll? (first s)) (concat result (first s))
+					 (add-last result (first s))))))))
+
+;; Maybe try to work without loop-recur? If possible that is.
+(defn interleave-seq [c1 c2]
+	(loop [s1 c1 s2 c2 result []] 
+		(if (or (empty? s1) (empty? s2) ) result 
+			(recur (rest s1) (rest s2) 
+				(add-last (add-last result (first s1)) (first s2) ) ) ) ) )
+
+
+;(defn flatten-seq [coll]
+;	(loop [s coll result '()] 
+;		(if (empty? s) result
+;		(recur (rest s)(do (if (coll? (first s)) (concat result (flatten-seq [first s]))
+;					 (add-last result (first s))))))))
+
+(defn rotate-left [rotations coll]
+	(loop [r rotations s coll]
+		(if (zero? r) s
+			(recur (dec r) (drop 1 (add-last s (first s))) ) )))
+
+(defn rotate-right [rotations coll]
+	(loop [r rotations s coll]
+		(if (zero? r) s
+			(recur (inc r) (drop-last (add-first s (last s))) ) )))
+	
+(defn rotate-seq [rotations coll]
+		(if (pos? rotations) (rotate-left rotations coll) 
+			             (rotate-right rotations coll)))
 
 (defn test-exceptions []
   (test-all-and-continue '((throw (new IndexOutOfBoundsException))
@@ -74,7 +113,10 @@
     ;(test-turtle)
     ;(test-exceptions)
     ;(test-nth)
-    (duplicate-seq [1 2 3])
+    ;(duplicate-seq [1 2 3])
+    ;(flatten-seq '((1 2) 3 [4 [5 6]]))
+    ;(interleave-seq [1 2 3] [:a :b :c])
+     ;(rotate-seq -6 [1 2 3 4 5])
 					;(reduce + +)
     ;(test-concat)
     (catch Throwable e (println (errors/prettify-exception e)))))
