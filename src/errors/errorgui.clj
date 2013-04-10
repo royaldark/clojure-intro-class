@@ -31,6 +31,7 @@
       (scroll! stacktrace :to :top)
       (.setAlwaysOnTop d true) ;; to make errors pop up on top of other programs
       ;(config! d :content hide-button)
+      ;; a mouse anywhere in the window resets it's always-on-top to false
       (listen d :mouse-entered (fn [e] (.setAlwaysOnTop d false)))
       (-> d pack! show!)))
       

@@ -2,7 +2,8 @@
   (:require [errors.core :as errors])
   (:use [corefns.core]
         [seesaw.core]
-        [turtle.core]))
+	[turtle.core]))
+        ;[turtle.extended-turtle]))
 
 (defn basic-seesaw-frame []
   (invoke-later
@@ -101,11 +102,63 @@
 			   (doall (concat [:banana] [:banana] [] 4))
 			   )))
 
+(defn test-first-rest []
+  (test-all-and-continue '((first 1) ; Don't know how to create a sequence from a number
+			   (rest 1) ; Don't know how to create a sequence from a number
+			   (first []) ;; returns nil
+			   (rest []) ;; returns an empty sequence
+			   (empty? 1)))) ;Don't know how to create a sequence from a number
+
+(defn test-conj-into []
+  (test-all-and-continue '((conj 1 []) ; Attempted to use a number, but a collection was expected.
+			   (into [2] 3) ; Don't know how to create a sequence from a number
+			   (conj + 1) ; Attempted to use a function, but a collection was expected.
+			   (into '() *)))) ; Don't know how to create a sequence from a function
+
+(defn test-add-first-last []
+  (test-all-and-continue '((add-first 1 []) ; currently failing asserts, this may change later
+			   (add-last 1 [])
+			   (add-first + 1)
+			   (add-last + 1))))
+
+(defn test-forgetting-a-quote []
+  (test-all-and-continue '((1 2 3) ; Attempted to use a number, but a function was expected.
+			   ([] 1 2) ; Wrong number of args (2) passed to: PersistentVector - hmmm
+			   ([2 4] 1) ; Not an error, returns 4
+			   ([] 1)))) ; An index in a vector or a list is out of bounds
+
 (defn test-turtle []
   (test-all-and-continue '(
 			   (pen-up turtle) ; using an unitialized turtle
 					; strangely the exception is that a function cannot be converted into a ref
 			   )))
+
+(defn our-reverse [coll]
+  (reduce add-first '() coll))
+
+(defn our-map [f coll]
+  (reduce (fn [res x] (add-last res (f x))) '() coll))
+  
+
+(defn add-first-last-examples []
+  (test-all-and-continue '((our-reverse [1 2 3])
+			   (our-reverse '(1 2 3))
+			   (our-map inc [1 2 3])
+			   (our-map inc '(1 2 3)))
+			 
+			 ))
+
+(defn test-seq []
+  (test-all-and-continue '((doall (concat [1 2] 5))
+			   (seq 2)
+			   (seq true)
+			   (seq map)
+			   )))
+
+(defn third [coll]
+  "Returns the third element in a collection,
+   or nil if the collection has fewer than three elements"
+  (first (rest (rest coll))))
 
 (defn -main [& args]
   (try
@@ -116,7 +169,21 @@
     ;(duplicate-seq [1 2 3])
     ;(flatten-seq '((1 2) 3 [4 [5 6]]))
     ;(interleave-seq [1 2 3] [:a :b :c])
-     ;(rotate-seq -6 [1 2 3 4 5])
+    ;(rotate-seq -6 [1 2 3 4 5])
 					;(reduce + +)
     ;(test-concat)
+					;(test-concat)
+					;(test-first-rest)
+					;(test-conj-into)
+					;(test-add-first-last)
+					;(test-forgetting-a-quote)
+					;(add-first-last-examples)
+    (def the-turtle (turtle 200 300))
+    ;(change-background the-turtle)
+    ;(pen-down the-turtle)
+    ;(go the-turtle 100 100)
+					;(show the-turtle)
+    (third [1 2 3 4])
+    (test-seq)
+
     (catch Throwable e (println (errors/prettify-exception e)))))
