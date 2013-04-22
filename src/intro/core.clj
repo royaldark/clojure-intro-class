@@ -127,6 +127,15 @@
 				 (contains-value? + 1)
 				 (contains-value? 1 [1 2 3]))))
 
+(defn test-contains-types []
+	(test-all-and-continue '((contains? "abc" \a)
+		                 (contains? "abc" 7) ; this works and returns false - why?
+		                 (contains? "abc" 1) ; works, returns true
+		                 (contains? "abc" 1.5) ; also returns true
+		                 (contains? "abc" :b)
+		                 (contains? [1 2 3] \a)
+		                 (contains? nil 2))))
+
 (defn test-wrong-arg-type [] 
 	(test-all-and-continue '( (+ 6 :k)
 		                  (+ 6 +)
@@ -136,6 +145,12 @@
 		                  (dec "orange")
 		                  (< 8 "lemon") ; doesn't work on strings
 		                  (< "apple" "orange"))))
+
+(defn test-boolean-functions []
+	(test-all-and-continue '( (not 5) ; not an error
+			 	  (and true +) ; not an error 
+			 	  (and nil) ; not an error 
+			 	  (every? #(and %) [1 2 3])))) ; not an error, returns true
 				 
 
 (defn third [coll]
@@ -167,5 +182,6 @@
 					;t
     ;(test-add-first-last)
     ;(test-any-contains)
-    (test-wrong-arg-type)
+    ;(test-wrong-arg-type)
+    (test-contains-types)
     (catch Throwable e (println (errors/prettify-exception e)))))

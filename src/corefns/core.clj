@@ -51,7 +51,7 @@
 (def contains-key? contains?)
 		
 ;; more content tests 
-(defn any? [pred coll] (not (not-any? pred coll))) 
+(defn any? [pred coll] (not (not-any? pred coll))) ; yes, I know :-(
 (defn some? [pred coll] (not (not-any? pred coll)))
 
 ;; String functions
