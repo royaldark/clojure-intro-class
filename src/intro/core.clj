@@ -17,8 +17,10 @@
 (defn test-and-continue [quoted-exp]
   (in-ns 'intro.core) ; eval by default evaluates in its own namespace
   (try
+    (println quoted-exp)
     (eval quoted-exp)
-    (catch Throwable e (println (errors/prettify-exception e)))))
+    (catch Throwable e (println (errors/prettify-exception e)))
+    (finally (println "Are there any exceptions left?"))))
 
 (defn test-all-and-continue [quoted-exps]
   ;; doall is needed because map is lazy 
@@ -42,7 +44,7 @@
   (test-all-and-continue '( (nth 3 [1 2 3]) ;; ERROR: Attempted to use a collection, but a number was expected.
 			(nth [1 2 3] 3)
 			(nth [1 2 3] [8 9])
-			(nth #{1 2 3} 1 ))))
+			(nth #{1 2 3} 1 )))) 
 
 (defn test-exceptions []
   (test-all-and-continue '((throw (new IndexOutOfBoundsException))
@@ -73,6 +75,10 @@
   (test-all-and-continue '((add-first 1 []) ; currently failing asserts, this may change later
 			   (add-last 1 [])
 			   (add-first + 1)
+			   (add-first \s "pie")
+			   (add-last \s "ies")
+			   (add-first :k [:a])
+			   (add-last :k [:a])
 			   (add-last + 1))))
 
 (defn test-forgetting-a-quote []
@@ -108,13 +114,36 @@
 			   (seq true)
 			   (seq map)
 			   )))
+(defn test-any-contains []
+	(test-all-and-continue '((any? 6 :k)
+				 (any? [1 2 3] odd?)
+				 (any? odd? {2 3 4 5}) ; ERROR: Argument must be an integer: [2 3] 
+				 (any? #(+ % 2) [1 2 5])
+				 (some? #(+ % 2) [:k :v]) ; the point is that it's a wrong type of argument
+				 (some? [1 2] [3 4])
+				 (contains-value? {:a :b :c :d} :a)
+				 (contains-value? {:a :b :c :d} :b)
+				 (contains-value? [1 2 3 4] +)
+				 (contains-value? + 1)
+				 (contains-value? 1 [1 2 3]))))
+
+(defn test-wrong-arg-type [] 
+	(test-all-and-continue '( (+ 6 :k)
+		                  (+ 6 +)
+		                  (* 6 "hello")
+		                  (odd? "banana")
+		                  (inc :k)
+		                  (dec "orange")
+		                  (< 8 "lemon") ; doesn't work on strings
+		                  (< "apple" "orange"))))
+				 
 
 (defn third [coll]
   "Returns the third element in a collection,
    or nil if the collection has fewer than three elements"
   (first (rest (rest coll))))
 
-(defn -main [& args]
+(defn -main [& args] 
   (try
     ;(basic-seesaw-frame)
     ;(test-turtle)
@@ -132,7 +161,11 @@
     ;(pen-down the-turtle)
     ;(go the-turtle 100 100)
 					;(show the-turtle)
-    (third [1 2 3 4])
-    (test-seq)
-    
+    ;(third [1 2 3 4])
+					;(test-seq)
+    ;(def t (add-last 4 [2 3]))
+					;t
+    ;(test-add-first-last)
+    ;(test-any-contains)
+    (test-wrong-arg-type)
     (catch Throwable e (println (errors/prettify-exception e)))))
