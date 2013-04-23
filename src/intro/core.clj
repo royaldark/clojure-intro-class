@@ -179,5 +179,6 @@
     ;(test-add-first-last)
     ;(test-any-contains)
     ;(test-wrong-arg-type)
-    (test-contains-types)
+    ;(test-contains-types)
+    (doall (nth #{1 2 3} 1 ))
     (catch Throwable e (println (errors/prettify-exception e)))))

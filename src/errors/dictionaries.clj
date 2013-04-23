@@ -20,7 +20,9 @@
 		      :clojure.lang.ISeq "a sequence"
 		      :ISeq "a sequence"
 		      ;; Refs come up in turtle graphics
-		      :clojure.lang.Ref "a mutable object"})
+		      :clojure.lang.Ref "a mutable object"
+		      ;; Clojure types
+		      :PersistentHashSet "a set"})
 
 ;; A string representation of a type t not listed in the type-dictionary
 (defn best-approximation [type]
@@ -71,5 +73,8 @@
 		        :replace "An attempt to access a non-existing object \n (NullPointerException)"}
 		       {:class IllegalArgumentException
 		        :match #"(.*) not supported on type: (.*)"
+		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}
+		       {:class UnsupportedOperationException
+		        :match #"(.*) not supported on this type: (.*)"
 		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}])
 
