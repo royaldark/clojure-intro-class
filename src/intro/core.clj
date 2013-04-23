@@ -39,10 +39,14 @@
 			    )))
 
 (defn test-nth []
-  (test-all-and-continue '( (nth 3 [1 2 3]) ;; ERROR: Attempted to use a collection, but a number was expected.
+  (test-all-and-continue '( ;(nth 3 [1 2 3]) ;; ERROR: Attempted to use a collection, but a number was expected.
 			(nth [1 2 3] 3)
 			(nth [1 2 3] [8 9])
-			(nth #{1 2 3} 1 ))))
+			(nth #{1 2 3} 1 )
+			(nth (seq {:a :b :c :d}) 1)
+			(nth (seq {:a :b :c :d}) 2)
+			(nth (seq #{1 0}) 2)
+			(nth (seq "a b c") 1)  )))
 
 ;; try re-writing using reduce
 ;; (reduce f coll) ---> user=> (reduce + [1 2 3 4 5]) == 15
@@ -56,10 +60,19 @@
 (defn duplicate-seq [coll] 
 	(interleave (reduce add-last '() coll) coll))
 
+;(defn flatten-helper [coll returnStuff]
+;	(if (empty? coll) returnStuff
+;		(do (if (coll? (first coll) ) (flatten-helper (first coll) returnStuff)
+;				(do (add-last returnStuff (first coll)) (flatten-helper (rest coll) returnStuff) )))))
+
+(defn flatten-helper [coll returnStuff]
+	(if (coll? (first coll)) (flatten-helper (rest coll) returnStuff)
+				 (concat returnStuff coll)))
+
 (defn flatten-seq [coll]
 	(loop [s coll result '()] 
 		(if (empty? s) result
-		(recur (rest s)(do (if (coll? (first s)) (concat result (first s))
+		(recur (rest s)(do (if (coll? (first s)) (flatten-helper (first s) result )
 					 (add-last result (first s))))))))
 
 ;; Maybe try to work without loop-recur? If possible that is.
@@ -90,6 +103,16 @@
 		(if (pos? rotations) (rotate-left rotations coll) 
 			             (rotate-right rotations coll)))
 
+(defn pascals-triangle-helper [coll]
+	(loop [s coll n 0 result []]
+		(if (= (inc n) (count s)) (add-last (add-first result (first s)) (last s))
+			(recur s (inc n) (add-last result (+ (nth s n) (nth s (+ 1 n))))))))
+
+(defn pascals-triangle [iterations]
+	(loop [n 0 result [[1]]]
+		(if (= n iterations) (last result)
+			(recur (inc n) (add-last result (pascals-triangle-helper (last result)))))))
+
 (defn test-exceptions []
   (test-all-and-continue '((throw (new IndexOutOfBoundsException))
 			   (throw (new IndexOutOfBoundsException "10"))
@@ -97,10 +120,10 @@
 			   (throw (new NullPointerException "some message")))))
 
 (defn test-concat []
-  (test-all-and-continue '((doall (concat [1 2] :banana)) ; need doall because concat is lazy
-			   (doall (concat [:banana] +))
-			   (doall (concat [:banana] [:banana] [] 4))
-			   )))
+  (test-all-and-continue '( (concat :banana [1 2]) ; need doall because concat is lazy
+			   (concat [:banana] +)
+			   (concat [:banana] [:banana] [] 4))))
+			   
 
 (defn test-first-rest []
   (test-all-and-continue '((first 1) ; Don't know how to create a sequence from a number
@@ -154,6 +177,7 @@
 			   (seq true)
 			   (seq map)
 			   )))
+ 
 
 (defn third [coll]
   "Returns the third element in a collection,
@@ -165,11 +189,27 @@
     ;(basic-seesaw-frame)
     ;(test-turtle)
     ;(test-exceptions)
-    ;(test-nth)
+    (test-nth)
     ;(duplicate-seq [1 2 3])
     ;(flatten-seq '((1 2) 3 [4 [5 6]]))
     ;(interleave-seq [1 2 3] [:a :b :c])
     ;(rotate-seq -6 [1 2 3 4 5])
+    ;(println ;(add-first \s "pie")
+    	     ;(add-first 5 [1 2 3])
+    	     ;(add-last 5 [1 2 3]))
+    	     ;(add-last \s "pie"))
+    	     
+    ;(doall (add-last \s "pie"))
+    ;(take 2 (lazy-cat 
+    ;	    ;(list 1 2 3) 
+    ;	    (range)
+    ;	    [1 (/ 1 0)]))
+    ;(add-first 0 [1 2 3 4 5])
+    ;(pascals-triangle-helper [1 1])
+    ;(pascals-triangle 11)
+    ;(add-last \s "pie")
+    ;(println (conj #{0 1} 1))
+    
 					;(reduce + +)
     ;(test-concat)
 					;(test-concat)
@@ -178,12 +218,12 @@
 					;(test-add-first-last)
 					;(test-forgetting-a-quote)
 					;(add-first-last-examples)
-    (def the-turtle (turtle 200 300))
+    ;(def the-turtle (turtle 200 300))
     ;(change-background the-turtle)
     ;(pen-down the-turtle)
     ;(go the-turtle 100 100)
 					;(show the-turtle)
-    (third [1 2 3 4])
-    (test-seq)
+    ;(third [1 2 3 4])
+    ;(test-seq)
 
     (catch Throwable e (println (errors/prettify-exception e)))))

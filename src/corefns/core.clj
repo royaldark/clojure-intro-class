@@ -39,7 +39,7 @@
   (clojure.core/filter argument1 argument2))
 
 (defn nth [argument1 argument2]
-  {:pre [(is-vector-or-list? argument1) (is-number? argument2)]}
+  ;{:pre [(is-collection? argument1) (is-number? argument2)]}
   (clojure.core/nth  argument1 argument2))
 
 ;(defn concat [argument1 argument2]
@@ -56,4 +56,4 @@
 
 (defn add-last [argument1 argument2]
   {:pre [(is-collection? argument1)]}
-  (concat argument1 [argument2]))
+  (doall (concat argument1 [argument2])))
