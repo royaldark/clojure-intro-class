@@ -47,6 +47,10 @@
 (defn replace-types [f]
   (fn [matches] (f (map get-type (rest matches)))))
 
+(defn replace-types-illegal-args [matches]
+	(let [converted-type (replace-types (nth matches 2))]
+		(str  "Function " (nth matches 1) " does not allow " converted-type  " as an argument")))
+
 (def error-dictionary [{:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
 			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))}
@@ -67,5 +71,5 @@
 		        :replace "An attempt to access a non-existing object \n (NullPointerException)"}
 		       {:class IllegalArgumentException
 		        :match #"(.*) not supported on type: (.*)"
-		        :replace (replace-types #(str "Function " (nth %1 0) " does not allow " (nth %1 1) " as an argument"))}])
+		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}])
 

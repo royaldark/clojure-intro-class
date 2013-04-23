@@ -162,7 +162,7 @@
   (try
     ;(basic-seesaw-frame)
     ;(test-turtle)
-    (test-exceptions)
+    ;(test-exceptions)
     ;(test-nth)
 					;(reduce + +)
 					;(test-concat)
@@ -171,16 +171,12 @@
 					;(test-add-first-last)
 					;(test-forgetting-a-quote)
 					;(add-first-last-examples)
-    (def the-turtle (turtle 200 300))
-    ;(change-background the-turtle)
-    ;(pen-down the-turtle)
-    ;(go the-turtle 100 100)
-					;(show the-turtle)
+    
     ;(third [1 2 3 4])
 					;(test-seq)
     ;(def t (add-last 4 [2 3]))
 					;t
-    (test-add-first-last)
+    ;(test-add-first-last)
     ;(test-any-contains)
     ;(test-wrong-arg-type)
     (test-contains-types)

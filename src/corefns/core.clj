@@ -44,6 +44,7 @@
   (concat argument1 [argument2]))
 
 ;; user-friendly versions of confusing functions
+; works on strings, unlike contains?
 (defn contains-value? [coll x]
 	(let [values (if (map? coll) (vals coll) coll)]
 		(not (every? #(not= x %) values))))
