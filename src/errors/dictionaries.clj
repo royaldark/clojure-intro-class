@@ -57,7 +57,7 @@
 			:match #"(\d+)"
 			:replace "An index in a sequence is out of bounds. The index is: $1"}
 		       {:class IndexOutOfBoundsException
-		        :match #""
+		        :match #"" ; the message may be a nil
 		        :replace "An index in a sequence is out of bounds"}
 		       {:class NullPointerException  
 			:match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine

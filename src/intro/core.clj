@@ -162,7 +162,7 @@
   (try
     ;(basic-seesaw-frame)
     ;(test-turtle)
-    ;(test-exceptions)
+    (test-exceptions)
     ;(test-nth)
 					;(reduce + +)
 					;(test-concat)
@@ -180,7 +180,7 @@
 					;(test-seq)
     ;(def t (add-last 4 [2 3]))
 					;t
-    ;(test-add-first-last)
+    (test-add-first-last)
     ;(test-any-contains)
     ;(test-wrong-arg-type)
     (test-contains-types)
