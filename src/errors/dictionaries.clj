@@ -53,14 +53,19 @@
 		       {:class IllegalArgumentException
 			:match #"Don't know how to create (.*) from: (.*)"
 			:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))}
-		       {:class IndexOutOfBoundsException ; may come with an empty message
+		       {:class IndexOutOfBoundsException 
 			:match #"(\d+)"
-			:replace "An index in a sequence is out of bounds. The index is: $1"
-			:emptyMessage "An index in a sequence is out of bounds"}
-		       {:class NullPointerException  ; may come with an empty message
+			:replace "An index in a sequence is out of bounds. The index is: $1"}
+		       {:class IndexOutOfBoundsException
+		        :match #""
+		        :replace "An index in a sequence is out of bounds"}
+		       {:class NullPointerException  
 			:match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
-			:replace "An attempt to access a non-existing object: $1 \n (NullPointerException)"
-			:emptyMessage "An attempt to access a non-existing object \n (NullPointerException)"
-			}])
-
+			:replace "An attempt to access a non-existing object: $1 \n (NullPointerException)"}
+		       {:class NullPointerException
+		        :match  #""
+		        :replace "An attempt to access a non-existing object \n (NullPointerException)"}
+		       {:class IllegalArgumentException
+		        :match #"(.*) not supported on type: (.*)"
+		        :replace (replace-types #(str "Function " (nth %1 0) " does not allow " (nth %1 1) " as an argument"))}])
 
