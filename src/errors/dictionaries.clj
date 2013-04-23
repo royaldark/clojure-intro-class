@@ -47,20 +47,29 @@
 (defn replace-types [f]
   (fn [matches] (f (map get-type (rest matches)))))
 
+(defn replace-types-illegal-args [matches]
+	(let [converted-type (replace-types (nth matches 2))]
+		(str  "Function " (nth matches 1) " does not allow " converted-type  " as an argument")))
+
 (def error-dictionary [{:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
 			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))}
 		       {:class IllegalArgumentException
 			:match #"Don't know how to create (.*) from: (.*)"
 			:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))}
-		       {:class IndexOutOfBoundsException ; may come with an empty message
+		       {:class IndexOutOfBoundsException 
 			:match #"(\d+)"
-			:replace "An index in a sequence is out of bounds. The index is: $1"
-			:emptyMessage "An index in a sequence is out of bounds"}
-		       {:class NullPointerException  ; may come with an empty message
+			:replace "An index in a sequence is out of bounds. The index is: $1"}
+		       {:class IndexOutOfBoundsException
+		        :match #"" ; the message may be a nil
+		        :replace "An index in a sequence is out of bounds"}
+		       {:class NullPointerException  
 			:match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
-			:replace "An attempt to access a non-existing object: $1 \n (NullPointerException)"
-			:emptyMessage "An attempt to access a non-existing object \n (NullPointerException)"
-			}])
-
+			:replace "An attempt to access a non-existing object: $1 \n (NullPointerException)"}
+		       {:class NullPointerException
+		        :match  #""
+		        :replace "An attempt to access a non-existing object \n (NullPointerException)"}
+		       {:class IllegalArgumentException
+		        :match #"(.*) not supported on type: (.*)"
+		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}])
 

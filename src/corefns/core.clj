@@ -60,4 +60,3 @@
 (defn some? [pred coll] (not (not-any? pred coll)))
 
 ;; String functions
-

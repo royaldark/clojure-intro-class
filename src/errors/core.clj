@@ -8,17 +8,18 @@
 ;;(def ignore-nses #"(clojure|java)\..*")
 (def ignore-nses #"(user|clojure|java)\..*")
 
+(defn- first-match [e message]
+	(println (class e)) ; debugging print
+	(first (filter #(and (instance? (:class %) e) (re-matches (:match %) message))
+			error-dictionary)))
+
 ;; Putting together a message (perhaps should be moved to errors.dictionaries? )
 (defn- get-pretty-message [e]
-  (let [message (.getMessage e)]
-    (if-let [entry (some #(when (instance? (:class %) e) %) error-dictionary)]
-      (if-let [pretty-message (if message
-				(clojure.string/replace message (:match entry) (:replace entry))
-				(:emptyMessage entry))]
-      pretty-message
-      message)
-    message)))
-
+  (let [m (.getMessage e)
+  	message (if m m "")] ; converting an empty message from nil to ""
+  	  (if-let [entry (first-match e message)]
+  	  	  (clojure.string/replace message (:match entry) (:replace entry))
+  	  	  message)))
 
 ;; All together:
 (defn prettify-exception [e]

@@ -263,11 +263,7 @@
 					;(test-add-first-last)
 					;(test-forgetting-a-quote)
 					;(add-first-last-examples)
-    ;(def the-turtle (turtle 200 300))
-    ;(change-background the-turtle)
-    ;(pen-down the-turtle)
-    ;(go the-turtle 100 100)
-					;(show the-turtle)
+
     ;(third [1 2 3 4])
     ;(test-seq)
 
