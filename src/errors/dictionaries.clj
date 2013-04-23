@@ -55,8 +55,8 @@
 			:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))}
 		       {:class IndexOutOfBoundsException ; may come with an empty message
 			:match #"(\d+)"
-			:replace "An index in a vector or a list is out of bounds. The index is: $1"
-			:emptyMessage "An index in a vector or a list is out of bounds"}
+			:replace "An index in a sequence is out of bounds. The index is: $1"
+			:emptyMessage "An index in a sequence is out of bounds"}
 		       {:class NullPointerException  ; may come with an empty message
 			:match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
 			:replace "An attempt to access a non-existing object: $1 \n (NullPointerException)"

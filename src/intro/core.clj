@@ -17,8 +17,10 @@
 (defn test-and-continue [quoted-exp]
   (in-ns 'intro.core) ; eval by default evaluates in its own namespace
   (try
+    (println quoted-exp)
     (eval quoted-exp)
-    (catch Throwable e (println (errors/prettify-exception e)))))
+    (catch Throwable e (println (errors/prettify-exception e)))
+    (finally (println "Are there any exceptions left?"))))
 
 (defn test-all-and-continue [quoted-exps]
   ;; doall is needed because map is lazy 
@@ -112,6 +114,7 @@
 	(loop [n 0 result [[1]]]
 		(if (= n iterations) (last result)
 			(recur (inc n) (add-last result (pascals-triangle-helper (last result)))))))
+			(nth #{1 2 3} 1 )))) 
 
 (defn test-exceptions []
   (test-all-and-continue '((throw (new IndexOutOfBoundsException))
@@ -142,6 +145,10 @@
   (test-all-and-continue '((add-first 1 []) ; currently failing asserts, this may change later
 			   (add-last 1 [])
 			   (add-first + 1)
+			   (add-first \s "pie")
+			   (add-last \s "ies")
+			   (add-first :k [:a])
+			   (add-last :k [:a])
 			   (add-last + 1))))
 
 (defn test-forgetting-a-quote []
@@ -177,19 +184,57 @@
 			   (seq true)
 			   (seq map)
 			   )))
- 
+
+(defn test-any-contains []
+	(test-all-and-continue '((any? 6 :k)
+				 (any? [1 2 3] odd?)
+				 (any? odd? {2 3 4 5}) ; ERROR: Argument must be an integer: [2 3] 
+				 (any? #(+ % 2) [1 2 5])
+				 (some? #(+ % 2) [:k :v]) ; the point is that it's a wrong type of argument
+				 (some? [1 2] [3 4])
+				 (contains-value? {:a :b :c :d} :a)
+				 (contains-value? {:a :b :c :d} :b)
+				 (contains-value? [1 2 3 4] +)
+				 (contains-value? + 1)
+				 (contains-value? 1 [1 2 3]))))
+
+(defn test-contains-types []
+	(test-all-and-continue '((contains? "abc" \a)
+		                 (contains? "abc" 7) ; this works and returns false - why?
+		                 (contains? "abc" 1) ; works, returns true
+		                 (contains? "abc" 1.5) ; also returns true
+		                 (contains? "abc" :b)
+		                 (contains? [1 2 3] \a)
+		                 (contains? nil 2))))
+
+(defn test-wrong-arg-type [] 
+	(test-all-and-continue '( (+ 6 :k)
+		                  (+ 6 +)
+		                  (* 6 "hello")
+		                  (odd? "banana")
+		                  (inc :k)
+		                  (dec "orange")
+		                  (< 8 "lemon") ; doesn't work on strings
+		                  (< "apple" "orange"))))
+
+(defn test-boolean-functions []
+	(test-all-and-continue '( (not 5) ; not an error
+			 	  (and true +) ; not an error 
+			 	  (and nil) ; not an error 
+			 	  (every? #(and %) [1 2 3])))) ; not an error, returns true
+				 
 
 (defn third [coll]
   "Returns the third element in a collection,
    or nil if the collection has fewer than three elements"
   (first (rest (rest coll))))
 
-(defn -main [& args]
+(defn -main [& args] 
   (try
     ;(basic-seesaw-frame)
     ;(test-turtle)
     ;(test-exceptions)
-    (test-nth)
+    ;(test-nth)
     ;(duplicate-seq [1 2 3])
     ;(flatten-seq '((1 2) 3 [4 [5 6]]))
     ;(interleave-seq [1 2 3] [:a :b :c])
@@ -225,5 +270,13 @@
 					;(show the-turtle)
     ;(third [1 2 3 4])
     ;(test-seq)
+
+					;(test-seq)
+    ;(def t (add-last 4 [2 3]))
+					;t
+    ;(test-add-first-last)
+    ;(test-any-contains)
+    ;(test-wrong-arg-type)
+    (test-contains-types)
 
     (catch Throwable e (println (errors/prettify-exception e)))))
