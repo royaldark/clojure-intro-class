@@ -40,15 +40,15 @@
 			    (conj "a" 2) ;; Attempted to use string, but collection was expected.
 			    )))
 
-(defn test-nth []
-  (test-all-and-continue '( ;(nth 3 [1 2 3]) ;; ERROR: Attempted to use a collection, but a number was expected.
-			(nth [1 2 3] 3)
-			(nth [1 2 3] [8 9])
-			(nth #{1 2 3} 1 )
-			(nth (seq {:a :b :c :d}) 1)
-			(nth (seq {:a :b :c :d}) 2)
-			(nth (seq #{1 0}) 2)
-			(nth (seq "a b c") 1)  )))
+;(defn test-nth []
+ ; (test-all-and-continue '( ;(nth 3 [1 2 3]) ;; ERROR: Attempted to use a collection, but a number was expected.
+;			(nth [1 2 3] 3)
+;			(nth [1 2 3] [8 9])
+;			(nth #{1 2 3} 1 )
+;			(nth (seq {:a :b :c :d}) 1)
+;			(nth (seq {:a :b :c :d}) 2)
+;			(nth (seq #{1 0}) 2)
+;			(nth (seq "a b c") 1)  )))
 
 ;; try re-writing using reduce
 ;; (reduce f coll) ---> user=> (reduce + [1 2 3 4 5]) == 15
@@ -277,6 +277,6 @@
     ;(test-add-first-last)
     ;(test-any-contains)
     ;(test-wrong-arg-type)
-    (test-contains-types)
+    ;(test-contains-types)
 
     (catch Throwable e (println (errors/prettify-exception e)))))
