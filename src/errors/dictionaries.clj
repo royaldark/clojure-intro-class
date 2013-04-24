@@ -28,7 +28,8 @@
 (defn best-approximation [type]
   "returns a string representation of a type t not listed in the type-dictionary for user-friendly error messages"
   ;; collections - must go before functions since some seqs implement the IFn interface
-  (let [t (resolve (symbol type))] ; this doesn't do what I was hoping it would do
+  (let [attempt (resolve (symbol type))
+        t (if attempt attempt (resolve (symbol (str "clojure.lang." type))))]
   	  (println t type)
   	  ;(if (isa? t clojure.lang.PersistentHashSet) "a set"
   	  (if (isa? t clojure.lang.IPersistentVector) "a vector"
