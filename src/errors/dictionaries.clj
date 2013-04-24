@@ -13,7 +13,7 @@
 		      :java.lang.Float "a number"
 		      :java.lang.Short  "a number"
 		      ;; perhaps add big ints and such
-		      :java.lang.Character "a character" ;; simplifying things for a new student
+		      :java.lang.Character "a character" ;; switched back from a symbol
 		      :clojure.lang.Symbol "a character"
 		      ;; to short-cut processing of error messages for
 		      ;; "Don't know how to create a sequence from ..."
@@ -21,8 +21,6 @@
 		      :ISeq "a sequence"
 		      ;; Refs come up in turtle graphics
 		      :clojure.lang.Ref "a mutable object"})
-		      ;; Clojure types
-		      ;;:PersistentHashSet "a set"})
 		      
 ;; matching type interfaces to beginner-friendly names. 
 ;; Note: since a type may implement more than one interface, 
@@ -35,34 +33,27 @@
 		    [clojure.lang.IPersistentSet "a set"]
 		    [clojure.lang.IPersistentMap "a map"]
 		    [clojure.lang.ISeq "a sequence"]
+		    ;; collections - must go before functions since some collections 
+		    ;; implement the IFn interface
 		    [clojure.lang.IPersistentCollection "a collection"]
 		    [clojure.lang.IFn "a function"]])
 		      
-;; A string representation of a type t not listed in the type-dictionary
+;; The best approximation of a type t not listed in the type-dictionary (as a string)
 (defn best-approximation [t]
   "returns a string representation of a type t not listed in the type-dictionary for user-friendly error messages"
-  ;; collections - must go before functions since some seqs implement the IFn interface
   (let [attempt (resolve (symbol t))
         type (if attempt attempt (resolve (symbol (str "clojure.lang." t)))) ;; may need to add clojure.lang. for some types
         matched-type (if type (first (filter #(isa? type (first %)) general-types)))]
         (if matched-type (second matched-type) (str "unrecognized type " type))))
 
-;; The best approximation of a type we can get if it's not listed in the type-dictionary
-(defn other-type [t]
-  "returns the best approximation of a type we can get if it's not listed in the type-dictionary"
-  (best-approximation t))
-
 (defn get-type [t]
   "returns a user-friendly representation of a type if it exists in the type-dictionary,
    or its default representation as an unknown type"
-  ((keyword t) type-dictionary (other-type t)))
+  ((keyword t) type-dictionary (best-approximation t)))
 
 (defn replace-types [f]
+   "returns a function that maps get-type over a list of matches"
   (fn [matches] (f (map get-type (rest matches)))))
-
-(defn replace-types-illegal-args [matches]
-	(let [converted-type (replace-types (nth matches 2))]
-		(str  "Function " (nth matches 1) " does not allow " converted-type  " as an argument")))
 
 (def error-dictionary [{:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
