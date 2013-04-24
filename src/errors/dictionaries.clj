@@ -13,28 +13,34 @@
 		      :java.lang.Float "a number"
 		      :java.lang.Short  "a number"
 		      ;; perhaps add big ints and such
-		      :java.lang.Character "a symbol" ;; simplifying things for a new student
-		      :clojure.lang.Symbol "a symbol"
+		      :java.lang.Character "a character" ;; simplifying things for a new student
+		      :clojure.lang.Symbol "a character"
 		      ;; to short-cut processing of error messages for
 		      ;; "Don't know how to create a sequence from ..."
 		      :clojure.lang.ISeq "a sequence"
 		      :ISeq "a sequence"
 		      ;; Refs come up in turtle graphics
-		      :clojure.lang.Ref "a mutable object"
+		      :clojure.lang.Ref "a mutable object"})
 		      ;; Clojure types
-		      :PersistentHashSet "a set"})
+		      ;;:PersistentHashSet "a set"})
 
 ;; A string representation of a type t not listed in the type-dictionary
 (defn best-approximation [type]
   "returns a string representation of a type t not listed in the type-dictionary for user-friendly error messages"
   ;; collections - must go before functions since some seqs implement the IFn interface
-  (let [t (resolve (symbol type))]
-    (if (isa? t clojure.lang.ISeq) "a sequence"
-	(if (isa? t clojure.lang.IPersistentCollection) "a collection" ;; the same test as in coll?
-	  ;; functions
-	  (if (isa? t clojure.lang.IFn) "a function"
-	      ;; if all else fails: 
-	      (str "unrecognized type " t))))))
+  (let [t (resolve (symbol type))] ; this doesn't do what I was hoping it would do
+  	  (println t type)
+  	  ;(if (isa? t clojure.lang.PersistentHashSet) "a set"
+  	  (if (isa? t clojure.lang.IPersistentVector) "a vector"
+  	  	  (if (isa? t clojure.lang.IPersistentList)"a list"
+  	  	  	  (if (isa? t  clojure.lang.IPersistentMap) "a map"
+  	  	  	  	  (if (isa? t  clojure.lang.IPersistentSet) "a set"
+  	  	  	  	  	  (if (isa? t clojure.lang.ISeq) "a sequence"
+  	  	  	  	  	  	  (if (isa? t clojure.lang.IPersistentCollection) "a collection" ;; the same test as in coll?
+  	  	  	  	  	  	  	  ;; functions
+  	  	  	  	  	  	  	  (if (isa? t clojure.lang.IFn) "a function"
+  	  	  	  	  	  	  	  	  ;; if all else fails: 
+  	  	  	  	  	  	  	  	  (str "unrecognized type " t))))))))))
 
 ;; The best approximation of a type we can get if it's not listed in the type-dictionary
 (defn other-type [t]
