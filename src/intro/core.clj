@@ -168,13 +168,13 @@
   (try
     ;(basic-seesaw-frame)
     ;(test-turtle)
-    ;(test-exceptions)
+    (test-exceptions)
     ;(test-nth)
 					;(reduce + +)
 					;(test-concat)
 					;(test-first-rest)
-					;(test-conj-into)
-					;(test-add-first-last)
+					(test-conj-into)
+					(test-add-first-last)
 					;(test-forgetting-a-quote)
 					;(add-first-last-examples)
     
@@ -184,7 +184,7 @@
 					;t
     ;(test-add-first-last)
     ;(test-any-contains)
-    ;(test-wrong-arg-type)
-    ;(test-contains-types)
+    (test-wrong-arg-type)
+    (test-contains-types)
     (test-unsupported-ops)
     (catch Throwable e (println (errors/prettify-exception e)))))

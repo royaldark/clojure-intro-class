@@ -23,25 +23,29 @@
 		      :clojure.lang.Ref "a mutable object"})
 		      ;; Clojure types
 		      ;;:PersistentHashSet "a set"})
-
+		      
+;; matching type interfaces to beginner-friendly names. 
+;; Note: since a type may implement more than one interface, 
+;; the order is essential. The lookup is done in order, so
+;; the first match is returned. 
+;; That's why it's a vector, not a hashmap. 
+;; USE CAUTION WHEN ADDING NEW TYPES! 
+(def general-types [[clojure.lang.IPersistentVector "a vector"]
+		    [clojure.lang.IPersistentList "a list"]
+		    [clojure.lang.IPersistentSet "a set"]
+		    [clojure.lang.IPersistentMap "a map"]
+		    [clojure.lang.ISeq "a sequence"]
+		    [clojure.lang.IPersistentCollection "a collection"]
+		    [clojure.lang.IFn "a function"]])
+		      
 ;; A string representation of a type t not listed in the type-dictionary
-(defn best-approximation [type]
+(defn best-approximation [t]
   "returns a string representation of a type t not listed in the type-dictionary for user-friendly error messages"
   ;; collections - must go before functions since some seqs implement the IFn interface
-  (let [attempt (resolve (symbol type))
-        t (if attempt attempt (resolve (symbol (str "clojure.lang." type))))]
-  	  (println t type)
-  	  ;(if (isa? t clojure.lang.PersistentHashSet) "a set"
-  	  (if (isa? t clojure.lang.IPersistentVector) "a vector"
-  	  	  (if (isa? t clojure.lang.IPersistentList)"a list"
-  	  	  	  (if (isa? t  clojure.lang.IPersistentMap) "a map"
-  	  	  	  	  (if (isa? t  clojure.lang.IPersistentSet) "a set"
-  	  	  	  	  	  (if (isa? t clojure.lang.ISeq) "a sequence"
-  	  	  	  	  	  	  (if (isa? t clojure.lang.IPersistentCollection) "a collection" ;; the same test as in coll?
-  	  	  	  	  	  	  	  ;; functions
-  	  	  	  	  	  	  	  (if (isa? t clojure.lang.IFn) "a function"
-  	  	  	  	  	  	  	  	  ;; if all else fails: 
-  	  	  	  	  	  	  	  	  (str "unrecognized type " t))))))))))
+  (let [attempt (resolve (symbol t))
+        type (if attempt attempt (resolve (symbol (str "clojure.lang." t)))) ;; may need to add clojure.lang. for some types
+        matched-type (if type (first (filter #(isa? type (first %)) general-types)))]
+        (if matched-type (second matched-type) (str "unrecognized type " type))))
 
 ;; The best approximation of a type we can get if it's not listed in the type-dictionary
 (defn other-type [t]
