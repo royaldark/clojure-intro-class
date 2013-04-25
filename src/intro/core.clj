@@ -113,8 +113,7 @@
 (defn pascals-triangle [iterations]
 	(loop [n 0 result [[1]]]
 		(if (= n iterations) (last result)
-			(recur (inc n) (add-last result (pascals-triangle-helper (last result)))))))
-			(nth #{1 2 3} 1 )))) 
+			(recur (inc n) (add-last result (pascals-triangle-helper (last result))))))) 
 
 (defn test-exceptions []
   (test-all-and-continue '((throw (new IndexOutOfBoundsException))
