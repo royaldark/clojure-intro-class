@@ -24,6 +24,10 @@
 ;  (clojure.core/filter argument1 argument2))
 
 ;(defn nth [argument1 argument2]
+  ;{:pre [(is-collection? argument1) (is-number? argument2)]}
+  ;(clojure.core/nth  argument1 argument2))
+
+;(defn nth [argument1 argument2]
 ;  {:pre [(is-vector-or-list? argument1) (is-number? argument2)]}
 ;  (clojure.core/nth  argument1 argument2))
 
@@ -41,10 +45,10 @@
 
 (defn add-last [argument1 argument2]
   ;{:pre [(is-collection? argument1)]}
-  (concat argument1 [argument2]))
+  (doall (concat argument1 [argument2])))
+
 
 ;; user-friendly versions of confusing functions
-; works on strings, unlike contains?
 (defn contains-value? [coll x]
 	(let [values (if (map? coll) (vals coll) coll)]
 		(not (every? #(not= x %) values))))
@@ -56,4 +60,3 @@
 (defn some? [pred coll] (not (not-any? pred coll)))
 
 ;; String functions
-

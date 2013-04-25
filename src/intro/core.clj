@@ -40,11 +40,106 @@
 			    (conj "a" 2) ;; Attempted to use string, but collection was expected.
 			    )))
 
-(defn test-nth []
-  (test-all-and-continue '( (nth 3 [1 2 3]) ;; ERROR: Attempted to use a collection, but a number was expected.
-			(nth [1 2 3] 3)
-			(nth [1 2 3] [8 9])
-			(nth #{1 2 3} 1 )))) 
+;(defn test-nth []
+ ; (test-all-and-continue '( ;(nth 3 [1 2 3]) ;; ERROR: Attempted to use a collection, but a number was expected.
+;			(nth [1 2 3] 3)
+;			(nth [1 2 3] [8 9])
+;			(nth #{1 2 3} 1 )
+;			(nth (seq {:a :b :c :d}) 1)
+;			(nth (seq {:a :b :c :d}) 2)
+;			(nth (seq #{1 0}) 2)
+;			(nth (seq "a b c") 1)  )))
+
+;; try re-writing using reduce
+;; (reduce f coll) ---> user=> (reduce + [1 2 3 4 5]) == 15
+;(defn duplicate-seq [coll] 
+;	(loop [s coll result []] ;; result can work with vector or a list
+;		(if (empty? s) result
+;			(recur (rest s) (add-last (add-last result (first s)) (first s))))))
+
+
+
+(defn duplicate-seq [coll] 
+	(interleave (reduce add-last '() coll) coll))
+
+;(defn flatten-helper [coll returnStuff]
+;	(if (empty? coll) returnStuff
+;		(do (if (coll? (first coll) ) (flatten-helper (first coll) returnStuff)
+;				(do (add-last returnStuff (first coll)) (flatten-helper (rest coll) returnStuff) )))))
+
+(defn flatten-helper [coll returnStuff]
+	(if (coll? (first coll)) (flatten-helper (rest coll) returnStuff)
+				 (concat returnStuff coll)))
+
+(defn flatten-seq [coll]
+	(loop [s coll result '()] 
+		(if (empty? s) result
+		(recur (rest s)(do (if (coll? (first s)) (flatten-helper (first s) result )
+					 (add-last result (first s))))))))
+
+;; Maybe try to work without loop-recur? If possible that is.
+(defn interleave-seq [c1 c2]
+	(loop [s1 c1 s2 c2 result []] 
+		(if (or (empty? s1) (empty? s2) ) result 
+			(recur (rest s1) (rest s2) 
+				(add-last (add-last result (first s1)) (first s2) ) ) ) ) )
+
+
+;(defn flatten-seq [coll]
+;	(loop [s coll result '()] 
+;		(if (empty? s) result
+;		(recur (rest s)(do (if (coll? (first s)) (concat result (flatten-seq [first s]))
+;					 (add-last result (first s))))))))
+
+(defn rotate-left [rotations coll]
+	(loop [r rotations s coll]
+		(if (zero? r) s
+			(recur (dec r) (drop 1 (add-last s (first s))) ) )))
+
+(defn rotate-right [rotations coll]
+	(loop [r rotations s coll]
+		(if (zero? r) s
+			(recur (inc r) (drop-last (add-first s (last s))) ) )))
+	
+(defn rotate-seq [rotations coll]
+		(if (pos? rotations) (rotate-left rotations coll) 
+			             (rotate-right rotations coll)))
+
+(defn pascals-triangle-helper [coll]
+	(loop [s coll n 0 result []]
+		(if (= (inc n) (count s)) (add-last (add-first result (first s)) (last s))
+			(recur s (inc n) (add-last result (+ (nth s n) (nth s (+ 1 n))))))))
+
+(defn pascals-triangle [iterations]
+	(loop [n 0 result [[1]]]
+		(if (= n iterations) (last result)
+			(recur (inc n) (add-last result (pascals-triangle-helper (last result))))))) 
+
+(defn pack-a-seq-helper [n coll]
+	(loop [s coll result '()]
+		(if (empty? s) result
+			(if (= n (first s)) (recur (rest s) (add-last result (first s)))
+				result))))
+
+(defn pack-a-seq-helper2 [n coll]
+	(loop [s coll v 0]
+		(if (empty? s) v
+			(if (= n (first s)) (recur (rest s) (inc v))
+			v))))
+
+(defn pack-a-seq [coll]
+	(loop [c coll result '()]
+		(if (empty? c) result 
+		(recur (drop (pack-a-seq-helper2 (first c) c) c)
+			(add-last result (pack-a-seq-helper (first c) c))
+			))))
+
+(defn test-recur [x]
+	(if (= x 5) x
+	(recur (inc x))))
+
+(defn a-nil-key [k hash]
+	(and (contains-key? hash k) (= (get hash k) nil)))
 
 (defn test-exceptions []
   (test-all-and-continue '((throw (new IndexOutOfBoundsException))
@@ -53,10 +148,10 @@
 			   (throw (new NullPointerException "some message")))))
 
 (defn test-concat []
-  (test-all-and-continue '((doall (concat [1 2] :banana)) ; need doall because concat is lazy
-			   (doall (concat [:banana] +))
-			   (doall (concat [:banana] [:banana] [] 4))
-			   )))
+  (test-all-and-continue '( (concat :banana [1 2]) ; need doall because concat is lazy
+			   (concat [:banana] +)
+			   (concat [:banana] [:banana] [] 4))))
+			   
 
 (defn test-first-rest []
   (test-all-and-continue '((first 1) ; Don't know how to create a sequence from a number
@@ -114,6 +209,7 @@
 			   (seq true)
 			   (seq map)
 			   )))
+
 (defn test-any-contains []
 	(test-all-and-continue '((any? 6 :k)
 				 (any? [1 2 3] odd?)
@@ -168,23 +264,54 @@
   (try
     ;(basic-seesaw-frame)
     ;(test-turtle)
-    (test-exceptions)
+    ;(test-exceptions)
     ;(test-nth)
+    ;(duplicate-seq [1 2 3])
+    ;(flatten-seq '((1 2) 3 [4 [5 6]]))
+    ;(interleave-seq [1 2 3] [:a :b :c])
+    ;(rotate-seq -6 [1 2 3 4 5])
+    ;(println ;(add-first \s "pie")
+    	     ;(add-first 5 [1 2 3])
+    	     ;(add-last 5 [1 2 3]))
+    	     ;(add-last \s "pie"))
+    	     
+    ;(doall (add-last \s "pie"))
+    ;(take 2 (lazy-cat 
+    ;	    ;(list 1 2 3) 
+    ;	    (range)
+    ;	    [1 (/ 1 0)]))
+    ;(add-first 0 [1 2 3 4 5])
+    ;(pascals-triangle-helper [1 1])
+    ;(pascals-triangle 11)
+    ;(add-last \s "pie")
+    ;(println (conj #{0 1} 1))
+    
 					;(reduce + +)
+    ;(test-concat)
 					;(test-concat)
 					;(test-first-rest)
-					(test-conj-into)
-					(test-add-first-last)
+					;(test-conj-into)
+					;(test-add-first-last)
 					;(test-forgetting-a-quote)
 					;(add-first-last-examples)
-    
+
     ;(third [1 2 3 4])
+    ;(test-seq)
+
 					;(test-seq)
     ;(def t (add-last 4 [2 3]))
 					;t
     ;(test-add-first-last)
     ;(test-any-contains)
-    (test-wrong-arg-type)
-    (test-contains-types)
-    (test-unsupported-ops)
+
+    ;(test-wrong-arg-type)
+    ;(test-contains-types)
+    ;(test-recur 1)
+    (nth '(1 2 3) "banana")
+    ;((+ 1000000000000000000000000000000000000000000000 1000000000000000000000000000000000000000000000) 5)
+    ;(pack-a-seq [1 1 2 1 1 1 3 3])
+
+    ;(test-wrong-arg-type)
+    ;(test-contains-types)
+    ;(test-unsupported-ops)
     (catch Throwable e (println (errors/prettify-exception e)))))
