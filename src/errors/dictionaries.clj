@@ -13,43 +13,47 @@
 		      :java.lang.Float "a number"
 		      :java.lang.Short  "a number"
 		      ;; perhaps add big ints and such
-		      :java.lang.Character "a symbol" ;; simplifying things for a new student
-		      :clojure.lang.Symbol "a symbol"
+		      :java.lang.Character "a character" ;; switched back from a symbol
+		      :clojure.lang.Symbol "a character"
 		      ;; to short-cut processing of error messages for
 		      ;; "Don't know how to create a sequence from ..."
 		      :clojure.lang.ISeq "a sequence"
 		      :ISeq "a sequence"
 		      ;; Refs come up in turtle graphics
 		      :clojure.lang.Ref "a mutable object"})
-
-;; A string representation of a type t not listed in the type-dictionary
-(defn best-approximation [type]
+		      
+;; matching type interfaces to beginner-friendly names. 
+;; Note: since a type may implement more than one interface, 
+;; the order is essential. The lookup is done in order, so
+;; the first match is returned. 
+;; That's why it's a vector, not a hashmap. 
+;; USE CAUTION WHEN ADDING NEW TYPES! 
+(def general-types [[clojure.lang.IPersistentVector "a vector"]
+		    [clojure.lang.IPersistentList "a list"]
+		    [clojure.lang.IPersistentSet "a set"]
+		    [clojure.lang.IPersistentMap "a map"]
+		    [clojure.lang.ISeq "a sequence"]
+		    ;; collections - must go before functions since some collections 
+		    ;; implement the IFn interface
+		    [clojure.lang.IPersistentCollection "a collection"]
+		    [clojure.lang.IFn "a function"]])
+		      
+;; The best approximation of a type t not listed in the type-dictionary (as a string)
+(defn best-approximation [t]
   "returns a string representation of a type t not listed in the type-dictionary for user-friendly error messages"
-  ;; collections - must go before functions since some seqs implement the IFn interface
-  (let [t (resolve (symbol type))]
-    (if (isa? t clojure.lang.ISeq) "a sequence"
-	(if (isa? t clojure.lang.IPersistentCollection) "a collection" ;; the same test as in coll?
-	  ;; functions
-	  (if (isa? t clojure.lang.IFn) "a function"
-	      ;; if all else fails: 
-	      (str "unrecognized type " t))))))
-
-;; The best approximation of a type we can get if it's not listed in the type-dictionary
-(defn other-type [t]
-  "returns the best approximation of a type we can get if it's not listed in the type-dictionary"
-  (best-approximation t))
+  (let [attempt (resolve (symbol t))
+        type (if attempt attempt (resolve (symbol (str "clojure.lang." t)))) ;; may need to add clojure.lang. for some types
+        matched-type (if type (first (filter #(isa? type (first %)) general-types)))]
+        (if matched-type (second matched-type) (str "unrecognized type " type))))
 
 (defn get-type [t]
   "returns a user-friendly representation of a type if it exists in the type-dictionary,
    or its default representation as an unknown type"
-  ((keyword t) type-dictionary (other-type t)))
+  ((keyword t) type-dictionary (best-approximation t)))
 
 (defn replace-types [f]
+   "returns a function that maps get-type over a list of matches"
   (fn [matches] (f (map get-type (rest matches)))))
-
-(defn replace-types-illegal-args [matches]
-	(let [converted-type (replace-types (nth matches 2))]
-		(str  "Function " (nth matches 1) " does not allow " converted-type  " as an argument")))
 
 (def error-dictionary [{:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
@@ -71,5 +75,8 @@
 		        :replace "An attempt to access a non-existing object \n (NullPointerException)"}
 		       {:class IllegalArgumentException
 		        :match #"(.*) not supported on type: (.*)"
+		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}
+		       {:class UnsupportedOperationException
+		        :match #"(.*) not supported on this type: (.*)"
 		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}])
 

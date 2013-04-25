@@ -216,6 +216,12 @@
 		                  (< 8 "lemon") ; doesn't work on strings
 		                  (< "apple" "orange"))))
 
+(defn test-unsupported-ops []
+	(test-all-and-continue '((doall (nth #{1 2 3} 1 ))
+			         (doall (nth {1 2 3 4} 1))
+			         (doall (nth nil 0))
+			         (doall (nth "abcd" 0))))) ; don't know how to create a sequence from a symbol? 
+
 (defn test-boolean-functions []
 	(test-all-and-continue '( (not 5) ; not an error
 			 	  (and true +) ; not an error 
@@ -232,7 +238,7 @@
   (try
     ;(basic-seesaw-frame)
     ;(test-turtle)
-    ;(test-exceptions)
+    (test-exceptions)
     ;(test-nth)
     ;(duplicate-seq [1 2 3])
     ;(flatten-seq '((1 2) 3 [4 [5 6]]))
@@ -258,8 +264,8 @@
     ;(test-concat)
 					;(test-concat)
 					;(test-first-rest)
-					;(test-conj-into)
-					;(test-add-first-last)
+					(test-conj-into)
+					(test-add-first-last)
 					;(test-forgetting-a-quote)
 					;(add-first-last-examples)
 
@@ -271,7 +277,11 @@
 					;t
     ;(test-add-first-last)
     ;(test-any-contains)
+
     ;(test-wrong-arg-type)
     ;(test-contains-types)
 
+    (test-wrong-arg-type)
+    (test-contains-types)
+    (test-unsupported-ops)
     (catch Throwable e (println (errors/prettify-exception e)))))
