@@ -115,6 +115,32 @@
 		(if (= n iterations) (last result)
 			(recur (inc n) (add-last result (pascals-triangle-helper (last result))))))) 
 
+(defn pack-a-seq-helper [n coll]
+	(loop [s coll result '()]
+		(if (empty? s) result
+			(if (= n (first s)) (recur (rest s) (add-last result (first s)))
+				result))))
+
+(defn pack-a-seq-helper2 [n coll]
+	(loop [s coll v 0]
+		(if (empty? s) v
+			(if (= n (first s)) (recur (rest s) (inc v))
+			v))))
+
+(defn pack-a-seq [coll]
+	(loop [c coll result '()]
+		(if (empty? c) result 
+		(recur (drop (pack-a-seq-helper2 (first c) c) c)
+			(add-last result (pack-a-seq-helper (first c) c))
+			))))
+
+(defn test-recur [x]
+	(if (= x 5) x
+	(recur (inc x))))
+
+(defn a-nil-key [k hash]
+	(and (contains-key? hash k) (= (get hash k) nil)))
+
 (defn test-exceptions []
   (test-all-and-continue '((throw (new IndexOutOfBoundsException))
 			   (throw (new IndexOutOfBoundsException "10"))
@@ -238,7 +264,7 @@
   (try
     ;(basic-seesaw-frame)
     ;(test-turtle)
-    (test-exceptions)
+    ;(test-exceptions)
     ;(test-nth)
     ;(duplicate-seq [1 2 3])
     ;(flatten-seq '((1 2) 3 [4 [5 6]]))
@@ -264,8 +290,8 @@
     ;(test-concat)
 					;(test-concat)
 					;(test-first-rest)
-					(test-conj-into)
-					(test-add-first-last)
+					;(test-conj-into)
+					;(test-add-first-last)
 					;(test-forgetting-a-quote)
 					;(add-first-last-examples)
 
@@ -280,8 +306,12 @@
 
     ;(test-wrong-arg-type)
     ;(test-contains-types)
+    ;(test-recur 1)
+    (nth '(1 2 3) "banana")
+    ;((+ 1000000000000000000000000000000000000000000000 1000000000000000000000000000000000000000000000) 5)
+    ;(pack-a-seq [1 1 2 1 1 1 3 3])
 
-    (test-wrong-arg-type)
-    (test-contains-types)
-    (test-unsupported-ops)
+    ;(test-wrong-arg-type)
+    ;(test-contains-types)
+    ;(test-unsupported-ops)
     (catch Throwable e (println (errors/prettify-exception e)))))

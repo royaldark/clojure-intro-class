@@ -12,6 +12,7 @@
 		      :java.lang.Double "a number"
 		      :java.lang.Float "a number"
 		      :java.lang.Short  "a number"
+		      :clojure.lang.BigInt "a number"
 		      ;; perhaps add big ints and such
 		      :java.lang.Character "a character" ;; switched back from a symbol
 		      :clojure.lang.Symbol "a character"
