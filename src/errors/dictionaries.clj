@@ -29,7 +29,8 @@
 ;; the first match is returned. 
 ;; That's why it's a vector, not a hashmap. 
 ;; USE CAUTION WHEN ADDING NEW TYPES! 
-(def general-types [[clojure.lang.IPersistentVector "a vector"]
+(def general-types [[Number "a number"]
+		    [clojure.lang.IPersistentVector "a vector"]
 		    [clojure.lang.IPersistentList "a list"]
 		    [clojure.lang.IPersistentSet "a set"]
 		    [clojure.lang.IPersistentMap "a map"]
