@@ -32,7 +32,8 @@
 		      :clojure.lang.IPersistentStack "an object that behaves as a stack (such as a vector or a list)"
 		      ;; assoc works on maps and vectors:
 		      :clojure.lang.Associative "a map or a vector"
-		      :clojure.lang.Reversible "a vector or a sorted-map"})
+		      :clojure.lang.Reversible "a vector or a sorted-map"
+		      :clojure.lang.Sorted "a collection stored in a sorted manner (such as sorted-map or sorted-set)"})
 		      
 		      
 ;; matching type interfaces to beginner-friendly names. 

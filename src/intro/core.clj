@@ -275,6 +275,11 @@
 		                 (rseq #{1 2 3})
 		                 (rseq '())
 		                 (rseq "abc"))))
+
+(defn test-sorted-collections []
+	(test-all-and-continue '((subseq [1 2 3 4] > 2)
+		                 (subseq #{1 2 3} = 2)
+		                 (subseq {1 2 3 4} > 2))))
 				 
 
 (defn third [coll]
@@ -336,5 +341,6 @@
     ;(test-unsupported-ops)
     ;(test-pop-peek)
     ;(test-assoc)
-    (test-reversible)
+    ;(test-reversible)
+    (test-sorted-collections)
     (catch Throwable e (println (errors/prettify-exception e)))))
