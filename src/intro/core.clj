@@ -328,8 +328,8 @@
 					;(test-seq)
     ;(def t (add-last 4 [2 3]))
 					;t
-    ;(test-add-first-last)
-    ;(test-any-contains)
+    (test-add-first-last)
+    (test-any-contains)
 
     ;(test-wrong-arg-type)
     ;(test-contains-types)
