@@ -21,7 +21,15 @@
 		      :clojure.lang.ISeq "a sequence"
 		      :ISeq "a sequence"
 		      ;; Refs come up in turtle graphics
-		      :clojure.lang.Ref "a mutable object"})
+		      :clojure.lang.Ref "a mutable object"
+		      ;; regular expressions wouldn't make sense to beginners,
+		      ;; but it's better to recognize their types for easier
+		      ;; help with diagnostics
+		      :java.util.regex.Pattern "a regular expression pattern"
+		      :java.util.regex.Matcher "a regular expression matcher"
+		      ;; also not something beginners would know,
+		      ;; but useful for understanding errors
+		      :clojure.lang.Symbol "a symbol"})
 		      
 ;; matching type interfaces to beginner-friendly names. 
 ;; Note: since a type may implement more than one interface, 
