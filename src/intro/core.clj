@@ -253,6 +253,14 @@
 			 	  (and true +) ; not an error 
 			 	  (and nil) ; not an error 
 			 	  (every? #(and %) [1 2 3])))) ; not an error, returns true
+
+(defn test-pop-peek [] 
+	(test-all-and-continue '((peek [])
+			         (pop nil)
+			         (peek #{1 2 3})
+			         (peek {1 2 3 4})
+			         (peek "abc")
+			         (peek 5))))
 				 
 
 (defn third [coll]
@@ -307,11 +315,10 @@
     ;(test-wrong-arg-type)
     ;(test-contains-types)
     ;(test-recur 1)
-    (nth '(1 2 3) "banana")
-    ;((+ 1000000000000000000000000000000000000000000000 1000000000000000000000000000000000000000000000) 5)
     ;(pack-a-seq [1 1 2 1 1 1 3 3])
 
     ;(test-wrong-arg-type)
     ;(test-contains-types)
     ;(test-unsupported-ops)
+    (test-pop-peek)
     (catch Throwable e (println (errors/prettify-exception e)))))

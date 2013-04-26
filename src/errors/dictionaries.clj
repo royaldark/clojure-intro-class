@@ -15,7 +15,6 @@
 		      :clojure.lang.BigInt "a number"
 		      ;; perhaps add big ints and such
 		      :java.lang.Character "a character" ;; switched back from a symbol
-		      :clojure.lang.Symbol "a character"
 		      ;; to short-cut processing of error messages for
 		      ;; "Don't know how to create a sequence from ..."
 		      :clojure.lang.ISeq "a sequence"
@@ -29,7 +28,9 @@
 		      :java.util.regex.Matcher "a regular expression matcher"
 		      ;; also not something beginners would know,
 		      ;; but useful for understanding errors
-		      :clojure.lang.Symbol "a symbol"})
+		      :clojure.lang.Symbol "a symbol"
+		      :clojure.lang.IPersistentStack "an object that behaves as a stack (such as a vector or a list)"})
+		      
 		      
 ;; matching type interfaces to beginner-friendly names. 
 ;; Note: since a type may implement more than one interface, 
