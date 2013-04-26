@@ -261,6 +261,20 @@
 			         (peek {1 2 3 4})
 			         (peek "abc")
 			         (peek 5))))
+
+(defn test-assoc [] 
+	(test-all-and-continue '((assoc [1 2 3] 5 6)
+		                 (assoc #{1 2} 3 4)
+		                 (dissoc '(1 2 3) 3)
+		                 (dissoc [1 2 3] 9)
+		                 (assoc "abc" \a \b))))
+
+(defn test-reversible []
+	(test-all-and-continue '((rseq [1 2 3])
+		                 (rseq {1 2 3 5})
+		                 (rseq #{1 2 3})
+		                 (rseq '())
+		                 (rseq "abc"))))
 				 
 
 (defn third [coll]
@@ -320,5 +334,7 @@
     ;(test-wrong-arg-type)
     ;(test-contains-types)
     ;(test-unsupported-ops)
-    (test-pop-peek)
+    ;(test-pop-peek)
+    ;(test-assoc)
+    (test-reversible)
     (catch Throwable e (println (errors/prettify-exception e)))))

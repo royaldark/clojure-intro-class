@@ -29,7 +29,10 @@
 		      ;; also not something beginners would know,
 		      ;; but useful for understanding errors
 		      :clojure.lang.Symbol "a symbol"
-		      :clojure.lang.IPersistentStack "an object that behaves as a stack (such as a vector or a list)"})
+		      :clojure.lang.IPersistentStack "an object that behaves as a stack (such as a vector or a list)"
+		      ;; assoc works on maps and vectors:
+		      :clojure.lang.Associative "a map or a vector"
+		      :clojure.lang.Reversible "a vector or a sorted-map"})
 		      
 		      
 ;; matching type interfaces to beginner-friendly names. 
