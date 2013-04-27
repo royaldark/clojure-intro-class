@@ -12,6 +12,13 @@
     (ref {:width width :height height :image image 
 	  :drawing true :point [0 0] :angle 0 :color Color/white})))
 
+;; added by Elena. Need to be changing the background of the Component
+;; This change is for clearing images only.
+(defn change-background
+  [turtle]
+  (println "+++++++++++++++++++++++++++++++++++++++++++++++++++")
+  (.setBackground (.createGraphics (:image @turtle)) Color/red))
+
 (defn pen-up? 
   "Is the pen up?"
   [turtle]
@@ -90,9 +97,10 @@
 
 (defn show [turtle]
   (doto (JFrame.)
-    (.add (proxy [JLabel] [] 
+    (.add (proxy [JLabel] []
 	    (paint [g] (.drawImage g (:image @turtle) 0 0 this))))
     (.setSize (Dimension. (:width @turtle) (:height @turtle)))
+    (.setDefaultCloseOperation JFrame/EXIT_ON_CLOSE) ;; added to be able to close
     (.show)))
 
 (defn write [turtle fname]
