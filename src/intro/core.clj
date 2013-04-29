@@ -281,6 +281,13 @@
 		                 (subseq #{1 2 3} = 2)
 		                 (subseq {1 2 3 4} > 2))))
 
+(defn test-arity [] 
+	(test-all-and-continue '((map [1 2 3])
+		                 (conj 7)
+		                 (drop [1 2 3])
+		                 (drop 2 [1 2 3] 7)
+		                 (#(+ % %) 1 3))))
+
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
 		(catch Throwable e (errors/prettify-exception e))))
@@ -344,7 +351,8 @@
     ;(test-contains-types)
     ;(test-unsupported-ops)
     ;(test-pop-peek)
-    (test-assoc)
-    (test-reversible)
+    ;(test-assoc)
+    ;(test-reversible)
+    (test-arity)
     ;(test-sorted-collections)
     (catch Throwable e (println (errors/prettify-exception e)))))

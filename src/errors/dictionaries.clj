@@ -85,17 +85,24 @@
 		        :replace "An index in a sequence is out of bounds"}
 		       {:class NullPointerException  
 			:match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
-			:replace "An attempt to access a non-existing object: $1 \n (NullPointerException)"}
+			:replace "An attempt to access a non-existing object: $1 \n(NullPointerException)"}
 		       {:class NullPointerException
 		        :match  #""
-		        :replace "An attempt to access a non-existing object \n (NullPointerException)"}
+		        :replace "An attempt to access a non-existing object \n(NullPointerException)"}
 		       {:class IllegalArgumentException
 		        :match #"(.*) not supported on type: (.*)"
 		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}
 		       {:class UnsupportedOperationException
 		        :match #"(.*) not supported on this type: (.*)"
 		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}
+		        ;; Compilation errors 
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Too many arguments to (.+), compiling:(.+)"
-		        :replace "Compilation error: too many arguments to $2 while compiling $3"}])
+		        :replace "Compilation error: too many arguments to $2 while compiling $3"}
+		       {:class clojure.lang.Compiler$CompilerException
+		        :match #"(.+): EOF while reading, starting at line (.+), compiling:(.+)"
+		        :replace "Compilation error: end of file, starting at line $2, while compiling $3.\nProbabbly a non-closing parentheses or bracket."}
+		        {:class clojure.lang.Compiler$CompilerException
+		        :match #"(.+): Unmatched delimiter: (.+), compiling:(.+)"
+		        :replace "Compilation error: a closing $2 without an opening one, while compiling $3."}])
 
