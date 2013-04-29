@@ -280,6 +280,10 @@
 	(test-all-and-continue '((subseq [1 2 3 4] > 2)
 		                 (subseq #{1 2 3} = 2)
 		                 (subseq {1 2 3 4} > 2))))
+
+(defn erun  []   
+	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
+		(catch Throwable e (errors/prettify-exception e))))
 				 
 
 (defn third [coll]
@@ -328,8 +332,8 @@
 					;(test-seq)
     ;(def t (add-last 4 [2 3]))
 					;t
-    (test-add-first-last)
-    (test-any-contains)
+    ;(test-add-first-last)
+    ;(test-any-contains)
 
     ;(test-wrong-arg-type)
     ;(test-contains-types)
@@ -340,7 +344,7 @@
     ;(test-contains-types)
     ;(test-unsupported-ops)
     ;(test-pop-peek)
-    ;(test-assoc)
-    ;(test-reversible)
-    (test-sorted-collections)
+    (test-assoc)
+    (test-reversible)
+    ;(test-sorted-collections)
     (catch Throwable e (println (errors/prettify-exception e)))))

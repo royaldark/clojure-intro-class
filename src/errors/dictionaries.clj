@@ -94,5 +94,8 @@
 		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}
 		       {:class UnsupportedOperationException
 		        :match #"(.*) not supported on this type: (.*)"
-		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}])
+		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}
+		       {:class clojure.lang.Compiler$CompilerException
+		        :match #"(.+): Too many arguments to (.+), compiling:(.+)"
+		        :replace "Compilation error: too many arguments to $2 while compiling $3"}])
 
