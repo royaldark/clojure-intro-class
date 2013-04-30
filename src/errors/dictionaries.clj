@@ -104,5 +104,5 @@
 		        :replace "Compilation error: end of file, starting at line $2, while compiling $3.\nProbabbly a non-closing parentheses or bracket."}
 		        {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Unmatched delimiter: (.+), compiling:(.+)"
-		        :replace "Compilation error: a closing $2 without an opening one, while compiling $3."}])
+		        :replace "Compilation error: a closing $2 without a matching opening one, while compiling $3."}])
 
