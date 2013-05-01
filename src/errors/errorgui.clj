@@ -34,12 +34,14 @@
       ;; a mouse anywhere in the window resets it's always-on-top to false
       (listen d :mouse-entered (fn [e] (.setAlwaysOnTop d false)))
       (-> d pack! show!)))
-      
+
     (catch java.lang.reflect.InvocationTargetException e
       (if (instance? java.awt.HeadlessException (.getCause e))
-        ; If there is no GUI available, this throws an InvocationTargetException
+        ; If there is no GUI available on Windows, this throws an InvocationTargetException
         ; wrapping a HeadlessException - print the error instead of showing a window.
         (println msg)
         ; And if the error does not originate from a HeadlessException, throw it again.
-        (throw e)))))
-
+        (throw e)))
+    (catch java.awt.HeadlessException e
+      ; If there is no GUI available on Linux, it simply throws a HeadlessException - print the erorr.
+      (println msg))))
