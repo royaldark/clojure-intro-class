@@ -353,6 +353,7 @@
     ;(test-pop-peek)
     ;(test-assoc)
     ;(test-reversible)
-    (test-arity)
+    ;(test-arity)
     ;(test-sorted-collections)
+    ;(sqr 0)
     (catch Throwable e (println (errors/prettify-exception e)))))

@@ -1,5 +1,6 @@
 (ns corefns.core
-  (:use [clojure.core.incubator]))
+  (:use [clojure.core.incubator])
+  (:require [trammel.provide :as provide]))
   ;(:refer-clojure :exclude [map filter nth]));[map filter nth concat]))
 
 
@@ -10,6 +11,11 @@
 (def is-number? number?)
 ;(def is-vector-or-list? #(or (vector? %) (list? %))) 
 
+; this doesn't work, as a fully qualified name or as just pos? 
+; I emailed Michael Fogus about it
+(provide/contracts 
+	[clojure.core/pos? "the argument is not a number"
+	[n] [(number? n)]])
 
 ;; filter and map have the same checks. Should we abstract over this?
 ;; note that for filter the function must return a boolean, but there
@@ -42,6 +48,10 @@
 (defn add-first [argument1 argument2]
   ;{:pre [(is-collection? argument1)]}
   (cons argument2 argument1))
+
+(provide/contracts
+  [add-first "the first argument of add-first must be a collection or a sequence"
+   [coll elt] [(seqable? coll)]])
 
 (defn add-last [argument1 argument2]
   ;{:pre [(is-collection? argument1)]}

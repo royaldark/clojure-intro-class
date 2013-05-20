@@ -92,6 +92,9 @@
 		       {:class IllegalArgumentException
 		        :match #"(.*) not supported on type: (.*)"
 		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}
+		       {:class IllegalArgumentException
+		        :match #"loop requires an even number of forms in binding vector in (.*)"
+		        :replace #(str  "")}
 		       {:class UnsupportedOperationException
 		        :match #"(.*) not supported on this type: (.*)"
 		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}
@@ -104,5 +107,8 @@
 		        :replace "Compilation error: end of file, starting at line $2, while compiling $3.\nProbabbly a non-closing parentheses or bracket."}
 		        {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Unmatched delimiter: (.+), compiling:(.+)"
-		        :replace "Compilation error: a closing $2 without a matching opening one, while compiling $3."}])
+		        :replace "Compilation error: a closing $2 without a matching opening one while compiling $3."}
+		        {:class clojure.lang.Compiler$CompilerException
+		        :match #"(.+): Unable to resolve symbol: (.+) in this context, compiling:\((.+)\)"
+		        :replace "Compilation error: name $2 is undefined in this context, while compiling $3."}])
 
