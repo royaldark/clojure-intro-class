@@ -1,6 +1,8 @@
 (ns corefns.core
   (:use [clojure.core.incubator])
-  (:require [trammel.provide :as provide]))
+  (:require [trammel.provide :as provide]
+    	    [trammel.core :as tramm]
+    	    [clojure.core.contracts :as contracts]))
   ;(:refer-clojure :exclude [map filter nth]));[map filter nth concat]))
 
 
@@ -43,15 +45,27 @@
 
 ;; need conj, into. Careful: there may be different cases. Can we have a complex pre-cond (with cases)?
 
+;(def second-arg-sequence
+ ; 	(provide/contract second-arg-seq 
+ (tramm/defcontract second-arg-sequence
+  		"Second argument must be a sequence"
+     		[f coll] [(seqable? coll)])
+
+;(def first-arg-function
+;  	(provide/contract first-arg-function 
+(tramm/defcontract first-arg-function
+  		"First argument must be a function"
+     		[f _] [(is-function? f)])
+
 ;; Functions for type-independent sequence handling
 ;; Need to define predicates on them as well
 (defn add-first [argument1 argument2]
   ;{:pre [(is-collection? argument1)]}
   (cons argument2 argument1))
 
-(provide/contracts
-  [add-first "the first argument of add-first must be a collection or a sequence"
-   [coll elt] [(seqable? coll)]])
+;(provide/contracts
+;  [add-first "the first argument of add-first must be a collection or a sequence"
+;   [coll elt] [(seqable? coll)]])
 
 (defn add-last [argument1 argument2]
   ;{:pre [(is-collection? argument1)]}

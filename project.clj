@@ -4,5 +4,6 @@
 			   [clj-stacktrace "0.2.5"]
 			   [org.clojure/core.incubator "0.1.2"]                                            
 			   [seesaw "1.4.3"]
-			   [trammel "0.7.0"]]
+			   [trammel "0.7.0"]
+			   [org.clojure/core.contracts "0.0.4"]]
             :main intro.core)
