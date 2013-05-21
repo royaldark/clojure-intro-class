@@ -45,17 +45,21 @@
 
 ;; need conj, into. Careful: there may be different cases. Can we have a complex pre-cond (with cases)?
 
-;(def second-arg-sequence
- ; 	(provide/contract second-arg-seq 
- (tramm/defcontract second-arg-sequence
+(tramm/defcontract second-arg-sequence
   		"Second argument must be a sequence"
-     		[f coll] [(seqable? coll)])
+     		[f coll] [(do (println (class coll)) true) (seqable? coll)])
 
-;(def first-arg-function
-;  	(provide/contract first-arg-function 
 (tramm/defcontract first-arg-function
   		"First argument must be a function"
      		[f _] [(is-function? f)])
+
+;; testing contracts
+(def myfn 
+	(contracts/with-constraints 
+		map 
+		second-arg-sequence))
+		;first-arg-function
+		;map))
 
 ;; Functions for type-independent sequence handling
 ;; Need to define predicates on them as well
