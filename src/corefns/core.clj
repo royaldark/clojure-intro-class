@@ -54,11 +54,11 @@
      		[f _] [(is-function? f)])
 
 ;; testing contracts
-(def myfn 
+(def map 
 	(contracts/with-constraints 
 		map 
-		second-arg-sequence))
-		;first-arg-function
+		second-arg-sequence
+		first-arg-function))
 		;map))
 
 ;; Functions for type-independent sequence handling
