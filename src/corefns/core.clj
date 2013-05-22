@@ -3,29 +3,32 @@
   ;(:require ;[trammel.provide :as provide]
     	    ;[trammel.core :as tramm]
     	    ;[clojure.core.contracts :as contracts])
-  (:refer-clojure :exclude [map]));[map filter nth concat]))
+  (:refer-clojure :exclude [map nth]));[map filter nth concat]))
 
 ;; to-do:
 ;; 1. remove references to contracts, trammel (from project.clj as well) - Done
 ;; 2. modify our type-checking functions to record the type (or the arg? or the message?)
 ;; 3. modify error--handling for asserts to check the recorded info
 ;; 4. rewrite messages similar to the standard ones (perhaps abstract over?)
-;; 5. don't forget to clear the queue at the end (post-cond? or the end of pre-cond? or finally?)
-;; 6. why didn't I think of this earlier? 
+;; 5. don't forget to clear the queue at the end (post-cond? or the end of pre-cond? or finally?) --
+;;    not in post-cond since if we got to post-cond, there were no errors. Perhaps after we
+;;    process the queue? We aren't going to handle nested errors. finally may be the place
+;; 6. Handle multiple-args functions
+;; inf. why didn't I think of this earlier? 
 
 ;; a global hashmap of recorded types/messages
 (def seen-objects (atom {}))
 
 (defn add-to-seen [binds] 
   "adds bindings to seen objects"
-  (swap! seen-objects merge binds))
+  (swap! seen-objects merge binds)) ; merge overwrites the same fields but adds new ones 
 
 (defn empty-seen [] 
   "removes all bindings from seen objects"
   (swap! seen-objects {}))
 
-;; A few function aliases to increase the readability of
-;; error messages caused by failed assertions
+;; Functions to check pre-conditions and record the offenders for 
+;; error processing
 (defn check-if-function? [x]
   (if (fn? x) true
   	      (do (add-to-seen {:check "function" 
@@ -34,8 +37,20 @@
   	      	   false)))   
 
 
-(def is-collection? seqable?) ;; coll? does a wrong thing on strings and nil
-(def is-number? number?)
+(defn check-if-seqable? [x]
+  (if (seqable? x) true
+  	      (do (add-to-seen {:check "seqable" 
+  	      		        :class (class x)
+  	      		        :value x})
+  	      	   false)))  
+
+(defn check-if-number? [x]
+  (if (number? x) true
+  	      (do (add-to-seen {:check "number" 
+  	      		        :class (class x)
+  	      		        :value x})
+  	      	   false)))  
+
 ;(def is-vector-or-list? #(or (vector? %) (list? %))) 
 
 
@@ -44,16 +59,16 @@
 ;; is no way to check for it, is there? - Elena
 
 (defn map [argument1 argument2]
-  {:pre [(is-collection? argument2) (check-if-function? argument1)]}
+  {:pre [(check-if-seqable? argument2) (check-if-function? argument1)]}
   (clojure.core/map argument1 argument2))
 
 ;(defn filter [argument1 argument2]
 ;  {:pre [(is-collection? argument2) (is-function? argument1)]}
 ;  (clojure.core/filter argument1 argument2))
 
-;(defn nth [argument1 argument2]
-  ;{:pre [(is-collection? argument1) (is-number? argument2)]}
-  ;(clojure.core/nth  argument1 argument2))
+(defn nth [argument1 argument2]
+  {:pre [(check-if-seqable? argument1) (check-if-number? argument2)]}
+  (clojure.core/nth  argument1 argument2))
 
 ;(defn nth [argument1 argument2]
 ;  {:pre [(is-vector-or-list? argument1) (is-number? argument2)]}
