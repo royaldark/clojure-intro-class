@@ -1,4 +1,5 @@
-(ns errors.dictionaries)
+(ns errors.dictionaries
+  (:use [corefns.core])) ; to be able to access seen-objects
 
 ;; A dictionary of known types and their user-friendly representations
 ;; potentially we can have multiple dictionaries, depending on the level
@@ -71,10 +72,26 @@
    "returns a function that maps get-type over a list of matches"
   (fn [matches] (f (map get-type (rest matches)))))
 
+(defn process-asserts [n]
+   "Returns a message for an assert failure based on the global seen-objects hashmap,
+   clears the hashmap"
+   (let [t (:check seen-objects)
+         c (:class seen-objects)
+         v (:value seen-objects)
+         arg (case n
+               1 "First argument"
+               2 "Second argument"
+               3 "Third argument"
+               4 "Fourth argument"
+               5 "Fifth argument"
+               (str "Argument " n))]
+   (empty-seen) ; empty the seen-objects hashmap     
+   (str arg " " v " has to be a " t " but is a " (get-type c))))
+
 (def error-dictionary [{:class AssertionError
 		        ;:match #"Assert failed: \((.*) argument(.*)\)  corefns.core/(.*) \((.*)\)"
 		        :match #"Assert failed: \((.*) argument(.*)\)"  
-		        :replace "Collected: $1 $2"}
+		        :replace #(process-asserts (nth % 1))}
 		       {:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
 			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))}
