@@ -1,8 +1,8 @@
 (ns intro.core 
-  (:require [errors.core :as errors])
-  (:use [corefns.core]
+  (:use [errors.core]
         [seesaw.core]
 	[turtle.core]))
+(refer 'corefns.core)
         ;[turtle.extended-turtle]))
 
 (defn basic-seesaw-frame []
@@ -19,7 +19,7 @@
   (try
     (println quoted-exp)
     (eval quoted-exp)
-    (catch Throwable e (println (errors/prettify-exception e)))
+    (catch Throwable e (println (prettify-exception e)))
     (finally (println "Are there any exceptions left?"))))
 
 (defn test-all-and-continue [quoted-exps]
@@ -298,7 +298,7 @@
 
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
-		(catch Throwable e (errors/prettify-exception e))))
+		(catch Throwable e (prettify-exception e))))
 				 
 
 (defn third [coll]
@@ -365,4 +365,4 @@
     ;(test-sorted-collections)
     ;(sqr 0)
     (test-asserts)
-    (catch Throwable e (println (errors/prettify-exception e)))))
+    (catch Throwable e (println (prettify-exception e)))))

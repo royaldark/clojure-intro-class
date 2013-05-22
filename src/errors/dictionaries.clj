@@ -1,5 +1,5 @@
 (ns errors.dictionaries
-  (:use [corefns.core])) ; to be able to access seen-objects
+  (:use [corefns.core]))
 
 ;; A dictionary of known types and their user-friendly representations
 ;; potentially we can have multiple dictionaries, depending on the level
@@ -75,9 +75,9 @@
 (defn process-asserts [n]
    "Returns a message for an assert failure based on the global seen-objects hashmap,
    clears the hashmap"
-   (let [t (:check seen-objects)
-         c (:class seen-objects)
-         v (:value seen-objects)
+   (let [t (:check @seen-objects)
+         c (.getName (:class @seen-objects))
+         v (:value @seen-objects)
          arg (case n
                1 "First argument"
                2 "Second argument"
@@ -85,13 +85,14 @@
                4 "Fourth argument"
                5 "Fifth argument"
                (str "Argument " n))]
+         (println t " " c " " v)
    (empty-seen) ; empty the seen-objects hashmap     
    (str arg " " v " has to be a " t " but is a " (get-type c))))
 
 (def error-dictionary [{:class AssertionError
 		        ;:match #"Assert failed: \((.*) argument(.*)\)  corefns.core/(.*) \((.*)\)"
 		        :match #"Assert failed: \((.*) argument(.*)\)"  
-		        :replace #(process-asserts (nth % 1))}
+		        :replace #(process-asserts (nth % 1))} ;; This doesn't seem to work....
 		       {:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
 			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))}
