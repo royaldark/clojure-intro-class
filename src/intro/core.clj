@@ -288,6 +288,14 @@
 		                 (drop 2 [1 2 3] 7)
 		                 (#(+ % %) 1 3))))
 
+(defn test-asserts []
+	(test-all-and-continue '((map 6 7)
+				 (map [1 2 3] dec)
+				 (map dec inc)
+				 (nth 1 [2 3 4])
+				 (nth "banana" [1 2 3])
+				 (nth [1 2 3] "banana"))))
+
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
 		(catch Throwable e (errors/prettify-exception e))))
@@ -356,4 +364,5 @@
     ;(test-arity)
     ;(test-sorted-collections)
     ;(sqr 0)
+    (test-asserts)
     (catch Throwable e (println (errors/prettify-exception e)))))

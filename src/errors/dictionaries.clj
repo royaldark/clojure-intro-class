@@ -71,7 +71,11 @@
    "returns a function that maps get-type over a list of matches"
   (fn [matches] (f (map get-type (rest matches)))))
 
-(def error-dictionary [{:class ClassCastException
+(def error-dictionary [{:class AssertionError
+		        ;:match #"Assert failed: \((.*) argument(.*)\)  corefns.core/(.*) \((.*)\)"
+		        :match #"Assert failed: \((.*) argument(.*)\)"  
+		        :replace "Collected: $1 $2"}
+		       {:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
 			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))}
 		       {:class IllegalArgumentException

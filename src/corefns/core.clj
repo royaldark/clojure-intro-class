@@ -7,8 +7,8 @@
 
 ;; to-do:
 ;; 1. remove references to contracts, trammel (from project.clj as well) - Done
-;; 2. modify our type-checking functions to record the type (or the arg? or the message?)
-;; 3. modify error--handling for asserts to check the recorded info
+;; 2. modify our type-checking functions to record the type (or the arg? or the message?) - Done
+;; 3. modify error-handling for asserts to check the recorded info
 ;; 4. rewrite messages similar to the standard ones (perhaps abstract over?)
 ;; 5. don't forget to clear the queue at the end (post-cond? or the end of pre-cond? or finally?) --
 ;;    not in post-cond since if we got to post-cond, there were no errors. Perhaps after we
