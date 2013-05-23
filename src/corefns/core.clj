@@ -85,17 +85,12 @@
 		
 ;;;;; Functions for type-independent sequence handling ;;;;;;
 
-;; Need to define predicates on them as well
 (defn add-first [argument1 argument2]
-  ;{:pre [(is-collection? argument1)]}
+  {:pre [(check-if-seqable? argument1)]}
   (cons argument2 argument1))
 
-;(provide/contracts
-;  [add-first "the first argument of add-first must be a collection or a sequence"
-;   [coll elt] [(seqable? coll)]])
-
 (defn add-last [argument1 argument2]
-  ;{:pre [(is-collection? argument1)]}
+  {:pre [(check-if-seqable? argument1)]}
   (doall (concat argument1 [argument2])))
 
 
