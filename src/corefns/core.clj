@@ -14,7 +14,7 @@
 ;;    not in post-cond since if we got to post-cond, there were no errors. Perhaps after we
 ;;    process the queue? We aren't going to handle nested errors. finally may be the place
 ;; 6. Handle multiple-args functions
-;; 7. Process function names 
+;; 7. Process function names - Done in the examples, need to test more
 ;; 8. Handle anonymous functions
 ;; 9. Add a function name to the error message
 ;; inf. why didn't I think of this earlier? 

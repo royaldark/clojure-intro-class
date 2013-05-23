@@ -72,13 +72,23 @@
    "returns a function that maps get-type over a list of matches"
   (fn [matches] (f (map get-type (rest matches)))))
 
+(defn- pretty-print-value [v c type]
+   "returns a pretty-printed value v based on its class, handles various messy cases"
+   ; strings are printed in double quotes:
+   (if (string? v) (str "\"" v "\"")
+     (if (= type "a function") 
+       ; extract a function from the class c (easier than from v):
+       (nth (re-matches #"(.*)\$(.*)" c) 2)
+       v)))
+
 (defn process-asserts [n]
    "Returns a message for an assert failure based on the global seen-objects hashmap,
    clears the hashmap"
    (let [t (:check @seen-objects)
          c (.getName (:class @seen-objects))
+         c-type (get-type c)
          v (:value @seen-objects)
-         v-print (if (string? v) (str "\"" v "\"") v)
+         v-print (pretty-print-value v c c-type)
          arg (case (Integer. n)
                1 "First argument"
                2 "Second argument"
@@ -88,7 +98,7 @@
                (str n "th argument "))]
          (println t " " c " " v)
    (empty-seen) ; empty the seen-objects hashmap     
-   (str arg " " v-print " must be a " t " but is " (get-type c))))
+   (str arg " " v-print " must be a " t " but is " c-type)))
 
 (def error-dictionary [{:class AssertionError
 		        :match #"Assert failed: \((.*) argument(.*)\)"  
