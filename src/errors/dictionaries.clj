@@ -78,21 +78,21 @@
    (let [t (:check @seen-objects)
          c (.getName (:class @seen-objects))
          v (:value @seen-objects)
-         arg (case n
+         v-print (if (string? v) (str "\"" v "\"") v)
+         arg (case (Integer. n)
                1 "First argument"
                2 "Second argument"
                3 "Third argument"
                4 "Fourth argument"
                5 "Fifth argument"
-               (str "Argument " n))]
+               (str n "th argument "))]
          (println t " " c " " v)
    (empty-seen) ; empty the seen-objects hashmap     
-   (str arg " " v " has to be a " t " but is a " (get-type c))))
+   (str arg " " v-print " must be a " t " but is " (get-type c))))
 
 (def error-dictionary [{:class AssertionError
-		        ;:match #"Assert failed: \((.*) argument(.*)\)  corefns.core/(.*) \((.*)\)"
 		        :match #"Assert failed: \((.*) argument(.*)\)"  
-		        :replace #(process-asserts (nth % 1))} ;; This doesn't seem to work....
+		        :replace #(process-asserts (nth % 2))} 
 		       {:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
 			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))}

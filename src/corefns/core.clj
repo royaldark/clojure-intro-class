@@ -8,12 +8,15 @@
 ;; to-do:
 ;; 1. remove references to contracts, trammel (from project.clj as well) - Done
 ;; 2. modify our type-checking functions to record the type (or the arg? or the message?) - Done
-;; 3. modify error-handling for asserts to check the recorded info
-;; 4. rewrite messages similar to the standard ones (perhaps abstract over?)
+;; 3. modify error-handling for asserts to check the recorded info - Done
+;; 4. rewrite messages similar to the standard ones (perhaps abstract over?) - maybe? 
 ;; 5. don't forget to clear the queue at the end (post-cond? or the end of pre-cond? or finally?) --
 ;;    not in post-cond since if we got to post-cond, there were no errors. Perhaps after we
 ;;    process the queue? We aren't going to handle nested errors. finally may be the place
 ;; 6. Handle multiple-args functions
+;; 7. Process function names 
+;; 8. Handle anonymous functions
+;; 9. Add a function name to the error message
 ;; inf. why didn't I think of this earlier? 
 
 ;; a global hashmap of recorded types/messages
@@ -39,7 +42,7 @@
 
 (defn check-if-seqable? [x]
   (if (seqable? x) true
-  	      (do (add-to-seen {:check "seqable" 
+  	      (do (add-to-seen {:check "sequence" 
   	      		        :class (class x)
   	      		        :value x})
   	      	   false)))  
