@@ -20,7 +20,11 @@
                                              :overflow :scroll
                                              :tabs [{:title "Error"
                                                      :tip "The simplified error message"
-                                                     :content (scrollable errormsg)}
+                                                     :content (str "<html><i>" errormsg "</i></html>")}
+                                                     ;(label 
+                                                     		     ;:multi-line? true
+                                                     		     ;:text (str "<html><i>" errormsg "</i></html>")
+                                                     		     ;:size [400 :by 400]};)}
                                                     {:title "Stacktrace"
                                                      :tip "The full Java stacktrace of the error"
                                                      :content (scrollable stacktrace)}])

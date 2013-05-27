@@ -72,6 +72,11 @@
    "returns a function that maps get-type over a list of matches"
   (fn [matches] (f (map get-type (rest matches)))))
 
+(def arg-font "it")
+
+(defn format-arg [x]
+   (str "<" arg-font ">" x "</" arg-font ">"))
+
 (defn- pretty-print-value [v c type]
    "returns a pretty-printed value v based on its class, handles various messy cases"
    ; strings are printed in double quotes:
@@ -98,7 +103,7 @@
                (str n "th argument "))]
          (println t " " c " " v)
    (empty-seen) ; empty the seen-objects hashmap     
-   (str arg " " v-print " must be a " t " but is " c-type)))
+   (str arg " " (format-arg v-print) " must be a " t " but is " c-type)))
 
 (def error-dictionary [{:class AssertionError
 		        :match #"Assert failed: \((.*) argument(.*)\)"  
