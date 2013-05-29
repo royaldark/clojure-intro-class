@@ -35,7 +35,10 @@
 		      :clojure.lang.Associative "a map or a vector"
 		      :clojure.lang.Reversible "a vector or a sorted-map"
 		      :clojure.lang.Sorted "a collection stored in a sorted manner (such as sorted-map or sorted-set)"
-		      :clojure.lang.Sequential "a sequential collection (such as a vector or a list)"})
+		      :clojure.lang.Sequential "a sequential collection (such as a vector or a list)"
+		      ;; got this in a seesaw error message. Not sure what other types are "Named"
+		      ;; source: https://groups.google.com/forum/?fromgroups#!topic/clojure/rd-MDXvn3q8
+		      :clojure.lang.Named "a keyword or a symbol"})
 		      
 		      
 ;; matching type interfaces to beginner-friendly names. 

@@ -12,19 +12,14 @@
 ;; Graphics 
 (defn show-error [msg e]
   (try
-     (let [errormsg (text :multi-line? true :editable? false :text msg)
+     (let [errormsg (styled-text :wrap-lines? true :text msg :styles [[:it :italic true]])
 	   stacktrace (text :multi-line? true :editable? false :rows 12 :text (format-stacktrace e))
-	   ;hide-button (button :text "Hide")
            d (dialog :title "Clojure Error",
                      :content (tabbed-panel :placement :bottom
                                              :overflow :scroll
                                              :tabs [{:title "Error"
                                                      :tip "The simplified error message"
-                                                     :content (str "<html><i>" errormsg "</i></html>")}
-                                                     ;(label 
-                                                     		     ;:multi-line? true
-                                                     		     ;:text (str "<html><i>" errormsg "</i></html>")
-                                                     		     ;:size [400 :by 400]};)}
+                                                     :content (do (style-text! errormsg :it 0 3) errormsg)}
                                                     {:title "Stacktrace"
                                                      :tip "The full Java stacktrace of the error"
                                                      :content (scrollable stacktrace)}])
@@ -34,7 +29,6 @@
       (scroll! errormsg :to :top) ;; Scrollboxes default to being scrolled to the bottom - not what we want
       (scroll! stacktrace :to :top)
       (.setAlwaysOnTop d true) ;; to make errors pop up on top of other programs
-      ;(config! d :content hide-button)
       ;; a mouse anywhere in the window resets it's always-on-top to false
       (listen d :mouse-entered (fn [e] (.setAlwaysOnTop d false)))
       (-> d pack! show!)))
