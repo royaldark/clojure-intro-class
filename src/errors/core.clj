@@ -19,7 +19,8 @@
   	message (if m m "")] ; converting an empty message from nil to ""
   	  (if-let [entry (first-match e message)]
   	  	  ;; this needs to change
-  	  	  (clojure.string/replace message (:match entry) (:replace entry))
+  	  	  ((:make-preobj entry) (re-matches  (:match entry) message)) 
+  	  	  ;(clojure.string/replace message (:match entry) (:replace entry))
   	  	  message)))
 
 ;; All together:

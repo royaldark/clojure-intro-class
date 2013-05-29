@@ -139,55 +139,71 @@
    ; (str arg " " (format-arg v-print) " must be a " t " but is " c-type)))
    (make-preobj-hashes 
    	   [[arg] [" "] [(format-arg v-print) :arg] 
-   	   [" must be a "] [t :type] [" but is "] [c-type :type]])))
-	
+   	   [" must be a "] [t :type] [" but is "] [c-type :type]])))	
 
-(def get-error-msg-preobj [{:class AssertionError
+(defn- make-mock-preobj [matches]
+  "creates a test message pre-obj. Used for testing so that things don't break"
+  (make-preobj-hashes [["This is a"] ["test" :arg]]))
+
+(def error-dictionary [{:class AssertionError
 		        :match #"Assert failed: \((.*) argument(.*)\)"  
-		        :replace #(process-asserts (nth % 2)) ;; need a message obj
+		        ;:replace #(process-asserts (nth % 2)) 
 			:make-preobj (fn [matches] (process-asserts-obj (nth matches 2)))}	        
 		       {:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
 			;; may need a message obj:
-			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))} 
+			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))
+			:make-preobj make-mock-preobj} 
 		       {:class IllegalArgumentException
 			:match #"Don't know how to create (.*) from: (.*)"
-			:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))}
+			:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))
+			:make-preobj make-mock-preobj}
 		       {:class IndexOutOfBoundsException 
 			:match #"(\d+)"
 			;; may need a message obj:
-			:replace "An index in a sequence is out of bounds. The index is: $1"}
+			:replace "An index in a sequence is out of bounds. The index is: $1"
+			:make-preobj make-mock-preobj}
 		       {:class IndexOutOfBoundsException
 		        :match #"" ; an empty message
 		        ;; doesn't need a message obj:
-		        :replace "An index in a sequence is out of bounds"}
+		        :replace "An index in a sequence is out of bounds"
+			:make-preobj make-mock-preobj}
 		       {:class NullPointerException  
 			:match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
-			:replace "An attempt to access a non-existing object: $1 \n(NullPointerException)"}
+			:replace "An attempt to access a non-existing object: $1 \n(NullPointerException)"
+			:make-preobj make-mock-preobj}
 		       {:class NullPointerException
 		        :match  #""
-		        :replace "An attempt to access a non-existing object \n(NullPointerException)"}
+		        :replace "An attempt to access a non-existing object \n(NullPointerException)"
+			:make-preobj make-mock-preobj}
 		       {:class IllegalArgumentException
 		        :match #"(.*) not supported on type: (.*)"
 		        ;; needs a message obj
-		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}
+		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")
+			:make-preobj make-mock-preobj}
 		       {:class IllegalArgumentException
 		        :match #"loop requires an even number of forms in binding vector in (.*)"
-		        :replace #(str  "")}
+		        :replace #(str  "")
+			:make-preobj make-mock-preobj}
 		       {:class UnsupportedOperationException
 		        :match #"(.*) not supported on this type: (.*)"
-		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}
+		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")
+			:make-preobj make-mock-preobj}
 		        ;; Compilation errors 
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Too many arguments to (.+), compiling:(.+)"
-		        :replace "Compilation error: too many arguments to $2 while compiling $3"}
+		        :replace "Compilation error: too many arguments to $2 while compiling $3"
+			:make-preobj make-mock-preobj}
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): EOF while reading, starting at line (.+), compiling:(.+)"
-		        :replace "Compilation error: end of file, starting at line $2, while compiling $3.\nProbabbly a non-closing parentheses or bracket."}
+		        :replace "Compilation error: end of file, starting at line $2, while compiling $3.\nProbabbly a non-closing parentheses or bracket."
+			:make-preobj make-mock-preobj}
 		        {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Unmatched delimiter: (.+), compiling:(.+)"
-		        :replace "Compilation error: a closing $2 without a matching opening one while compiling $3."}
+		        :replace "Compilation error: a closing $2 without a matching opening one while compiling $3."
+			:make-preobj make-mock-preobj}
 		        {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Unable to resolve symbol: (.+) in this context, compiling:\((.+)\)"
-		        :replace "Compilation error: name $2 is undefined in this context, while compiling $3."}])
+		        :replace "Compilation error: name $2 is undefined in this context, while compiling $3."
+			:make-preobj make-mock-preobj}])
 
