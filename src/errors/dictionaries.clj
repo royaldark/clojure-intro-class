@@ -108,20 +108,58 @@
    (empty-seen) ; empty the seen-objects hashmap     
    (str arg " " (format-arg v-print) " must be a " t " but is " c-type)))
 
-(def error-dictionary [{:class AssertionError
+(defn- make-msg-preobj-hash 
+	"creates a hash map for a msg preobject out of a msg and style"
+	([msg style] {:msg msg :stylekey style :length (count msg)})
+	([msg] {:msg msg :stylekey :reg :length (count msg)}))
+
+(defn- make-preobj-hashes [messages] 
+	"creates a vector of hash maps out of a vector of vectors of msg + optional style"
+	;; apply is needed since messages contains vectors of 1 or 2 elements
+	(map #(apply make-msg-preobj-hash %) messages))
+
+(defn process-asserts-obj [n] 
+  "Returns a message object generated for an assert failure based on the 
+  global seen-objects hashmap, clears the hashmap"
+  ;; and perhaps need manual error handling, in case the seen-object is empty
+   (let [t (:check @seen-objects)
+         c (.getName (:class @seen-objects))
+         c-type (get-type c)
+         v (:value @seen-objects)
+         v-print (pretty-print-value v c c-type)
+         arg (case (Integer. n)
+               1 "First argument"
+               2 "Second argument"
+               3 "Third argument"
+               4 "Fourth argument"
+               5 "Fifth argument"
+               (str n "th argument "))]
+         (println t " " c " " v)
+   (empty-seen) ; empty the seen-objects hashmap 
+   ; (str arg " " (format-arg v-print) " must be a " t " but is " c-type)))
+   (make-preobj-hashes 
+   	   [[arg] [" "] [(format-arg v-print) :arg] 
+   	   [" must be a "] [t :type] [" but is "] [c-type :type]])))
+	
+
+(def get-error-msg-preobj [{:class AssertionError
 		        :match #"Assert failed: \((.*) argument(.*)\)"  
-		        :replace #(process-asserts (nth % 2))} 
+		        :replace #(process-asserts (nth % 2)) ;; need a message obj
+			:make-preobj (fn [matches] (process-asserts-obj (nth matches 2)))}	        
 		       {:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
-			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))}
+			;; may need a message obj:
+			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))} 
 		       {:class IllegalArgumentException
 			:match #"Don't know how to create (.*) from: (.*)"
 			:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))}
 		       {:class IndexOutOfBoundsException 
 			:match #"(\d+)"
+			;; may need a message obj:
 			:replace "An index in a sequence is out of bounds. The index is: $1"}
 		       {:class IndexOutOfBoundsException
 		        :match #"" ; an empty message
+		        ;; doesn't need a message obj:
 		        :replace "An index in a sequence is out of bounds"}
 		       {:class NullPointerException  
 			:match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
@@ -131,6 +169,7 @@
 		        :replace "An attempt to access a non-existing object \n(NullPointerException)"}
 		       {:class IllegalArgumentException
 		        :match #"(.*) not supported on type: (.*)"
+		        ;; needs a message obj
 		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")}
 		       {:class IllegalArgumentException
 		        :match #"loop requires an even number of forms in binding vector in (.*)"

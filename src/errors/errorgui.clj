@@ -10,16 +10,20 @@
     (.toString writer)))
 
 ;; Graphics 
+;; msg-obj will contain parts and styles and lengths 
 (defn show-error [msg e]
   (try
-     (let [errormsg (styled-text :wrap-lines? true :text msg :styles [[:it :italic true]])
+     (let ;; styles for formatting various portions of a message
+     	  [styles [[:arg :italic true] [:reg] [:stack]]
+           errormsg (styled-text :wrap-lines? true :text msg :styles styles)
 	   stacktrace (text :multi-line? true :editable? false :rows 12 :text (format-stacktrace e))
            d (dialog :title "Clojure Error",
                      :content (tabbed-panel :placement :bottom
                                              :overflow :scroll
                                              :tabs [{:title "Error"
                                                      :tip "The simplified error message"
-                                                     :content (do (style-text! errormsg :it 0 3) errormsg)}
+                                                     ;; if we apply style-text! multiple times, we need a function
+                                                     :content (do (style-text! errormsg :arg 0 3) errormsg)}
                                                     {:title "Stacktrace"
                                                      :tip "The full Java stacktrace of the error"
                                                      :content (scrollable stacktrace)}])

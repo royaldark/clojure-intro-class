@@ -18,6 +18,7 @@
   (let [m (.getMessage e)
   	message (if m m "")] ; converting an empty message from nil to ""
   	  (if-let [entry (first-match e message)]
+  	  	  ;; this needs to change
   	  	  (clojure.string/replace message (:match entry) (:replace entry))
   	  	  message)))
 
@@ -27,5 +28,6 @@
         cljerrs (filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %))))
                         (:trace-elems info))
         errstrs (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") cljerrs)]
+        ;; this needs to change, too
     (show-error (str "ERROR: " (get-pretty-message e) "\nPossible causes:\n" (join "\n" errstrs))
 		e)))
