@@ -30,3 +30,7 @@
    "concatenate all text from a message object into a string"
    (reduce #(str %1 (:msg %2)) "" msg-obj))
 
+(defn make-mock-preobj [matches]
+  "creates a test message pre-obj. Used for testing so that things don't break"
+  (make-preobj-hashes [["This is a"] ["test" :arg]]))
+

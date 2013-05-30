@@ -85,25 +85,6 @@
        (nth (re-matches #"(.*)\$(.*)" c) 2)
        v)))
 
-(defn process-asserts [n]
-   "Returns a message for an assert failure based on the global seen-objects hashmap,
-   clears the hashmap"
-   (let [t (:check @seen-objects)
-         c (.getName (:class @seen-objects))
-         c-type (get-type c)
-         v (:value @seen-objects)
-         v-print (pretty-print-value v c c-type)
-         arg (case (Integer. n)
-               1 "First argument"
-               2 "Second argument"
-               3 "Third argument"
-               4 "Fourth argument"
-               5 "Fifth argument"
-               (str n "th argument "))]
-         (println t " " c " " v)
-   (empty-seen) ; empty the seen-objects hashmap     
-   (str arg " " v-print " must be a " t " but is " c-type)))
-
 
 (defn process-asserts-obj [n] 
   "Returns a message object generated for an assert failure based on the 
@@ -128,33 +109,34 @@
    	   [[arg] [" "] [v-print :arg] 
    	   [" must be a "] [t :type] [" but is "] [c-type :type]])))	
 
-(defn- make-mock-preobj [matches]
-  "creates a test message pre-obj. Used for testing so that things don't break"
-  (make-preobj-hashes [["This is a"] ["test" :arg]]))
-
 (def error-dictionary [{:class AssertionError
 		        :match #"Assert failed: \((.*) argument(.*)\)"  
-		        ;:replace #(process-asserts (nth % 2)) 
 			:make-preobj (fn [matches] (process-asserts-obj (nth matches 2)))}	        
 		       {:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
-			;; may need a message obj:
-			:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))
-			:make-preobj make-mock-preobj} 
+			;:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))
+			:make-preobj (fn [matches] (make-preobj-hashes [["Attempted to use "] 
+                                                   [(get-type (nth matches 1)) :type] [", but "] 
+                                                   [(get-type (nth matches 2)) :type] [" was expected."]]))} 
 		       {:class IllegalArgumentException
 			:match #"Don't know how to create (.*) from: (.*)"
-			:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))
-			:make-preobj make-mock-preobj}
+			;:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))
+			:make-preobj (fn [matches] (make-preobj-hashes [["Don't know how to create "] 
+                                                   [(get-type (nth matches 1)) :type] 
+                                                   [" from "] [(get-type (nth matches 2)) :type]]))}
 		       {:class IndexOutOfBoundsException 
 			:match #"(\d+)"
 			;; may need a message obj:
-			:replace "An index in a sequence is out of bounds. The index is: $1"
-			:make-preobj make-mock-preobj}
+			;:replace "An index in a sequence is out of bounds. The index is: $1"
+			:make-preobj (fn [matches] (make-preobj-hashes 
+					[["An index in a sequence is out of bounds."] ["The index is:"] 
+					[(nth matches 0) :arg]]))}
 		       {:class IndexOutOfBoundsException
 		        :match #"" ; an empty message
 		        ;; doesn't need a message obj:
 		        :replace "An index in a sequence is out of bounds"
 			:make-preobj make-mock-preobj}
+			;;;;;;;;; add clojure.lang.ArityException !!!!!!
 		       {:class NullPointerException  
 			:match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
 			:replace "An attempt to access a non-existing object: $1 \n(NullPointerException)"
