@@ -133,18 +133,18 @@
 					[(nth matches 0) :arg]]))}
 		       {:class IndexOutOfBoundsException
 		        :match #"" ; an empty message
-		        ;; doesn't need a message obj:
-		        :replace "An index in a sequence is out of bounds"
-			:make-preobj make-mock-preobj}
+		        ;:replace "An index in a sequence is out of bounds"
+			:make-preobj (fn [matches] (make-preobj-hashes [["An index in a sequence is out of bounds"]]))}
 			;;;;;;;;; add clojure.lang.ArityException !!!!!!
 		       {:class NullPointerException  
 			:match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
-			:replace "An attempt to access a non-existing object: $1 \n(NullPointerException)"
-			:make-preobj make-mock-preobj}
+			;:replace "An attempt to access a non-existing object: $1 \n(NullPointerException)"
+			:make-preobj (fn [matches] (make-preobj-hashes [["An attempt to access a non-existing object: "]
+					[(nth matches 1) :arg] ["\n(NullPointerException)"]]))}
 		       {:class NullPointerException
 		        :match  #""
 		        :replace "An attempt to access a non-existing object \n(NullPointerException)"
-			:make-preobj make-mock-preobj}
+			:make-preobj (fn [matches] (make-preobj-hashes [["An attempt to access a non-existing object. \n(NullPointerException)"]]))}
 		       {:class IllegalArgumentException
 		        :match #"(.*) not supported on type: (.*)"
 		        ;; needs a message obj
