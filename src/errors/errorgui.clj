@@ -1,5 +1,6 @@
 (ns errors.errorgui
-  (:use [seesaw.core]))
+  (:use [seesaw.core]
+  	[errors.messageobj]))
 
 ;; Formatting functions
 
@@ -16,10 +17,6 @@
   		          (:start %) 
   		          (:length %)) 
   		  msg-obj)))
-
-(defn get-all-text [msg-obj]
-   "concatenate all text from a message object into a string"
-   (reduce #(str %1 (:msg %2)) "" msg-obj))
 
 ;; Graphics 
 ;; msg-obj will contain parts and styles and lengths 

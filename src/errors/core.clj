@@ -3,6 +3,7 @@
   (:use [clojure.string :only [join]]
         [errors.dictionaries]
 	[errors.errorgui]
+	[errors.messageobj]
         [seesaw.core]))
 
 ;;(def ignore-nses #"(clojure|java)\..*")
@@ -22,13 +23,6 @@
   	  	  ((:make-preobj entry) (re-matches  (:match entry) message)) 
   	  	  (make-preobj-hashes [[message]])))) 
 
-(defn make-obj [pre-obj] ; pre-obj is a vector of hashmaps
-  "fills in the starting points of objects in the hash maps"
-  (loop [hashes pre-obj start 0 res []]
-    (if (empty? hashes) res
-      (recur (rest hashes) 
-      	     (+ start (:length (first hashes)))
-      	     (conj res (assoc (first hashes) :start start))))))
 
 ;; All together:
 (defn prettify-exception [e]

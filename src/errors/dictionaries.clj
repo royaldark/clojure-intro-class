@@ -1,5 +1,6 @@
 (ns errors.dictionaries
-  (:use [corefns.core]))
+  (:use [corefns.core]
+  	[errors.messageobj]))
 
 ;; A dictionary of known types and their user-friendly representations
 ;; potentially we can have multiple dictionaries, depending on the level
@@ -103,17 +104,6 @@
    (empty-seen) ; empty the seen-objects hashmap     
    (str arg " " v-print " must be a " t " but is " c-type)))
 
-(defn make-msg-preobj-hash 
-	"creates a hash map for a msg preobject out of a msg and style"
-	([msg style] (let [m (str msg)]
-			{:msg m :stylekey style :length (count m)}))
-	([msg] (let [m (str msg)] 
-			{:msg m :stylekey :reg :length (count m)})))
-
-(defn make-preobj-hashes [messages] 
-	"creates a vector of hash maps out of a vector of vectors of msg + optional style"
-	;; apply is needed since messages contains vectors of 1 or 2 elements
-	(map #(apply make-msg-preobj-hash %) messages))
 
 (defn process-asserts-obj [n] 
   "Returns a message object generated for an assert failure based on the 
