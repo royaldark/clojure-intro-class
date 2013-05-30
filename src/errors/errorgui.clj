@@ -19,7 +19,7 @@
   		  msg-obj)))
 
 (defn- get-all-text [msg-obj]
-   (reduce #(str (:msg %1) %2) msg-obj))
+   (reduce #(str (:msg %2) %1) msg-obj))
 
 ;; Graphics 
 ;; msg-obj will contain parts and styles and lengths 
@@ -34,7 +34,7 @@
                                              :overflow :scroll
                                              :tabs [{:title "Error"
                                                      :tip "The simplified error message"
-                                                     :content (do (display-msg-object! msg-obj errormsg) errormsg)}
+                                                     :content (do (display-msg-object! msg-obj errormsg) (scrollable errormsg))}
                                                     {:title "Stacktrace"
                                                      :tip "The full Java stacktrace of the error"
                                                      :content (scrollable stacktrace)}])

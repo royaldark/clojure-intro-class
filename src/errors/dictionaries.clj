@@ -75,11 +75,6 @@
    "returns a function that maps get-type over a list of matches"
   (fn [matches] (f (map get-type (rest matches)))))
 
-(def arg-font "it")
-
-(defn format-arg [x]
-   (str "<" arg-font ">" x "</" arg-font ">"))
-
 (defn- pretty-print-value [v c type]
    "returns a pretty-printed value v based on its class, handles various messy cases"
    ; strings are printed in double quotes:
@@ -106,7 +101,7 @@
                (str n "th argument "))]
          (println t " " c " " v)
    (empty-seen) ; empty the seen-objects hashmap     
-   (str arg " " (format-arg v-print) " must be a " t " but is " c-type)))
+   (str arg " " v-print " must be a " t " but is " c-type)))
 
 (defn make-msg-preobj-hash 
 	"creates a hash map for a msg preobject out of a msg and style"
@@ -138,7 +133,7 @@
    (empty-seen) ; empty the seen-objects hashmap 
    ; (str arg " " (format-arg v-print) " must be a " t " but is " c-type)))
    (make-preobj-hashes 
-   	   [[arg] [" "] [(format-arg v-print) :arg] 
+   	   [[arg] [" "] [v-print :arg] 
    	   [" must be a "] [t :type] [" but is "] [c-type :type]])))	
 
 (defn- make-mock-preobj [matches]
