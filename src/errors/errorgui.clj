@@ -10,16 +10,16 @@
     (.toString writer)))
 
 (defn- display-msg-object! [msg-obj msg-area] 
-  "adding text and styles from msg-obj to msg-area"
-  (println "AND THE MESSAGE IS:" msg-obj)
+  "add text and styles from msg-obj to msg-area"
   (doall (map #(style-text! msg-area 
   			  (:stylekey %)
   		          (:start %) 
   		          (:length %)) 
   		  msg-obj)))
 
-(defn- get-all-text [msg-obj]
-   (reduce #(str (:msg %2) %1) msg-obj))
+(defn get-all-text [msg-obj]
+   "concatenate all text from a message object into a string"
+   (reduce #(str %1 (:msg %2)) "" msg-obj))
 
 ;; Graphics 
 ;; msg-obj will contain parts and styles and lengths 

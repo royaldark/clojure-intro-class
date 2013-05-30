@@ -37,7 +37,6 @@
                         (:trace-elems info))
         errstrs (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") cljerrs)]
         ;; this needs to change, too
-    (show-error (make-obj (concat (make-preobj-hashes [["ERROR" :err]]) (get-pretty-message e) 
+    (show-error (make-obj (concat (make-preobj-hashes [["ERROR: " :err]]) (get-pretty-message e) 
     		    (make-preobj-hashes [[(str "\nPossible causes:\n" (join "\n" errstrs)) :causes]])))
-    	    	;(str "ERROR: " (get-pretty-message e) "\nPossible causes:\n" (join "\n" errstrs))
 		e)))

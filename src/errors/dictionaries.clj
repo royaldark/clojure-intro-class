@@ -105,8 +105,10 @@
 
 (defn make-msg-preobj-hash 
 	"creates a hash map for a msg preobject out of a msg and style"
-	([msg style] {:msg msg :stylekey style :length (count msg)})
-	([msg] {:msg msg :stylekey :reg :length (count msg)}))
+	([msg style] (let [m (str msg)]
+			{:msg m :stylekey style :length (count m)}))
+	([msg] (let [m (str msg)] 
+			{:msg m :stylekey :reg :length (count m)})))
 
 (defn make-preobj-hashes [messages] 
 	"creates a vector of hash maps out of a vector of vectors of msg + optional style"
