@@ -20,8 +20,15 @@
   	  (if-let [entry (first-match e message)]
   	  	  ;; this needs to change
   	  	  ((:make-preobj entry) (re-matches  (:match entry) message)) 
-  	  	  ;(clojure.string/replace message (:match entry) (:replace entry))
-  	  	  message)))
+  	  	  (make-preobj-hashes [[message]])))) 
+
+(defn make-obj [pre-obj] ; pre-obj is a vector of hashmaps
+  "fills in the starting points of objects in the hash maps"
+  (loop [hashes pre-obj start 0 res []]
+    (if (empty? hashes) res
+      (recur (rest hashes) 
+      	     (+ start (:length (first hashes)))
+      	     (conj res (assoc (first hashes) :start start))))))
 
 ;; All together:
 (defn prettify-exception [e]
@@ -30,5 +37,7 @@
                         (:trace-elems info))
         errstrs (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") cljerrs)]
         ;; this needs to change, too
-    (show-error (str "ERROR: " (get-pretty-message e) "\nPossible causes:\n" (join "\n" errstrs))
+    (show-error (make-obj (concat (make-preobj-hashes [["ERROR" :err]]) (get-pretty-message e) 
+    		    (make-preobj-hashes [[(str "\nPossible causes:\n" (join "\n" errstrs)) :causes]])))
+    	    	;(str "ERROR: " (get-pretty-message e) "\nPossible causes:\n" (join "\n" errstrs))
 		e)))

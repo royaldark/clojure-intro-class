@@ -108,12 +108,12 @@
    (empty-seen) ; empty the seen-objects hashmap     
    (str arg " " (format-arg v-print) " must be a " t " but is " c-type)))
 
-(defn- make-msg-preobj-hash 
+(defn make-msg-preobj-hash 
 	"creates a hash map for a msg preobject out of a msg and style"
 	([msg style] {:msg msg :stylekey style :length (count msg)})
 	([msg] {:msg msg :stylekey :reg :length (count msg)}))
 
-(defn- make-preobj-hashes [messages] 
+(defn make-preobj-hashes [messages] 
 	"creates a vector of hash maps out of a vector of vectors of msg + optional style"
 	;; apply is needed since messages contains vectors of 1 or 2 elements
 	(map #(apply make-msg-preobj-hash %) messages))
