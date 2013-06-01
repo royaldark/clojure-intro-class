@@ -76,13 +76,19 @@
    "returns a function that maps get-type over a list of matches"
   (fn [matches] (f (map get-type (rest matches)))))
 
+(defn- get-function-name [fname]
+  "extract a function name from a qualified name"
+  (if-let [matching-name (nth (re-matches #"(.*)\$(.*)" fname) 2)]
+  	  (if (= matching-name "fn") "anonymous function" matching-name)
+  	  fname))
+
 (defn- pretty-print-value [v c type]
    "returns a pretty-printed value v based on its class, handles various messy cases"
    ; strings are printed in double quotes:
    (if (string? v) (str "\"" v "\"")
      (if (= type "a function") 
        ; extract a function from the class c (easier than from v):
-       (nth (re-matches #"(.*)\$(.*)" c) 2)
+       (get-function-name c)
        v)))
 
 
@@ -136,6 +142,17 @@
 		        ;:replace "An index in a sequence is out of bounds"
 			:make-preobj (fn [matches] (make-preobj-hashes [["An index in a sequence is out of bounds"]]))}
 			;;;;;;;;; add clojure.lang.ArityException !!!!!!
+			;;;  Wrong number of args (1) passed to: core$map
+		       {:class clojure.lang.ArityException
+		        :match #"Wrong number of args \((.*)\) passed to: (.*)"
+		        :make-preobj (fn [matches] 
+		        		(let [fstr (get-function-name (nth matches 2))
+		        		      funstr (if (= fstr " anonymous function ")
+		        		     	     	 " an "
+		        		     	     	 (str " a function " fstr))]
+		        		(make-preobj-hashes [["Wrong number of arguments ("] 
+		        		[(nth matches 1)] [")  passed to "] [funstr]
+		        		[fstr :arg]])))}
 		       {:class NullPointerException  
 			:match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
 			;:replace "An attempt to access a non-existing object: $1 \n(NullPointerException)"
@@ -143,21 +160,23 @@
 					[(nth matches 1) :arg] ["\n(NullPointerException)"]]))}
 		       {:class NullPointerException
 		        :match  #""
-		        :replace "An attempt to access a non-existing object \n(NullPointerException)"
+		        ;:replace "An attempt to access a non-existing object \n(NullPointerException)"
 			:make-preobj (fn [matches] (make-preobj-hashes [["An attempt to access a non-existing object. \n(NullPointerException)"]]))}
 		       {:class IllegalArgumentException
 		        :match #"(.*) not supported on type: (.*)"
 		        ;; needs a message obj
-		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")
-			:make-preobj make-mock-preobj}
+		        ;:replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")
+			:make-preobj (fn [matches] (make-preobj-hashes [["Function "] [(nth matches 1) :arg] 
+					[" does not allow "] [(get-type (nth matches 2)) :type] [" as an argument"]]))}
 		       {:class IllegalArgumentException
 		        :match #"loop requires an even number of forms in binding vector in (.*)"
 		        :replace #(str  "")
 			:make-preobj make-mock-preobj}
 		       {:class UnsupportedOperationException
 		        :match #"(.*) not supported on this type: (.*)"
-		        :replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")
-			:make-preobj make-mock-preobj}
+		        ;:replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")
+			:make-preobj (fn [matches] (make-preobj-hashes [["Function "] [(nth matches 1) :arg] 
+					[" does not allow "] [(get-type (nth matches 2)) :type] [" as an argument"]]))}
 		        ;; Compilation errors 
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Too many arguments to (.+), compiling:(.+)"
