@@ -135,7 +135,8 @@
 			;; may need a message obj:
 			;:replace "An index in a sequence is out of bounds. The index is: $1"
 			:make-preobj (fn [matches] (make-preobj-hashes 
-					[["An index in a sequence is out of bounds."] ["The index is:"] 
+					[["An index in a sequence is out of bounds."] 			
+					["The index is:"] 
 					[(nth matches 0) :arg]]))}
 		       {:class IndexOutOfBoundsException
 		        :match #"" ; an empty message
@@ -147,9 +148,9 @@
 		        :match #"Wrong number of args \((.*)\) passed to: (.*)"
 		        :make-preobj (fn [matches] 
 		        		(let [fstr (get-function-name (nth matches 2))
-		        		      funstr (if (= fstr " anonymous function ")
-		        		     	     	 " an "
-		        		     	     	 (str " a function " fstr))]
+		        		      funstr (if (= fstr "anonymous function")
+		        		     	     	 "an "
+		        		     	     	 (str "a function "))]
 		        		(make-preobj-hashes [["Wrong number of arguments ("] 
 		        		[(nth matches 1)] [")  passed to "] [funstr]
 		        		[fstr :arg]])))}
