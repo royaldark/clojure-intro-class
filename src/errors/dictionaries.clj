@@ -91,6 +91,14 @@
        (get-function-name c)
        v)))
 
+(defn arg-str [n]
+  (case n 
+    1 "First argument" 
+    2 "Second argument" 
+    3 "Third argument" 
+    4 "Fourth argument" 
+    5 "Fifth argument" 
+    (str n "th argument ")))  	  
 
 (defn process-asserts-obj [n] 
   "Returns a message object generated for an assert failure based on the 
@@ -101,23 +109,19 @@
          c-type (get-type c)
          v (:value @seen-objects)
          v-print (pretty-print-value v c c-type)
-         arg (case (Integer. n)
-               1 "First argument"
-               2 "Second argument"
-               3 "Third argument"
-               4 "Fourth argument"
-               5 "Fifth argument"
-               (str n "th argument "))]
+         arg (arg-str (if n (Integer. n) (:arg-num @seen-objects)))]
          (println t " " c " " v)
    (empty-seen) ; empty the seen-objects hashmap 
-   ; (str arg " " (format-arg v-print) " must be a " t " but is " c-type)))
    (make-preobj-hashes 
    	   [[arg] [" "] [v-print :arg] 
    	   [" must be a "] [t :type] [" but is "] [c-type :type]])))	
 
 (def error-dictionary [{:class AssertionError
 		        :match #"Assert failed: \((.*) argument(.*)\)"  
-			:make-preobj (fn [matches] (process-asserts-obj (nth matches 2)))}	        
+			:make-preobj (fn [matches] (process-asserts-obj (nth matches 2)))}
+		       {:class AssertionError
+		        :match #"Assert failed: \((.*)\)"  
+			:make-preobj (fn [matches] (process-asserts-obj nil))}
 		       {:class ClassCastException
 			:match #"(.*) cannot be cast to (.*)"
 			;:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))
@@ -142,8 +146,6 @@
 		        :match #"" ; an empty message
 		        ;:replace "An index in a sequence is out of bounds"
 			:make-preobj (fn [matches] (make-preobj-hashes [["An index in a sequence is out of bounds"]]))}
-			;;;;;;;;; add clojure.lang.ArityException !!!!!!
-			;;;  Wrong number of args (1) passed to: core$map
 		       {:class clojure.lang.ArityException
 		        :match #"Wrong number of args \((.*)\) passed to: (.*)"
 		        :make-preobj (fn [matches] 
