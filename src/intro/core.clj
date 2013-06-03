@@ -344,7 +344,7 @@
     ;(test-concat)
 					(test-concat)
 					;(test-first-rest)
-					(test-conj-into)
+					;(test-conj-into)
 					;(test-add-first-last)
 					;(test-forgetting-a-quote)
 					;(add-first-last-examples)
