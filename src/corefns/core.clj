@@ -1,9 +1,6 @@
 (ns corefns.core
   (:use [clojure.core.incubator])
-  ;(:require ;[trammel.provide :as provide]
-    	    ;[trammel.core :as tramm]
-    	    ;[clojure.core.contracts :as contracts])
-  (:refer-clojure :exclude [map nth]));[map filter nth concat]))
+  (:refer-clojure :exclude [map nth]))
 
 ;; to-do:
 ;; 1. remove references to contracts, trammel (from project.clj as well) - Done
@@ -12,11 +9,12 @@
 ;; 4. rewrite messages similar to the standard ones (perhaps abstract over?) - maybe? 
 ;; 5. don't forget to clear the queue at the end (post-cond? or the end of pre-cond? or finally?) --
 ;;    not in post-cond since if we got to post-cond, there were no errors. Perhaps after we
-;;    process the queue? We aren't going to handle nested errors. finally may be the place
-;; 6. Handle multiple-args functions
-;; 7. Process function names - Done in the examples, need to test more
-;; 8. Handle anonymous functions
-;; 9. Add a function name to the error message
+;;    process the queue? We aren't going to handle nested errors. finally may be the place - Done
+;; 6. Handle multiple-args functions - done the prototype
+;; 7. Process function names - Done
+;; 8. Change the messsage for only one arg
+;; 9. Handle anonymous functions
+;; 10. Add a function name to the error message
 ;; inf. why didn't I think of this earlier? 
 
 ;; a global hashmap of recorded types/messages
@@ -57,45 +55,86 @@
 ;(def is-vector-or-list? #(or (vector? %) (list? %))) 
 
 ;; should pass the strating arg number: it's different for different functions
-(defn check-if-seqables? [arguments]
-  (loop [args arguments n 2]
+(defn check-if-seqables? [arguments start]
+  (loop [args arguments n start]
     (if (empty? args) true
       (if (not (check-if-seqable? (first args)))
       	(do (add-to-seen {:arg-num n})
             false)
         (recur (rest args) (inc n))))))
 
+;; Including the standard Clojure documentation to make sure that asserts 
+;; and cases are consistent with the standard Clojure. 
 
-;; filter and map have the same checks. Should we abstract over this?
-;; note that for filter the function must return a boolean, but there
-;; is no way to check for it, is there? - Elena
+;; (map f coll)
+;; (map f c1 c2)
+;; (map f c1 c2 c3)
+;; (map f c1 c2 c3 & colls)
+;; Returns a lazy sequence consisting of the result of applying f to the
+;; set of first items of each coll, followed by applying f to the set
+;; of second items in each coll, until any one of the colls is
+;; exhausted. Any remaining items in other colls are ignored. Function
+;; f should accept number-of-colls arguments.
+(defn map [argument1 & args]
+  {:pre [(check-if-function? argument1) (check-if-seqables? args 2)]}
+  (apply clojure.core/map argument1 args))
 
-;; instead of getting the arg number from the naming convention, can we generate it?
-(defn map [argument1 argument2]
-  ;{:pre [(check-if-seqables? args) (check-if-function? argument1)]}
-  {:pre [(check-if-seqable? argument2) (check-if-function? argument1)]}
-  ;; do we need apply?
-  (apply clojure.core/map argument1 [argument2]))
+;; count, into, conj, nth, drop, take, concat, filter, reduce
 
-;(defn filter [argument1 argument2]
-;  {:pre [(is-collection? argument2) (is-function? argument1)]}
-;  (clojure.core/filter argument1 argument2))
+;; (count coll)
+;; Returns the number of items in the collection. (count nil) returns
+;; 0. Also works on strings, arrays, and Java Collections and Maps
+(defn count [argument1]
+  {:pre [(check-if-seqable? argument1)]}
+  (clojure.core/count argument1))
 
-;(defn nth [argument1 argument2] ;; there is an optional third arg!
- ; {:pre [(check-if-seqable? argument2) (check-if-number? argument1)]}
-  ;(apply clojure.core/nth  argument1 argument2))
+;; (conj coll x)
+;; (conj coll x & xs)
+;; conj[oin]. Returns a new collection with the xs
+;;'added'. (conj nil item) returns (item). The 'addition' may
+;; happen at different 'places' depending on the concrete type.
+(defn conj [argument1 & args]
+  {:pre [(check-if-seqable? argument1)]}
+  (apply clojure.core/conj argument1 args))
 
-;; add mapcat for testing 
+;; 
+(defn into [argument1 argument2]
+   {:pre [(check-if-seqable? argument1) (check-if-seqable? argument2)]}
+   (clojure.core/into argument1 argument2))
 
+;; (nth coll index)
+;; (nth coll index not-found)
+;; Returns the value at the index. get returns nil if index out of
+;; bounds, nth throws an exception unless not-found is supplied. nth
+;; also works for strings, Java arrays, regex Matchers and Lists, and,
+;; in O(n) time, for sequences.
+(defn nth [argument1 argument2 & args] ;; there may be an optional 3rd arg, no restrictions 
+   {:pre [(check-if-seqable? argument1) (check-if-number? argument2)]}
+   (apply clojure.core/nth argument1 argument2 args))
+
+
+;; (filter pred coll)
+;; Returns a lazy sequence of the items in coll for which
+;; (pred item) returns true. pred must be free of side-effects.
+(defn filter [argument1 argument2]
+  {:pre [(check-if-function? argument1) (check-if-seqable? argument2)]}
+  (clojure.core/filter argument1 argument2))
+
+;; (mapcat f & colls)
+;; Returns the result of applying concat to the result of applying map
+;; to f and colls. Thus function f should return a collection.
 (defn mapcat [argument1 & args]
-  {:pre [(check-if-seqables? args) (check-if-function? argument1)]}
+  {:pre [(check-if-function? argument1) (check-if-seqables? args 2)]}
   (apply clojure.core/mapcat argument1 args))
 
-;(defn concat [argument1 argument2]
-;  {:pre [(is-collection? argument1) (is-collection? argument2)]}
-;  (clojure.core/concat  argument1 argument2))
-
-;; need conj, into. Careful: there may be different cases. Can we have a complex pre-cond (with cases)?
+;; (concat)
+;; (concat x)
+;; (concat x y)
+;; (concat x y & zs)
+;; Returns a lazy seq representing the concatenation of the elements in the supplied colls.
+(defn concat [& args]
+  {:pre [(check-if-seqables? args 1)]}
+  (apply clojure.core/concat args))
 		
 ;;;;; Functions for type-independent sequence handling ;;;;;;
 

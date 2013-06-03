@@ -76,6 +76,7 @@
    "returns a function that maps get-type over a list of matches"
   (fn [matches] (f (map get-type (rest matches)))))
 
+;; TODO: lookup for names like _PLUS_ and _STAR_
 (defn- get-function-name [fname]
   "extract a function name from a qualified name"
   (if-let [matching-name (nth (re-matches #"(.*)\$(.*)" fname) 2)]

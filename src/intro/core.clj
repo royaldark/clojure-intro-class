@@ -301,6 +301,7 @@
                                  (mapcat dec inc)
                                  (mapcat + [1 2 3] :a)
                                  (mapcat + :a 9)
+                                 (mapcat + nil) ;; should work
                                  (mapcat + ))))
 
 (defn erun  []   
@@ -341,9 +342,9 @@
     
 					;(reduce + +)
     ;(test-concat)
-					;(test-concat)
+					(test-concat)
 					;(test-first-rest)
-					;(test-conj-into)
+					(test-conj-into)
 					;(test-add-first-last)
 					;(test-forgetting-a-quote)
 					;(add-first-last-examples)
@@ -371,5 +372,5 @@
     ;(test-arity)
     ;(test-sorted-collections)
     ;(test-asserts)
-    (test-asserts-multiple-args)
+    ;(test-asserts-multiple-args)
     (catch Throwable e (println (prettify-exception e)))))
