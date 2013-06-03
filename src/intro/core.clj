@@ -303,6 +303,11 @@
                                  (mapcat + :a 9)
                                  (mapcat + nil) ;; should work
                                  (mapcat + ))))
+(defn test-reduce []
+	(test-all-and-continue '((reduce + 4 [1 2 3]) ;; should work, return 10
+				 (reduce 4 [1 2 5])
+				 (reduce [1 2 3] +)
+				 (reduce + 2 2))))
 
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
@@ -328,21 +333,9 @@
     	     ;(add-first 5 [1 2 3])
     	     ;(add-last 5 [1 2 3]))
     	     ;(add-last \s "pie"))
-    	     
-    ;(doall (add-last \s "pie"))
-    ;(take 2 (lazy-cat 
-    ;	    ;(list 1 2 3) 
-    ;	    (range)
-    ;	    [1 (/ 1 0)]))
-    ;(add-first 0 [1 2 3 4 5])
-    ;(pascals-triangle-helper [1 1])
     ;(pascals-triangle 11)
-    ;(add-last \s "pie")
-    ;(println (conj #{0 1} 1))
-    
-					;(reduce + +)
     ;(test-concat)
-					(test-concat)
+					;(test-concat)
 					;(test-first-rest)
 					;(test-conj-into)
 					;(test-add-first-last)
@@ -351,10 +344,7 @@
 
     ;(third [1 2 3 4])
     ;(test-seq)
-
-					;(test-seq)
     ;(def t (add-last 4 [2 3]))
-					;t
     ;(test-add-first-last)
     ;(test-any-contains)
 
@@ -373,4 +363,5 @@
     ;(test-sorted-collections)
     ;(test-asserts)
     ;(test-asserts-multiple-args)
+    (test-reduce)
     (catch Throwable e (println (prettify-exception e)))))

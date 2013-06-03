@@ -38,11 +38,15 @@
   	      	   false)))   
 
 
-(defn check-if-seqable? [x]
+(defn check-if-seqable? [x & [n]]
+  "returns true if x is seqable and false otherwise, sets data
+  in seen-objects. If the second argument is present, it's added 
+  to the seen-objects as the number of the argument"
   (if (seqable? x) true
   	      (do (add-to-seen {:check "sequence" 
   	      		        :class (class x)
   	      		        :value x})
+  	      	   (if n (add-to-seen {:arg-num n}))
   	      	   false)))  
 
 (defn check-if-number? [x]
@@ -101,6 +105,25 @@
 (defn into [argument1 argument2]
    {:pre [(check-if-seqable? argument1) (check-if-seqable? argument2)]}
    (clojure.core/into argument1 argument2))
+
+;; (reduce f coll)
+;; (reduce f val coll)
+;; f should be a function of 2 arguments. If val is not supplied,
+;; returns the result of applying f to the first 2 items in coll, then
+;; applying f to that result and the 3rd item, etc. If coll contains no
+;; items, f must accept no arguments as well, and reduce returns the
+;; result of calling f with no arguments. If coll has only 1 item, it
+;; is returned and f is not called. If val is supplied, returns the
+;; result of applying f to val and the first item in coll, then
+;; applying f to that result and the 2nd item, etc. If coll contains no
+;; items, returns val and f is not called.
+(defn reduce [argument1 & args]
+   {:pre [(check-if-function? argument1) (if (= (count args) 1)
+   		   			     (check-if-seqable? (first args) 2)
+   		   			     (check-if-seqable? (second args) 3))]}
+   (apply clojure.core/reduce argument1 args))  
+                                               
+
 
 ;; (nth coll index)
 ;; (nth coll index not-found)
