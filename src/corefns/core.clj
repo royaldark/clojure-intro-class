@@ -56,26 +56,40 @@
 
 ;(def is-vector-or-list? #(or (vector? %) (list? %))) 
 
+;; should pass the strating arg number: it's different for different functions
+(defn check-if-seqables? [arguments]
+  (loop [args arguments n 2]
+    (if (empty? args) true
+      (if (not (check-if-seqable? (first args)))
+      	(do (add-to-seen {:arg-num n})
+            false)
+        (recur (rest args) (inc n))))))
+
 
 ;; filter and map have the same checks. Should we abstract over this?
 ;; note that for filter the function must return a boolean, but there
 ;; is no way to check for it, is there? - Elena
 
+;; instead of getting the arg number from the naming convention, can we generate it?
 (defn map [argument1 argument2]
+  ;{:pre [(check-if-seqables? args) (check-if-function? argument1)]}
   {:pre [(check-if-seqable? argument2) (check-if-function? argument1)]}
-  (clojure.core/map argument1 argument2))
+  ;; do we need apply?
+  (apply clojure.core/map argument1 [argument2]))
 
 ;(defn filter [argument1 argument2]
 ;  {:pre [(is-collection? argument2) (is-function? argument1)]}
 ;  (clojure.core/filter argument1 argument2))
 
-(defn nth [argument1 argument2]
-  {:pre [(check-if-seqable? argument1) (check-if-number? argument2)]}
-  (clojure.core/nth  argument1 argument2))
+;(defn nth [argument1 argument2] ;; there is an optional third arg!
+ ; {:pre [(check-if-seqable? argument2) (check-if-number? argument1)]}
+  ;(apply clojure.core/nth  argument1 argument2))
 
-;(defn nth [argument1 argument2]
-;  {:pre [(is-vector-or-list? argument1) (is-number? argument2)]}
-;  (clojure.core/nth  argument1 argument2))
+;; add mapcat for testing 
+
+(defn mapcat [argument1 & args]
+  {:pre [(check-if-seqables? args) (check-if-function? argument1)]}
+  (apply clojure.core/mapcat argument1 args))
 
 ;(defn concat [argument1 argument2]
 ;  {:pre [(is-collection? argument1) (is-collection? argument2)]}

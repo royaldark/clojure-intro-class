@@ -296,6 +296,13 @@
 				 (nth "banana" [1 2 3])
 				 (nth [1 2 3] "banana"))))
 
+(defn test-asserts-multiple-args []
+	(test-all-and-continue '((mapcat dec 4)
+                                 (mapcat dec inc)
+                                 (mapcat + [1 2 3] :a)
+                                 (mapcat + :a 9)
+                                 (mapcat + ))))
+
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
 		(catch Throwable e (prettify-exception e))))
@@ -361,7 +368,8 @@
     ;(test-pop-peek)
     ;(test-assoc)
     ;(test-reversible)
-    (test-arity)
+    ;(test-arity)
     ;(test-sorted-collections)
     ;(test-asserts)
+    (test-asserts-multiple-args)
     (catch Throwable e (println (prettify-exception e)))))
