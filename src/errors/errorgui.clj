@@ -26,7 +26,7 @@
 (defn show-error [msg-obj e]
   (try
     (let ;; styles for formatting various portions of a message
-      [styles [[:arg :italic true] [:reg] [:stack] [:err] [:type] [:causes]]
+      [styles [[:arg :font "monospace" :bold true] [:reg] [:stack] [:err] [:type] [:causes]]
        errormsg (styled-text :wrap-lines? true :text (get-all-text msg-obj) :styles styles)
        stacktrace (text :multi-line? true :editable? false :rows 12 :text (format-stacktrace e))
        d (dialog :title "Clojure Error",
