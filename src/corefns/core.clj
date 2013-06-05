@@ -146,6 +146,8 @@
 ;; (mapcat f & colls)
 ;; Returns the result of applying concat to the result of applying map
 ;; to f and colls. Thus function f should return a collection.
+;; !!!! TODO: add a condition for the number of args to mapcat !!!!
+;; (the error message refers to the number of args to map) 
 (defn mapcat [argument1 & args]
   {:pre [(check-if-function? argument1) (check-if-seqables? args 2)]}
   (apply clojure.core/mapcat argument1 args))

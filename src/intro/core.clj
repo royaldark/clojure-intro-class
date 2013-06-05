@@ -303,11 +303,32 @@
                                  (mapcat + :a 9)
                                  (mapcat + nil) ;; should work
                                  (mapcat + ))))
+
+(defn test-asserts-multiple-args-map []
+	(test-all-and-continue '((map dec 4)
+                                 (map dec inc)
+                                 (map + [1 2 3] :a)
+                                 (map + :a 9)
+                                 (map + nil) ;; should work
+                                 (map + ))))
+
 (defn test-reduce []
 	(test-all-and-continue '((reduce + 4 [1 2 3]) ;; should work, return 10
 				 (reduce 4 [1 2 5])
 				 (reduce [1 2 3] +)
 				 (reduce + 2 2))))
+
+(defn test-filter []
+	(test-all-and-continue '((filter 9 [1 2 3])
+		             (filter odd? *)
+		             (filter "abc" "123")
+		             (filter (+ 2 3) "123")
+		             (filter odd? even?) ;; need to fix this as well
+		             (filter + (fn[x] (+ x 2))) ;; need to change filtering
+		             (filter odd? #(* % 2))
+		             (filter + [1 2 3])
+		             ;(filter assoc [1 2 3])
+		             (filter #(< 5 %) [1 2 3] [4 5 6]))))
 
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
@@ -356,12 +377,14 @@
     ;(test-wrong-arg-type)
     ;(test-contains-types)
     ;(test-unsupported-ops)
-    ;(test-pop-peek)
-    ;(test-assoc)
+    (test-pop-peek)
+    (test-assoc)
     ;(test-reversible)
     ;(test-arity)
     ;(test-sorted-collections)
     ;(test-asserts)
     ;(test-asserts-multiple-args)
-    (test-reduce)
+    ;(test-asserts-multiple-args-map)
+    ;(test-filter)
+    ;(test-reduce)
     (catch Throwable e (println (prettify-exception e)))))
