@@ -154,9 +154,12 @@
 			:make-preobj (fn [matches] (make-preobj-hashes [["Don't know how to create "] 
                                                    [(get-type (nth matches 1)) :type] 
                                                    [" from "] [(get-type (nth matches 2)) :type]]))}
+                       {:class IllegalArgumentException
+			:match #"loop requires an even number of forms in binding vector in (.*):(.*)"
+			:make-preobj (fn [matches] (make-preobj-hashes [["You need an even number of elements for a loop on line "]
+					[(nth matches 2)] [" in the file "]  [(nth matches 1)]]))}
 		       {:class IndexOutOfBoundsException 
 			:match #"(\d+)"
-			;; may need a message obj:
 			;:replace "An index in a sequence is out of bounds. The index is: $1"
 			:make-preobj (fn [matches] (make-preobj-hashes 
 					[["An index in a sequence is out of bounds."] 			
@@ -187,8 +190,6 @@
 			:make-preobj (fn [matches] (make-preobj-hashes [["An attempt to access a non-existing object. \n(NullPointerException)"]]))}
 		       {:class IllegalArgumentException
 		        :match #"(.*) not supported on type: (.*)"
-		        ;; needs a message obj
-		        ;:replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")
 			:make-preobj (fn [matches] (make-preobj-hashes [["Function "] [(nth matches 1) :arg] 
 					[" does not allow "] [(get-type (nth matches 2)) :type] [" as an argument"]]))}
 		       {:class IllegalArgumentException
@@ -200,6 +201,10 @@
 		        ;:replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")
 			:make-preobj (fn [matches] (make-preobj-hashes [["Function "] [(nth matches 1) :arg] 
 					[" does not allow "] [(get-type (nth matches 2)) :type] [" as an argument"]]))}
+		       {:class java.lang.Exception
+		        :match #"Unsupported binding form: (.*)"
+		        :make-preobj (fn [matches] (make-preobj-hashes [["You cannot use "] [(nth matches 1) :arg]
+		        		[" as a variable."]]))}
 		        ;; Compilation errors 
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Too many arguments to (.+), compiling:(.+)"
@@ -222,12 +227,14 @@
 					 [(nth matches 2) :arg] [" is undefined, while compiling "] 
 					 [(nth matches 3) :arg]]))}
 			{:class clojure.lang.Compiler$CompilerException
+			 :match #"(.*) Mismatched argument count to recur, expected: (.*) args, got: (.*), compiling:(.*)"
+			 :make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: this loop is supposed to take "]
+			 		 [(nth matches 3)] [" arguments, but you are passing "] [(nth matches 2)]
+			 		 [", while compiling "]  [(nth matches 4)]]))}
+			{:class clojure.lang.Compiler$CompilerException
 			:match #"(.+): Can't take value of a macro: (.+), compiling:\((.+)\)"
 			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: "] 
 					[(get-macro-name (nth matches 2)) :arg] 
 					[" is a macro, cannot be passed to a function, while compiling "]
 					[(nth matches 3)]]))}])
-			        ;;;;; (filter even? lazy-cat)
-		        ;;;; class clojure.lang.Compiler$CompilerException java.lang.RuntimeException: Can't
-		        ;;;; take value of a macro: #'clojure.core/lazy-cat, compiling:(NO_SOURCE_PATH:347:20)])
 

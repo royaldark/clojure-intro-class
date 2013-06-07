@@ -367,6 +367,10 @@
 		                 (filter even? and))))
 		                 ;(filter even? -?>)
 		                 ;(filter even? -?>>))))
+(defn test-loop-recur []
+	(test-all-and-continue '((loop [n 1 m] (if (= n 1) 0 (recur (inc n))))
+			         (loop [n 1 m 2] (if (= n 1) 0 (recur (inc n))))
+			         (loop [1 2] (if (= n 1) 0 (recur (inc n)))))))
 
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
@@ -422,10 +426,11 @@
     ;(test-sorted-collections)
     ;(test-asserts)
     ;(test-asserts-multiple-args)
-    (test-asserts-multiple-args-map)
+    ;(test-asserts-multiple-args-map)
     ;(test-filter)
     ;(test-reduce)
     ;(test-function-names)
     ;(test-qmark-bang)
     ;(test-macros-names)
+    (test-loop-recur)
     (catch Throwable e (println (prettify-exception e)))))
