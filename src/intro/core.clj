@@ -310,13 +310,15 @@
                                  (map + [1 2 3] :a)
                                  (map + :a 9)
                                  (map + nil) ;; should work
-                                 (map + ))))
+                                 (map + )
+                                 (nth (map #(+ %1 %2) [1 2 3] [3 4] [5 6]) 1))))
 
 (defn test-reduce []
 	(test-all-and-continue '((reduce + 4 [1 2 3]) ;; should work, return 10
 				 (reduce 4 [1 2 5])
 				 (reduce [1 2 3] +)
-				 (reduce + 2 2))))
+				 (reduce + 2 2)
+				 (reduce #(+ %1 %2 %3) [1 2 3]))))
 
 (defn test-filter []
 	(test-all-and-continue '((filter 9 [1 2 3])
@@ -327,7 +329,7 @@
 		             (filter + (fn[x] (+ x 2))) 
 		             (filter odd? #(* % 2))
 		             (filter + [1 2 3])
-		             (filter assoc [1 2 3])
+		             (nth (filter assoc [1 2 3]) 1) ; added nth because otherwise it's a lazy seq
 		             (filter #(< 5 %) [1 2 3] [4 5 6]))))
 
 (defn test-function-names []
@@ -360,7 +362,9 @@
 (defn test-macros-names []
 	(test-all-and-continue '((filter even? lazy-cat)
 		                 (filter even? ->)
-		                 (filter even? ->>))))
+		                 (filter even? ->>)
+		                 (filter even? cond)
+		                 (filter even? and))))
 		                 ;(filter even? -?>)
 		                 ;(filter even? -?>>))))
 
@@ -418,8 +422,8 @@
     ;(test-sorted-collections)
     ;(test-asserts)
     ;(test-asserts-multiple-args)
-    ;(test-asserts-multiple-args-map)
-    (test-filter)
+    (test-asserts-multiple-args-map)
+    ;(test-filter)
     ;(test-reduce)
     ;(test-function-names)
     ;(test-qmark-bang)

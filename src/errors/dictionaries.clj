@@ -203,8 +203,10 @@
 		        ;; Compilation errors 
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Too many arguments to (.+), compiling:(.+)"
-		        :replace "Compilation error: too many arguments to $2 while compiling $3"
-			:make-preobj make-mock-preobj}
+		        ;:replace "Compilation error: too many arguments to $2 while compiling $3"
+			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: Too many arguments to"]
+					[(nth matches 2) :arg] [", while compiling "]
+					[(nth matches 3) :arg]]))}
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): EOF while reading, starting at line (.+), compiling:(.+)"
 		        :replace "Compilation error: end of file, starting at line $2, while compiling $3.\nProbabbly a non-closing parentheses or bracket."
@@ -223,7 +225,8 @@
 			:match #"(.+): Can't take value of a macro: (.+), compiling:\((.+)\)"
 			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: "] 
 					[(get-macro-name (nth matches 2)) :arg] 
-					[" is a macro, cannot be passed to a function, while compiling "][(nth matches 3)]]))}])
+					[" is a macro, cannot be passed to a function, while compiling "]
+					[(nth matches 3)]]))}])
 			        ;;;;; (filter even? lazy-cat)
 		        ;;;; class clojure.lang.Compiler$CompilerException java.lang.RuntimeException: Can't
 		        ;;;; take value of a macro: #'clojure.core/lazy-cat, compiling:(NO_SOURCE_PATH:347:20)])
