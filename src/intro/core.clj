@@ -370,7 +370,13 @@
 (defn test-loop-recur []
 	(test-all-and-continue '((loop [n 1 m] (if (= n 1) 0 (recur (inc n))))
 			         (loop [n 1 m 2] (if (= n 1) 0 (recur (inc n))))
-			         (loop [1 2] (if (= n 1) 0 (recur (inc n)))))))
+			         (loop [1 2] (if (= n 1) 0 (recur (inc n))))
+			         (loop '(n 1) (if (= n 1) 0 (recur (inc n)))))))
+
+(defn test-bindings []
+	(test-all-and-continue '((let '(n 1) (+ n 1))
+				 (def 5 6)
+				 (defn a (+ 1 2)))))
 
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
@@ -433,4 +439,5 @@
     ;(test-qmark-bang)
     ;(test-macros-names)
     (test-loop-recur)
+    (test-bindings)
     (catch Throwable e (println (prettify-exception e)))))

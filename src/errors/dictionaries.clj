@@ -158,6 +158,15 @@
 			:match #"loop requires an even number of forms in binding vector in (.*):(.*)"
 			:make-preobj (fn [matches] (make-preobj-hashes [["You need an even number of elements for a loop on line "]
 					[(nth matches 2)] [" in the file "]  [(nth matches 1)]]))}
+		       {:class IllegalArgumentException
+		        :match #"(.*) requires a vector for its binding in (.*):(.*)"
+		        :make-preobj (fn [matches] (make-preobj-hashes [["When declaring a "] [(nth matches 1)] 
+		        		[", you need to pass it a vector of arguments. Line "]
+		        		[(nth matches 3)] [" in the file "]  [(nth matches 2)]]))}
+		       {:class IllegalArgumentException
+		        :match #"(.*) not supported on type: (.*)"
+			:make-preobj (fn [matches] (make-preobj-hashes [["Function "] [(nth matches 1) :arg] 
+					[" does not allow "] [(get-type (nth matches 2)) :type] [" as an argument"]]))}
 		       {:class IndexOutOfBoundsException 
 			:match #"(\d+)"
 			;:replace "An index in a sequence is out of bounds. The index is: $1"
@@ -188,14 +197,6 @@
 		        :match  #""
 		        ;:replace "An attempt to access a non-existing object \n(NullPointerException)"
 			:make-preobj (fn [matches] (make-preobj-hashes [["An attempt to access a non-existing object. \n(NullPointerException)"]]))}
-		       {:class IllegalArgumentException
-		        :match #"(.*) not supported on type: (.*)"
-			:make-preobj (fn [matches] (make-preobj-hashes [["Function "] [(nth matches 1) :arg] 
-					[" does not allow "] [(get-type (nth matches 2)) :type] [" as an argument"]]))}
-		       {:class IllegalArgumentException
-		        :match #"loop requires an even number of forms in binding vector in (.*)"
-		        :replace #(str  "")
-			:make-preobj make-mock-preobj}
 		       {:class UnsupportedOperationException
 		        :match #"(.*) not supported on this type: (.*)"
 		        ;:replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")
