@@ -56,8 +56,6 @@
   	      		        :value x})
   	      	   false)))  
 
-;(def is-vector-or-list? #(or (vector? %) (list? %))) 
-
 ;; should pass the strating arg number: it's different for different functions
 (defn check-if-seqables? [arguments start]
   (loop [args arguments n start]

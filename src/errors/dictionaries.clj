@@ -77,19 +77,23 @@
   (fn [matches] (f (map get-type (rest matches)))))
 
 ;; hashmap of internal function names and their user-friendly versions
-(def predefined-names {:_PLUS_ "+" :_STAR_ "*"})
+(def predefined-names {:_PLUS_ "+" :_STAR_ "*" :_LT_ "<" :_EQ_ "="
+	               :_ "-" :_SLASH_ "/" })
 
 (defn- lookup-funct-name [fname]
   "looks up pre-defined function names, such as _PLUS_. If not found,
   returns the original"
   (let [lookup ((keyword fname) predefined-names)]
-    (if lookup lookup fname)))
+    (if lookup lookup (-> fname
+    		    	  (clojure.string/replace #"_QMARK_" "?")
+    		    	  (clojure.string/replace #"_BANG_" "!")))))
 
-;; TODO: lookup for names like _PLUS_ and _STAR_
+;; TODO: User-defined named functions??? 
 (defn- get-function-name [fname]
   "extract a function name from a qualified name"
   (if-let [matching-name (lookup-funct-name (nth (re-matches #"(.*)\$(.*)" fname) 2))]
-  	  (if (= matching-name "fn") "anonymous function" matching-name)
+  	  (if (or (= matching-name "fn") (re-matches #"fn_(.*)" matching-name)) 
+               "anonymous function" matching-name)
   	  fname))
 
 (defn- pretty-print-value [v c type]
@@ -191,6 +195,9 @@
 			:make-preobj (fn [matches] (make-preobj-hashes [["Function "] [(nth matches 1) :arg] 
 					[" does not allow "] [(get-type (nth matches 2)) :type] [" as an argument"]]))}
 		        ;; Compilation errors 
+		        ;;;;; (filter even? lazy-cat)
+		        ;;;; class clojure.lang.Compiler$CompilerException java.lang.RuntimeException: Can't
+		        ;;;; take value of a macro: #'clojure.core/lazy-cat, compiling:(NO_SOURCE_PATH:347:20)
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Too many arguments to (.+), compiling:(.+)"
 		        :replace "Compilation error: too many arguments to $2 while compiling $3"
