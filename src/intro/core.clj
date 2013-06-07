@@ -327,7 +327,7 @@
 		             (filter + (fn[x] (+ x 2))) 
 		             (filter odd? #(* % 2))
 		             (filter + [1 2 3])
-		             ;(filter assoc [1 2 3])
+		             (filter assoc [1 2 3])
 		             (filter #(< 5 %) [1 2 3] [4 5 6]))))
 
 (defn test-function-names []
@@ -358,7 +358,11 @@
 		                 (filter even? myf?))))
 
 (defn test-macros-names []
-	(test-all-and-continue '((filter even? lazy-cat))))
+	(test-all-and-continue '((filter even? lazy-cat)
+		                 (filter even? ->)
+		                 (filter even? ->>))))
+		                 ;(filter even? -?>)
+		                 ;(filter even? -?>>))))
 
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
@@ -415,9 +419,9 @@
     ;(test-asserts)
     ;(test-asserts-multiple-args)
     ;(test-asserts-multiple-args-map)
-    ;(test-filter)
+    (test-filter)
     ;(test-reduce)
     ;(test-function-names)
     ;(test-qmark-bang)
-    (test-macros-names)
+    ;(test-macros-names)
     (catch Throwable e (println (prettify-exception e)))))

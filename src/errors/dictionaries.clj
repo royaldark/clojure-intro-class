@@ -215,8 +215,10 @@
 			:make-preobj make-mock-preobj}
 		        {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Unable to resolve symbol: (.+) in this context, compiling:\((.+)\)"
-		        :replace "Compilation error: name $2 is undefined in this context, while compiling $3."
-			:make-preobj make-mock-preobj}
+		        ;:replace "Compilation error: name $2 is undefined in this context, while compiling $3."
+			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: "] ["name "] 
+					 [(nth matches 2) :arg] [" is undefined, while compiling "] 
+					 [(nth matches 3) :arg]]))}
 			{:class clojure.lang.Compiler$CompilerException
 			:match #"(.+): Can't take value of a macro: (.+), compiling:\((.+)\)"
 			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: "] 
