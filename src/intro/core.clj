@@ -336,7 +336,15 @@
 		                 (filter even? /)
 		                 (filter even? =)
 		                 (filter even? <)
-		                 (filter even? nil?)
+		                 (filter even? ==)
+		                 (filter even? >=)
+		                 (filter even? <=)
+		                 (filter even? not=)
+		                 (filter even? lazy-cat)
+		                 (filter even? list*))))
+
+(defn test-qmark-bang []
+	(test-all-and-continue '((filter even? nil?)
 		                 (filter even? identical?)
 		                 (filter even? zero?)
 		                 (filter even? pos?)
@@ -344,9 +352,7 @@
 		                 (filter even? keyword?)
 		                 (filter even? isa?)
 		                 (filter even? odd?)
-		                 (filter even? lazy-cat)
-		                 (filter even? swap!)
-		                 (filter even? *agent*))))
+		                 (filter even? swap!))))
 
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 

@@ -77,8 +77,7 @@
   (fn [matches] (f (map get-type (rest matches)))))
 
 ;; hashmap of internal function names and their user-friendly versions
-(def predefined-names {:_PLUS_ "+" :_STAR_ "*" :_LT_ "<" :_EQ_ "="
-	               :_ "-" :_SLASH_ "/" })
+(def predefined-names {:_PLUS_ "+"  :_ "-" :_SLASH_ "/" }) ;:_STAR_ "*" :_LT_ "<" :_EQ_ "="
 
 (defn- lookup-funct-name [fname]
   "looks up pre-defined function names, such as _PLUS_. If not found,
@@ -86,7 +85,11 @@
   (let [lookup ((keyword fname) predefined-names)]
     (if lookup lookup (-> fname
     		    	  (clojure.string/replace #"_QMARK_" "?")
-    		    	  (clojure.string/replace #"_BANG_" "!")))))
+    		    	  (clojure.string/replace #"_BANG_" "!")
+    		    	  (clojure.string/replace #"_EQ_" "=")
+    		    	  (clojure.string/replace #"_LT_" "<")
+    		    	  (clojure.string/replace #"_GT_" ">")
+    		    	  (clojure.string/replace #"_STAR_" "*")))))
 
 ;; TODO: User-defined named functions??? 
 (defn- get-function-name [fname]
