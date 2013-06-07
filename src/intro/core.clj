@@ -340,8 +340,10 @@
 		                 (filter even? >=)
 		                 (filter even? <=)
 		                 (filter even? not=)
-		                 (filter even? lazy-cat)
+		                 ;(filter even? lazy-cat)
 		                 (filter even? list*))))
+
+(defn myf? [x] (+ x 2))
 
 (defn test-qmark-bang []
 	(test-all-and-continue '((filter even? nil?)
@@ -352,7 +354,11 @@
 		                 (filter even? keyword?)
 		                 (filter even? isa?)
 		                 (filter even? odd?)
-		                 (filter even? swap!))))
+		                 (filter even? swap!)
+		                 (filter even? myf?))))
+
+(defn test-macros-names []
+	(test-all-and-continue '((filter even? lazy-cat))))
 
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
@@ -411,5 +417,7 @@
     ;(test-asserts-multiple-args-map)
     ;(test-filter)
     ;(test-reduce)
-    (test-function-names)
+    ;(test-function-names)
+    ;(test-qmark-bang)
+    (test-macros-names)
     (catch Throwable e (println (prettify-exception e)))))

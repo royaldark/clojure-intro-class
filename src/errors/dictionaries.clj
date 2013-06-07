@@ -77,7 +77,7 @@
   (fn [matches] (f (map get-type (rest matches)))))
 
 ;; hashmap of internal function names and their user-friendly versions
-(def predefined-names {:_PLUS_ "+"  :_ "-" :_SLASH_ "/" }) ;:_STAR_ "*" :_LT_ "<" :_EQ_ "="
+(def predefined-names {:_PLUS_ "+"  :_ "-" :_SLASH_ "/" }) 
 
 (defn- lookup-funct-name [fname]
   "looks up pre-defined function names, such as _PLUS_. If not found,
@@ -91,13 +91,16 @@
     		    	  (clojure.string/replace #"_GT_" ">")
     		    	  (clojure.string/replace #"_STAR_" "*")))))
 
-;; TODO: User-defined named functions??? 
 (defn- get-function-name [fname]
   "extract a function name from a qualified name"
   (if-let [matching-name (lookup-funct-name (nth (re-matches #"(.*)\$(.*)" fname) 2))]
   	  (if (or (= matching-name "fn") (re-matches #"fn_(.*)" matching-name)) 
                "anonymous function" matching-name)
   	  fname))
+
+(defn- get-macro-name [mname]
+  "extract a macro name from a qualified name"
+  (nth (re-matches #"(.*)/(.*)" mname) 2))
 
 (defn- pretty-print-value [v c type]
    "returns a pretty-printed value v based on its class, handles various messy cases"
@@ -198,9 +201,6 @@
 			:make-preobj (fn [matches] (make-preobj-hashes [["Function "] [(nth matches 1) :arg] 
 					[" does not allow "] [(get-type (nth matches 2)) :type] [" as an argument"]]))}
 		        ;; Compilation errors 
-		        ;;;;; (filter even? lazy-cat)
-		        ;;;; class clojure.lang.Compiler$CompilerException java.lang.RuntimeException: Can't
-		        ;;;; take value of a macro: #'clojure.core/lazy-cat, compiling:(NO_SOURCE_PATH:347:20)
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Too many arguments to (.+), compiling:(.+)"
 		        :replace "Compilation error: too many arguments to $2 while compiling $3"
@@ -216,5 +216,13 @@
 		        {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Unable to resolve symbol: (.+) in this context, compiling:\((.+)\)"
 		        :replace "Compilation error: name $2 is undefined in this context, while compiling $3."
-			:make-preobj make-mock-preobj}])
+			:make-preobj make-mock-preobj}
+			{:class clojure.lang.Compiler$CompilerException
+			:match #"(.+): Can't take value of a macro: (.+), compiling:\((.+)\)"
+			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: "] 
+					[(get-macro-name (nth matches 2)) :arg] 
+					[" is a macro, cannot be passed to a function, while compiling "][(nth matches 3)]]))}])
+			        ;;;;; (filter even? lazy-cat)
+		        ;;;; class clojure.lang.Compiler$CompilerException java.lang.RuntimeException: Can't
+		        ;;;; take value of a macro: #'clojure.core/lazy-cat, compiling:(NO_SOURCE_PATH:347:20)])
 
