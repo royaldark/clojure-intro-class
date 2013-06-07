@@ -371,10 +371,14 @@
 	(test-all-and-continue '((loop [n 1 m] (if (= n 1) 0 (recur (inc n))))
 			         (loop [n 1 m 2] (if (= n 1) 0 (recur (inc n))))
 			         (loop [1 2] (if (= n 1) 0 (recur (inc n))))
-			         (loop '(n 1) (if (= n 1) 0 (recur (inc n)))))))
+			         (loop '(n 1) (if (= n 1) 0 (recur (inc n))))
+			         (loop [] (if (= 1 1) 0 (recur)))
+			         (loop map (if (= n 1) 0 (recur (inc n)))))))
 
 (defn test-bindings []
 	(test-all-and-continue '((let '(n 1) (+ n 1))
+				 (let [m 1 n] (+ m n))
+				 (let [] (+ 1 2))
 				 (def 5 6)
 				 (defn a (+ 1 2)))))
 

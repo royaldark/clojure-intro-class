@@ -155,9 +155,10 @@
                                                    [(get-type (nth matches 1)) :type] 
                                                    [" from "] [(get-type (nth matches 2)) :type]]))}
                        {:class IllegalArgumentException
-			:match #"loop requires an even number of forms in binding vector in (.*):(.*)"
-			:make-preobj (fn [matches] (make-preobj-hashes [["You need an even number of elements for a loop on line "]
-					[(nth matches 2)] [" in the file "]  [(nth matches 1)]]))}
+			:match #"(.*) requires an even number of forms in binding vector in (.*):(.*)"
+			:make-preobj (fn [matches] (make-preobj-hashes [["A parameter is missing a binding for a "] 
+					[(nth matches 1)] [" on line "]
+					[(nth matches 3)] [" in the file "]  [(nth matches 2)]]))}
 		       {:class IllegalArgumentException
 		        :match #"(.*) requires a vector for its binding in (.*):(.*)"
 		        :make-preobj (fn [matches] (make-preobj-hashes [["When declaring a "] [(nth matches 1)] 
