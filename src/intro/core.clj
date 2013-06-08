@@ -392,6 +392,23 @@
 				 (let [] [] []) ;; no error
 				 (let (+ 2 3) 8))))
 
+(defn test-if []
+	(test-all-and-continue '((if true)
+				 (if 5)
+				 (if 5 6 7) ; works
+				 (if map 1 2) ; works 
+				 (if {6 7} 1 2) ; works
+				 (if (odd? 5) 1 2 3)
+				 (when true) ; works (because of do)
+				 (when 5 6 7) ; works (because of do)
+				 (if) 
+				 (when))))
+
+(defn test-cond []
+	(test-all-and-continue '((cond {7 8})
+				 (cond :else 5 :else 7) ; works
+				 (cond (odd? 8) 7 :else))))
+
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
 		(catch Throwable e (prettify-exception e))))
@@ -453,6 +470,8 @@
     ;(test-qmark-bang)
     ;(test-macros-names)
     ;(test-loop-recur)
-    (test-bindings)
-    (test-let)
+    ;(test-bindings)
+    ;(test-let)
+    ;(test-if)
+    (test-cond)
     (catch Throwable e (println (prettify-exception e)))))

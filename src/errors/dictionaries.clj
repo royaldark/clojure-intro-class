@@ -155,6 +155,10 @@
                                                    [(get-type (nth matches 1)) :type] 
                                                    [" from "] [(get-type (nth matches 2)) :type]]))}
                        {:class IllegalArgumentException
+                        :match #"(.*) requires an even number of forms"
+                        :make-preobj (fn [matches] (make-preobj-hashes [["There is an unmatched parameter in declaration of "]
+                        		[(nth matches 1) :arg]]))}
+                       {:class IllegalArgumentException
 			:match #"(.*) requires an even number of forms in binding vector in (.*):(.*)"
 			:make-preobj (fn [matches] (make-preobj-hashes [["A parameter for a "][(nth matches 1)]
 					[" is missing a binding on line "]
@@ -220,6 +224,12 @@
 			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: Too many arguments to "]
 					[(nth matches 2) :arg] [", while compiling "]
 					[(nth matches 3) :arg]]))}
+			{:class clojure.lang.Compiler$CompilerException
+		        :match #"(.+): Too few arguments to (.+), compiling:(.+)"
+		        ;:replace "Compilation error: too many arguments to $2 while compiling $3"
+			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: Too few arguments to "]
+					[(nth matches 2) :arg] [", while compiling "]
+					[(nth matches 3) :arg]]))}
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): EOF while reading, starting at line (.+), compiling:(.+)"
 		        :replace "Compilation error: end of file, starting at line $2, while compiling $3.\nProbabbly a non-closing parentheses or bracket."
@@ -234,6 +244,10 @@
 			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: "] ["name "] 
 					 [(nth matches 2) :arg] [" is undefined, while compiling "] 
 					 [(nth matches 3) :arg]]))}
+			{:class clojure.lang.Compiler$CompilerException
+			 :match #"(.*): (.*) requires an even number of forms, compiling:\((.+)\)"
+			 :make-preobj (fn [matches] (make-preobj-hashes [["There is an unmatched parameter in declaration of "]
+                        		[(nth matches 2) :arg] [". Compiling: "] [(nth matches 3)]]))}
 			{:class clojure.lang.Compiler$CompilerException
 			 :match #"(.*) Mismatched argument count to recur, expected: (.*) args, got: (.*), compiling:(.*)"
 			 :make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: this recur is supposed to take "]
