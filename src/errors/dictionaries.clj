@@ -225,7 +225,7 @@
 			:make-preobj make-mock-preobj}
 		        {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Unmatched delimiter: (.+), compiling:(.+)"
-		        :replace "Compilation error: a closing $2 without a matching opening one while compiling $3."
+		        ;:replace "Compilation error: a closing $2 without a matching opening one while compiling $3."
 			:make-preobj make-mock-preobj}
 		        {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Unable to resolve symbol: (.+) in this context, compiling:\((.+)\)"
@@ -235,13 +235,20 @@
 					 [(nth matches 3) :arg]]))}
 			{:class clojure.lang.Compiler$CompilerException
 			 :match #"(.*) Mismatched argument count to recur, expected: (.*) args, got: (.*), compiling:(.*)"
-			 :make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: this loop is supposed to take "]
+			 :make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: this recur is supposed to take "]
 			 		 [(nth matches 2)] [" arguments, but you are passing "] [(nth matches 3)]
-			 		 [", while compiling "]  [(nth matches 4)]]))}
+			 		 [", while compiling "]  [(nth matches 4)]]))
+			 :hints "1. You are pssing a wrong number of arguments to recur. Check its function or loop.
+			 	 2. recur might be outside of the scope of its function or loop"}
 			{:class clojure.lang.Compiler$CompilerException
 			 :match #"(.*) First argument to (.*) must be a Symbol, compiling:\((.+)\)"
 			 :make-preobj (fn [matches] (make-preobj-hashes [[(nth matches 2) :arg] 
-			 		 [" must be followed by a name. Compiling "] [(nth matches 3)]]))}
+									 [" must be followed by a name. Compiling "] [(nth matches 3)]]))}
+			{:class clojure.lang.Compiler$CompilerException
+			 :match #"(.*) Can only recur from tail position, compiling:(.*)"
+			 :make-preobj (fn [matches] (make-preobj-hashes [["recur" :arg]
+			 		 [" can only occur as a tail call (no operations can be done after its return)."]
+			 		 [" Compiling "][(nth matches 2)]]))} 
 			{:class clojure.lang.Compiler$CompilerException
 			:match #"(.+): Can't take value of a macro: (.+), compiling:\((.+)\)"
 			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: "] 

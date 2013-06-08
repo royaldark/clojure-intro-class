@@ -373,6 +373,7 @@
 			         (loop [1 2] (if (= n 1) 0 (recur (inc n))))
 			         (loop '(n 1) (if (= n 1) 0 (recur (inc n))))
 			         (loop [] (if (= 1 1) 0 (recur)))
+			         (loop [n 1] (if (= n 1) 0 (+ n (recur (dec n)))))
 			         (loop map (if (= n 1) 0 (recur (inc n)))))))
 
 (defn test-bindings []
@@ -451,7 +452,7 @@
     ;(test-function-names)
     ;(test-qmark-bang)
     ;(test-macros-names)
-    (test-loop-recur)
-    ;(test-bindings)
-    ;(test-let)
+    ;(test-loop-recur)
+    (test-bindings)
+    (test-let)
     (catch Throwable e (println (prettify-exception e)))))
