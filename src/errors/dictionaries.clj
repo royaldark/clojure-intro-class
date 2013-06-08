@@ -217,7 +217,6 @@
 		        :make-preobj (fn [matches] (make-preobj-hashes [["You cannot use "] [(nth matches 1) :arg]
 		        		[" as a variable."]]))}
 		        ;; Compilation errors 
-		        ;; TODO: is there "too few arguments"? 
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Too many arguments to (.+), compiling:(.+)"
 		        ;:replace "Compilation error: too many arguments to $2 while compiling $3"

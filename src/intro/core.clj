@@ -409,6 +409,13 @@
 				 (cond :else 5 :else 7) ; works
 				 (cond (odd? 8) 7 :else))))
 
+;; solution for problem 120 on 4clojure
+(def prob120 
+  (fn [c]
+    (let [sum-digits (fn [n] (reduce #(+ %1 (* (Character/digit %2 10) (Character/digit %2 10))) 0 (str n)))
+          smaller-than-sum-digits? (fn [n] (< n (sum-digits n)))]
+          (count (filter smaller-than-sum-digits? c)))))
+
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
 		(catch Throwable e (prettify-exception e))))
@@ -473,5 +480,10 @@
     ;(test-bindings)
     ;(test-let)
     ;(test-if)
-    (test-cond)
+    (println
+    ;(sum-digits 19)
+    (prob120 (range 10))
+    (prob120 (range 100))
+    (prob120 (range 1000)))
+    ;(test-cond)
     (catch Throwable e (println (prettify-exception e)))))
