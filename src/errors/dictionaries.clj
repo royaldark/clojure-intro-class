@@ -156,8 +156,8 @@
                                                    [" from "] [(get-type (nth matches 2)) :type]]))}
                        {:class IllegalArgumentException
 			:match #"(.*) requires an even number of forms in binding vector in (.*):(.*)"
-			:make-preobj (fn [matches] (make-preobj-hashes [["A parameter is missing a binding for a "] 
-					[(nth matches 1)] [" on line "]
+			:make-preobj (fn [matches] (make-preobj-hashes [["A parameter for a "][(nth matches 1)]
+					[" is missing a binding on line "]
 					[(nth matches 3)] [" in the file "]  [(nth matches 2)]]))}
 		       {:class IllegalArgumentException
 		        :match #"(.*) requires a vector for its binding in (.*):(.*)"
@@ -168,6 +168,11 @@
 		        :match #"(.*) not supported on type: (.*)"
 			:make-preobj (fn [matches] (make-preobj-hashes [["Function "] [(nth matches 1) :arg] 
 					[" does not allow "] [(get-type (nth matches 2)) :type] [" as an argument"]]))}
+		       {:class IllegalArgumentException
+		        :match #"Parameter declaration (.*) should be a vector"
+		        :make-preobj (fn [matches] (make-preobj-hashes [["Parameters in "] ["defn" :arg]
+		        		 ;; perhaps need to look up the class of a parameter
+		        		 [" should be a vector, but is "] [(nth matches 1)]]))}
 		       {:class IndexOutOfBoundsException 
 			:match #"(\d+)"
 			;:replace "An index in a sequence is out of bounds. The index is: $1"
