@@ -213,6 +213,7 @@
 		        :make-preobj (fn [matches] (make-preobj-hashes [["You cannot use "] [(nth matches 1) :arg]
 		        		[" as a variable."]]))}
 		        ;; Compilation errors 
+		        ;; TODO: is there "too few arguments"? 
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Too many arguments to (.+), compiling:(.+)"
 		        ;:replace "Compilation error: too many arguments to $2 while compiling $3"
@@ -236,6 +237,7 @@
 			{:class clojure.lang.Compiler$CompilerException
 			 :match #"(.*) Mismatched argument count to recur, expected: (.*) args, got: (.*), compiling:(.*)"
 			 :make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: this recur is supposed to take "]
+			 		 ;; TODO: handle singular/plural arguments
 			 		 [(nth matches 2)] [" arguments, but you are passing "] [(nth matches 3)]
 			 		 [", while compiling "]  [(nth matches 4)]]))
 			 :hints "1. You are pssing a wrong number of arguments to recur. Check its function or loop.
@@ -249,6 +251,13 @@
 			 :make-preobj (fn [matches] (make-preobj-hashes [["recur" :arg]
 			 		 [" can only occur as a tail call (no operations can be done after its return)."]
 			 		 [" Compiling "][(nth matches 2)]]))} 
+			 ;; This is probably somewhat fragile: it occurs in an unbounded recur, but
+			 ;; may occur elsewhere. We need to be careful to not catch a wider rnage of exceptions:
+			{:class clojure.lang.Compiler$CompilerException
+			 :match #"(.*): clojure.lang.Var\$Unbound cannot be cast to clojure.lang.IPersistentVector, compiling:(.*)"
+			 :make-preobj (fn [matches] (make-preobj-hashes [["recur" :arg]
+			 		 [" does not refer to any function or loop."]
+			 		 [" Compiling "][(nth matches 2)]]))}
 			{:class clojure.lang.Compiler$CompilerException
 			:match #"(.+): Can't take value of a macro: (.+), compiling:\((.+)\)"
 			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: "] 
