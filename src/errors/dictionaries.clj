@@ -172,7 +172,7 @@
 		        :match #"Parameter declaration (.*) should be a vector"
 		        :make-preobj (fn [matches] (make-preobj-hashes [["Parameters in "] ["defn" :arg]
 		        		 ;; perhaps need to look up the class of a parameter
-		        		 [" should be a vector, but is "] [(nth matches 1)]]))}
+		        		 [" should be a vector, but is "] [(nth matches 1) :arg]]))}
 		       {:class IndexOutOfBoundsException 
 			:match #"(\d+)"
 			;:replace "An index in a sequence is out of bounds. The index is: $1"
@@ -216,7 +216,7 @@
 		       {:class clojure.lang.Compiler$CompilerException
 		        :match #"(.+): Too many arguments to (.+), compiling:(.+)"
 		        ;:replace "Compilation error: too many arguments to $2 while compiling $3"
-			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: Too many arguments to"]
+			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: Too many arguments to "]
 					[(nth matches 2) :arg] [", while compiling "]
 					[(nth matches 3) :arg]]))}
 		       {:class clojure.lang.Compiler$CompilerException
@@ -236,8 +236,12 @@
 			{:class clojure.lang.Compiler$CompilerException
 			 :match #"(.*) Mismatched argument count to recur, expected: (.*) args, got: (.*), compiling:(.*)"
 			 :make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: this loop is supposed to take "]
-			 		 [(nth matches 3)] [" arguments, but you are passing "] [(nth matches 2)]
+			 		 [(nth matches 2)] [" arguments, but you are passing "] [(nth matches 3)]
 			 		 [", while compiling "]  [(nth matches 4)]]))}
+			{:class clojure.lang.Compiler$CompilerException
+			 :match #"(.*) First argument to (.*) must be a Symbol, compiling:\((.+)\)"
+			 :make-preobj (fn [matches] (make-preobj-hashes [[(nth matches 2) :arg] 
+			 		 [" must be followed by a name. Compiling "] [(nth matches 3)]]))}
 			{:class clojure.lang.Compiler$CompilerException
 			:match #"(.+): Can't take value of a macro: (.+), compiling:\((.+)\)"
 			:make-preobj (fn [matches] (make-preobj-hashes [["Compilation error: "] 
