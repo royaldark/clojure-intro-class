@@ -409,12 +409,22 @@
 				 (cond :else 5 :else 7) ; works
 				 (cond (odd? 8) 7 :else))))
 
-;; solution for problem 120 on 4clojure
+;; solutions for a few problems on 4clojure
 (def prob120 
   (fn [c]
     (let [sum-digits (fn [n] (reduce #(+ %1 (* (Character/digit %2 10) (Character/digit %2 10))) 0 (str n)))
           smaller-than-sum-digits? (fn [n] (< n (sum-digits n)))]
           (count (filter smaller-than-sum-digits? c)))))
+
+(def prob50
+  (fn [c]
+    (vals (group-by class c))))
+
+(def prob128
+ (fn [card]
+  (let [suits {\H :heart \C :club \D :diamond \S :spade}
+        ranks (conj (vec (map (comp first str) (range 2 10))) \T \J \Q \K \A)]
+        (assoc {} :suit (suits (first card)) :rank (+ (.indexOf ranks (second card)) 2)))))
 
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
@@ -481,9 +491,12 @@
     ;(test-let)
     ;(test-if)
     (println
+    	    (prob128 "DQ"))
+    	    ;(prob50 [1 :a 2 :b 3 :c])
+    	    ;(prob50 [:a "foo"  "bar" :b]))
     ;(sum-digits 19)
-    (prob120 (range 10))
-    (prob120 (range 100))
-    (prob120 (range 1000)))
+    ;(prob120 (range 10))
+    ;(prob120 (range 100))
+    ;(prob120 (range 1000)))
     ;(test-cond)
     (catch Throwable e (println (prettify-exception e)))))
