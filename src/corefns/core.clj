@@ -78,10 +78,11 @@
 ;; exhausted. Any remaining items in other colls are ignored. Function
 ;; f should accept number-of-colls arguments.
 (defn map [argument1 & args]
-  {:pre [(check-if-function? argument1) (check-if-seqables? args 2)]}
+ {:pre [(check-if-function? argument1) (check-if-seqables? args 2)]}
   (apply clojure.core/map argument1 args))
 
 ;; count, into, conj, nth, drop, take, concat, filter, reduce
+;; Maps and the like: key, val, keys, vals - careful with pre-conds for key!
 
 ;; (count coll)
 ;; Returns the number of items in the collection. (count nil) returns

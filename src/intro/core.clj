@@ -296,6 +296,23 @@
 				 (nth "banana" [1 2 3])
 				 (nth [1 2 3] "banana"))))
 
+(defn test-no-asserts []
+	(test-all-and-continue '((shuffle 5) ;; fix the Collection type
+				 (shuffle inc)
+				 (shuffle "banana")))) ; should work
+
+(defn test-drop-while [] 
+	(test-all-and-continue '((doall (drop-while 5 '(1 2 3)))
+			         (doall (drop-while inc 9))
+			         (doall (drop-while inc inc)) ;; actually, we probably want a function name here, not just "function"
+			         (doall (drop-while inc [1 2 3])) ; should work?
+			         (doall (drop-while cons '(1 2 3)))
+			         (doall (drop-while (fn [x y] x) '(1 2 3)))
+			         (doall (drop-while odd? '(5 "banana" 6)))
+			         (doall (drop-while odd? '(5 4 "banana" 6))) ; works (odd? is never applied to "banana")
+			         (doall (drop-while println '(1 2 3))))))
+		            
+
 (defn test-asserts-multiple-args []
 	(test-all-and-continue '((mapcat dec 4)
                                  (mapcat dec inc)
@@ -317,7 +334,8 @@
 	(test-all-and-continue '((reduce + 4 [1 2 3]) ;; should work, return 10
 				 (reduce 4 [1 2 5])
 				 (reduce [1 2 3] +)
-				 (reduce + 2 2)
+				 (reduce + inc)
+				 (reduce + 2 3)
 				 (reduce #(+ %1 %2 %3) [1 2 3]))))
 
 (defn test-filter []
@@ -412,7 +430,10 @@
 ;; solutions for a few problems on 4clojure
 (def prob120 
   (fn [c]
-    (let [sum-digits (fn [n] (reduce #(+ %1 (* (Character/digit %2 10) (Character/digit %2 10))) 0 (str n)))
+    (let [sum-digits (fn [n] (reduce #(+ %1 (* (Character/digit %2 10) 
+    					       (Character/digit %2 10))) 
+    			             0 
+    			             (str n)))
           smaller-than-sum-digits? (fn [n] (< n (sum-digits n)))]
           (count (filter smaller-than-sum-digits? c)))))
 
@@ -425,6 +446,10 @@
   (let [suits {\H :heart \C :club \D :diamond \S :spade}
         ranks (conj (vec (map (comp first str) (range 2 10))) \T \J \Q \K \A)]
         (assoc {} :suit (suits (first card)) :rank (+ (.indexOf ranks (second card)) 2)))))
+
+(def prob135
+  (fn [& c]
+    (reduce #((first %2) %1 (second %2)) (first c) (partition 2 (rest c)))))
 
 (defn erun  []   
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
@@ -479,6 +504,8 @@
     ;(test-arity)
     ;(test-sorted-collections)
     ;(test-asserts)
+    ;(test-no-asserts)
+    (test-drop-while)
     ;(test-asserts-multiple-args)
     ;(test-asserts-multiple-args-map)
     ;(test-filter)
@@ -490,8 +517,9 @@
     ;(test-bindings)
     ;(test-let)
     ;(test-if)
-    (println
-    	    (prob128 "DQ"))
+    ;(println
+    ;	    (prob135 38 + 48 - 2 / 2))
+    	    ;(prob128 "DQ"))
     	    ;(prob50 [1 :a 2 :b 3 :c])
     	    ;(prob50 [:a "foo"  "bar" :b]))
     ;(sum-digits 19)
