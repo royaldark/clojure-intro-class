@@ -308,6 +308,8 @@
 			         (doall (drop-while inc [1 2 3])) ; should work?
 			         (doall (drop-while cons '(1 2 3)))
 			         (doall (drop-while (fn [x y] x) '(1 2 3)))
+			         (defn myfunc [x y] (+ x y))
+			         (doall (drop-while myfunc '(1 2 3)))
 			         (doall (drop-while odd? '(5 "banana" 6)))
 			         (doall (drop-while odd? '(5 4 "banana" 6))) ; works (odd? is never applied to "banana")
 			         (doall (drop-while println '(1 2 3))))))

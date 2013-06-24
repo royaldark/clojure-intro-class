@@ -14,7 +14,7 @@
 ;; 7. Process function names - Done
 ;; 8. Change the messsage for only one arg
 ;; 9. Handle anonymous functions
-;; 10. Add a function name to the error message
+;; 10. Add a function name to the error message !!!!!
 ;; inf. why didn't I think of this earlier? 
 
 ;; a global hashmap of recorded types/messages
@@ -30,37 +30,40 @@
 
 ;; Functions to check pre-conditions and record the offenders for 
 ;; error processing
-(defn check-if-function? [x]
+(defn check-if-function? [fname x]
   (if (fn? x) true
   	      (do (add-to-seen {:check "function" 
   	      		        :class (class x)
-  	      		        :value x})
+  	      		        :value x
+  	      		        :fname fname})
   	      	   false)))   
 
 
-(defn check-if-seqable? [x & [n]]
+(defn check-if-seqable? [fname x & [n]]
   "returns true if x is seqable and false otherwise, sets data
   in seen-objects. If the second argument is present, it's added 
   to the seen-objects as the number of the argument"
   (if (seqable? x) true
   	      (do (add-to-seen {:check "sequence" 
   	      		        :class (class x)
-  	      		        :value x})
+  	      		        :value x
+  	      		        :fname fname})
   	      	   (if n (add-to-seen {:arg-num n}))
   	      	   false)))  
 
-(defn check-if-number? [x]
+(defn check-if-number? [fname x]
   (if (number? x) true
   	      (do (add-to-seen {:check "number" 
   	      		        :class (class x)
-  	      		        :value x})
+  	      		        :value x
+  	      		        :fname fname})
   	      	   false)))  
 
 ;; should pass the strating arg number: it's different for different functions
-(defn check-if-seqables? [arguments start]
+(defn check-if-seqables? [fname arguments start]
   (loop [args arguments n start]
     (if (empty? args) true
-      (if (not (check-if-seqable? (first args)))
+      (if (not (check-if-seqable? fname (first args)))
       	(do (add-to-seen {:arg-num n})
             false)
         (recur (rest args) (inc n))))))
@@ -78,17 +81,18 @@
 ;; exhausted. Any remaining items in other colls are ignored. Function
 ;; f should accept number-of-colls arguments.
 (defn map [argument1 & args]
- {:pre [(check-if-function? argument1) (check-if-seqables? args 2)]}
+ {:pre [(check-if-function? "map" argument1) (check-if-seqables? "map" args 2)]}
   (apply clojure.core/map argument1 args))
 
 ;; count, into, conj, nth, drop, take, concat, filter, reduce
 ;; Maps and the like: key, val, keys, vals - careful with pre-conds for key!
+;; odd?, even?, etc - check for numbers!
 
 ;; (count coll)
 ;; Returns the number of items in the collection. (count nil) returns
 ;; 0. Also works on strings, arrays, and Java Collections and Maps
 (defn count [argument1]
-  {:pre [(check-if-seqable? argument1)]}
+  {:pre [(check-if-seqable? "count" argument1)]}
   (clojure.core/count argument1))
 
 ;; (conj coll x)
@@ -97,12 +101,12 @@
 ;;'added'. (conj nil item) returns (item). The 'addition' may
 ;; happen at different 'places' depending on the concrete type.
 (defn conj [argument1 & args]
-  {:pre [(check-if-seqable? argument1)]}
+  {:pre [(check-if-seqable? "conj" argument1)]}
   (apply clojure.core/conj argument1 args))
 
 ;; 
 (defn into [argument1 argument2]
-   {:pre [(check-if-seqable? argument1) (check-if-seqable? argument2)]}
+   {:pre [(check-if-seqable? "into" argument1) (check-if-seqable? "into" argument2)]}
    (clojure.core/into argument1 argument2))
 
 ;; (reduce f coll)
@@ -117,9 +121,9 @@
 ;; applying f to that result and the 2nd item, etc. If coll contains no
 ;; items, returns val and f is not called.
 (defn reduce [argument1 & args]
-   {:pre [(check-if-function? argument1) (if (= (count args) 1)
-   		   			     (check-if-seqable? (first args) 2)
-   		   			     (check-if-seqable? (second args) 3))]}
+   {:pre [(check-if-function? "reduce" argument1) (if (= (count args) 1)
+   		   			     (check-if-seqable? "reduce" (first args) 2)
+   		   			     (check-if-seqable? "reduce" (second args) 3))]}
    (apply clojure.core/reduce argument1 args))  
                                                
 
@@ -131,7 +135,7 @@
 ;; also works for strings, Java arrays, regex Matchers and Lists, and,
 ;; in O(n) time, for sequences.
 (defn nth [argument1 argument2 & args] ;; there may be an optional 3rd arg, no restrictions 
-   {:pre [(check-if-seqable? argument1) (check-if-number? argument2)]}
+   {:pre [(check-if-seqable? "nth" argument1) (check-if-number? "nth" argument2)]}
    (apply clojure.core/nth argument1 argument2 args))
 
 
@@ -139,7 +143,7 @@
 ;; Returns a lazy sequence of the items in coll for which
 ;; (pred item) returns true. pred must be free of side-effects.
 (defn filter [argument1 argument2]
-  {:pre [(check-if-function? argument1) (check-if-seqable? argument2)]}
+  {:pre [(check-if-function? "filter" argument1) (check-if-seqable? "filter" argument2)]}
   (clojure.core/filter argument1 argument2))
 
 ;; (mapcat f & colls)
@@ -148,7 +152,7 @@
 ;; !!!! TODO: add a condition for the number of args to mapcat !!!!
 ;; (the error message refers to the number of args to map) 
 (defn mapcat [argument1 & args]
-  {:pre [(check-if-function? argument1) (check-if-seqables? args 2)]}
+  {:pre [(check-if-function? "mapcat" argument1) (check-if-seqables? "mapcat" args 2)]}
   (apply clojure.core/mapcat argument1 args))
 
 ;; (concat)
@@ -157,17 +161,17 @@
 ;; (concat x y & zs)
 ;; Returns a lazy seq representing the concatenation of the elements in the supplied colls.
 (defn concat [& args]
-  {:pre [(check-if-seqables? args 1)]}
+  {:pre [(check-if-seqables? "concat" args 1)]}
   (apply clojure.core/concat args))
 		
 ;;;;; Functions for type-independent sequence handling ;;;;;;
 
 (defn add-first [argument1 argument2]
-  {:pre [(check-if-seqable? argument1)]}
+  {:pre [(check-if-seqable? "add-first" argument1)]}
   (cons argument2 argument1))
 
 (defn add-last [argument1 argument2]
-  {:pre [(check-if-seqable? argument1)]}
+  {:pre [(check-if-seqable? "add-last" argument1)]}
   (doall (concat argument1 [argument2])))
 
 
