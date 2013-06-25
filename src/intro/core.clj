@@ -296,10 +296,17 @@
 				 (nth "banana" [1 2 3])
 				 (nth [1 2 3] "banana"))))
 
-(defn test-no-asserts []
+(defn test-shuffle []
 	(test-all-and-continue '((shuffle 5) ;; fix the Collection type
 				 (shuffle inc)
-				 (shuffle "banana")))) ; should work
+				 (shuffle "banana") ; doesn't work
+				 (shuffle [1 2 3]) ; works
+				 (shuffle {1 2 3 4}) ; doesn't work
+				 (shuffle #{1 2}) ; works
+				 (shuffle #{}) ; works
+				 ;(shuffle (range 1 1000000)) ; works, prints a ton of stuff
+				 ;(shuffle (range)) ; goes infinite, or so it seems
+				 (shuffle nil)))) ; doesn't work
 
 (defn test-drop-while [] 
 	(test-all-and-continue '((doall (drop-while 5 '(1 2 3)))
@@ -506,8 +513,8 @@
     ;(test-arity)
     ;(test-sorted-collections)
     ;(test-asserts)
-    ;(test-no-asserts)
-    (test-drop-while)
+    (test-shuffle)
+    ;(test-drop-while)
     ;(test-asserts-multiple-args)
     ;(test-asserts-multiple-args-map)
     ;(test-filter)

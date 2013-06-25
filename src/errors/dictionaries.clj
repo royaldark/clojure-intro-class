@@ -37,6 +37,8 @@
 		      :clojure.lang.Reversible "a vector or a sorted-map"
 		      :clojure.lang.Sorted "a collection stored in a sorted manner (such as sorted-map or sorted-set)"
 		      :clojure.lang.Sequential "a sequential collection (such as a vector or a list)"
+		      ;; This is here because of shuffle. It's not ideal, too similar to Sequential
+		      :java.util.Collection " a traversable collection (such as a vector, list, or set)" ; not sure if this makes sense in relation to the previous one
 		      ;; got this in a seesaw error message. Not sure what other types are "Named"
 		      ;; source: https://groups.google.com/forum/?fromgroups#!topic/clojure/rd-MDXvn3q8
 		      :clojure.lang.Named "a keyword or a symbol"})
@@ -126,6 +128,7 @@
   ;; and perhaps need manual error handling, in case the seen-object is empty
    (let [t (:check @seen-objects)
          c (.getName (:class @seen-objects))
+         fname (:fname @seen-objects)
          c-type (get-type c)
          v (:value @seen-objects)
          v-print (pretty-print-value v c c-type)
@@ -133,7 +136,7 @@
          (println t " " c " " v)
    (empty-seen) ; empty the seen-objects hashmap 
    (make-preobj-hashes 
-   	   [[arg] [" "] [v-print :arg] 
+   	   [["in function "] [fname :arg] [": "] [arg] [" "] [v-print :arg] 
    	   [" must be a "] [t :type] [" but is "] [c-type :type]])))	
 
 (def error-dictionary [{:class AssertionError

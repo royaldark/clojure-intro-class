@@ -10,11 +10,11 @@
 ;; 5. don't forget to clear the queue at the end (post-cond? or the end of pre-cond? or finally?) --
 ;;    not in post-cond since if we got to post-cond, there were no errors. Perhaps after we
 ;;    process the queue? We aren't going to handle nested errors. finally may be the place - Done
-;; 6. Handle multiple-args functions - done the prototype
+;; 6. Handle multiple-args functions - Done
 ;; 7. Process function names - Done
 ;; 8. Change the messsage for only one arg
-;; 9. Handle anonymous functions
-;; 10. Add a function name to the error message !!!!!
+;; 9. Handle anonymous functions - Done?
+;; 10. Add a function name to the error message - Done
 ;; inf. why didn't I think of this earlier? 
 
 ;; a global hashmap of recorded types/messages
