@@ -135,9 +135,9 @@
          arg (arg-str (if n (Integer. n) (:arg-num @seen-objects)))]
          (println t " " c " " v)
    (empty-seen) ; empty the seen-objects hashmap 
-   (make-preobj-hashes 
-   	   [["in function "] [fname :arg] [": "] [arg] [" "] [v-print :arg] 
-   	   [" must be a "] [t :type] [" but is "] [c-type :type]])))	
+   (make-msg-preobj-hash-easier 
+   	   "in function " fname :arg ": " arg " " v-print :arg 
+   	   " must be a " t :type " but is " c-type :type)))	
 
 (def error-dictionary [{:class AssertionError
 		        :match #"Assert failed: \((.*) argument(.*)\)"  

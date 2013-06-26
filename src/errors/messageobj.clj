@@ -1,4 +1,5 @@
 (ns errors.messageobj)
+  ;(:refer corefn/core :only [add-fisrt add-last]))
 ;; Functions related to a message object. Message object 
 ;; is a vector of parts of a message (in order). Each 
 ;; part is a hash map that contains the message text :msg,
@@ -12,6 +13,18 @@
 			{:msg m :stylekey style :length (count m)}))
 	([msg] (let [m (str msg)] 
 			{:msg m :stylekey :reg :length (count m)})))
+
+(defn- make-msg-preobj-hashes-helper [messages result]
+	"creates a vector of hash maps out of a vector that are strings, possibly followed by optional keywords"
+	(if (empty? messages) result
+		(let [next (second messages)]
+			(if (keyword? next) (recur (rest (rest messages))
+					           (conj result (make-msg-preobj-hash (first messages) next)))
+				            (recur (rest messages)
+				            	   (conj result (make-msg-preobj-hash (first messages))))))))
+
+(defn make-msg-preobj-hash-easier [& args]
+	(make-msg-preobj-hashes-helper args []))
 
 (defn make-preobj-hashes [messages] 
 	"creates a vector of hash maps out of a vector of vectors of msg + optional style"
