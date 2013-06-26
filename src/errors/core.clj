@@ -20,7 +20,7 @@
   	message (if m m "")] ; converting an empty message from nil to ""
   	  (if-let [entry (first-match e message)]
   	  	  ((:make-preobj entry) (re-matches  (:match entry) message)) 
-  	  	  (make-preobj-hashes [[message]])))) 
+  	  	  (make-preobj-hashes message)))) 
 
 
 ;; All together:
@@ -29,6 +29,6 @@
         cljerrs (filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %))))
                         (:trace-elems info))
         errstrs (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") cljerrs)]
-    (show-error (make-obj (concat (make-preobj-hashes [["ERROR: " :err]]) (get-pretty-message e) 
-    		    (make-preobj-hashes [[(str "\nSequence of function calls:\n" (join "\n" errstrs)) :causes]])))
+    (show-error (make-obj (concat (make-preobj-hashes "ERROR: " :err) (get-pretty-message e) 
+    		    (make-preobj-hashes (str "\nSequence of function calls:\n" (join "\n" errstrs)) :causes)))
 		e)))

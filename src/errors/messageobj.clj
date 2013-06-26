@@ -14,8 +14,7 @@
 	([msg] (let [m (str msg)] 
 			{:msg m :stylekey :reg :length (count m)})))
 
-(defn- make-msg-preobj-hashes-helper [messages result]
-	"creates a vector of hash maps out of a vector that are strings, possibly followed by optional keywords"
+(defn- make-msg-preobj-hashes-helper [messages result]	
 	(if (empty? messages) result
 		(let [next (second messages)]
 			(if (keyword? next) (recur (rest (rest messages))
@@ -23,13 +22,14 @@
 				            (recur (rest messages)
 				            	   (conj result (make-msg-preobj-hash (first messages))))))))
 
-(defn make-msg-preobj-hash-easier [& args]
+(defn make-preobj-hashes [& args]
+	"creates a vector of hash maps out of a vector that are strings, possibly followed by optional keywords"
 	(make-msg-preobj-hashes-helper args []))
 
-(defn make-preobj-hashes [messages] 
-	"creates a vector of hash maps out of a vector of vectors of msg + optional style"
-	;; apply is needed since messages contains vectors of 1 or 2 elements
-	(map #(apply make-msg-preobj-hash %) messages))
+;(defn make-preobj-hashes [messages] 
+;	"creates a vector of hash maps out of a vector of vectors of msg + optional style"
+;	;; apply is needed since messages contains vectors of 1 or 2 elements
+;	(map #(apply make-msg-preobj-hash %) messages))
 
 (defn make-obj [pre-obj] ; pre-obj is a vector of hashmaps
   "fills in the starting points of objects in the hash maps"
@@ -45,5 +45,5 @@
 
 (defn make-mock-preobj [matches]
   "creates a test message pre-obj. Used for testing so that things don't break"
-  (make-preobj-hashes [["This is a"] ["test" :arg]]))
+  (make-preobj-hashes "This is a" "test" :arg))
 
