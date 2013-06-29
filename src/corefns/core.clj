@@ -68,6 +68,15 @@
             false)
         (recur (rest args) (inc n))))))
 
+;; should pass the strating arg number: it's different for different functions
+(defn check-if-numbers? [fname arguments start]
+  (loop [args arguments n start]
+    (if (empty? args) true
+      (if (not (check-if-number? fname (first args)))
+      	(do (add-to-seen {:arg-num n})
+            false)
+        (recur (rest args) (inc n))))))
+
 ;; Including the standard Clojure documentation to make sure that asserts 
 ;; and cases are consistent with the standard Clojure. 
 
@@ -163,6 +172,18 @@
 (defn concat [& args]
   {:pre [(check-if-seqables? "concat" args 1)]}
   (apply clojure.core/concat args))
+
+
+
+
+;;    (< x)
+;;    (< x y)
+;;    (< x y & more)
+;; Returns non-nil if nums are in monotonically increasing order,
+;; otherwise false.
+(defn < [& args]
+   {:pre [(check-if-numbers? "<" args 1)]}
+   (apply clojure.core/< args))
 		
 ;;;;; Functions for type-independent sequence handling ;;;;;;
 

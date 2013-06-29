@@ -436,6 +436,16 @@
 				 (cond :else 5 :else 7) ; works
 				 (cond (odd? 8) 7 :else))))
 
+(defn test-comparisons []
+	(test-all-and-continue '((< "banana" 5)
+			         (< 6 "banana")
+			         (< true :n)
+			         (< :n :m)
+			         (< [1 2 3] 9)
+			         (< [1 2 3] ["a" "b"])
+			         (< 7 nil)
+			         )))
+
 ;; solutions for a few problems on 4clojure
 (def prob120 
   (fn [c]
@@ -510,22 +520,23 @@
     ;(test-pop-peek)
     ;(test-assoc)
     ;(test-reversible)
-    (test-arity)
-    (test-sorted-collections)
-    (test-asserts)
+    ;(test-arity)
+    ;(test-sorted-collections)
+    ;(test-asserts)
     ;(test-shuffle)
     ;(test-drop-while)
-    (test-asserts-multiple-args)
+    ;(test-asserts-multiple-args)
     ;(test-asserts-multiple-args-map)
     ;(test-filter)
     ;(test-reduce)
-    (test-function-names)
-    (test-qmark-bang)
-    (test-macros-names)
-    (test-loop-recur)
+    ;(test-function-names)
+    ;(test-qmark-bang)
+    ;(test-macros-names)
+    ;(test-loop-recur)
     ;(test-bindings)
     ;(test-let)
     ;(test-if)
+    (test-comparisons)
     ;(println
     ;	    (prob135 38 + 48 - 2 / 2))
     	    ;(prob128 "DQ"))

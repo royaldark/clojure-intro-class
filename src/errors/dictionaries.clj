@@ -111,15 +111,15 @@
      (if (= type "a function") 
        ; extract a function from the class c (easier than from v):
        (get-function-name c)
-       v)))
+       (str v))))
 
 (defn arg-str [n]
   (case n 
-    1 "First argument" 
-    2 "Second argument" 
-    3 "Third argument" 
-    4 "Fourth argument" 
-    5 "Fifth argument" 
+    1 "first argument" 
+    2 "second argument" 
+    3 "third argument" 
+    4 "fourth argument" 
+    5 "fifth argument" 
     (str n "th argument ")))  	  
 
 (defn process-asserts-obj [n] 
@@ -133,10 +133,11 @@
          v (:value @seen-objects)
          v-print (pretty-print-value v c c-type)
          arg (arg-str (if n (Integer. n) (:arg-num @seen-objects)))]
-         (println t " " c " " v)
+         ;(println t " " c " " v)
+         ;(println (class t) " " (class c-type) " " (class v-print))
    (empty-seen) ; empty the seen-objects hashmap 
    (make-preobj-hashes 
-   	   "in function " fname :arg ": " arg " " v-print :arg 
+   	   "in function " fname :arg " " arg " " v-print :arg 
    	   " must be a " t :type " but is " c-type :type)))	
 
 (def error-dictionary [{:class AssertionError
