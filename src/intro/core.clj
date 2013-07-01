@@ -246,6 +246,7 @@
 	(test-all-and-continue '((doall (nth #{1 2 3} 1 ))
 			         (doall (nth {1 2 3 4} 1))
 			         (doall (nth nil 0))
+			         (doall (nth [2 3 4] nil))
 			         (doall (nth "abcd" 0))))) ; don't know how to create a sequence from a symbol? 
 
 (defn test-boolean-functions []
@@ -517,7 +518,7 @@
 
     ;(test-wrong-arg-type)
     ;(test-contains-types)
-    ;(test-unsupported-ops)
+    (test-unsupported-ops)
     ;(test-pop-peek)
     ;(test-assoc)
     ;(test-reversible)
@@ -537,7 +538,7 @@
     ;(test-bindings)
     ;(test-let)
     ;(test-if)
-    (test-comparisons)
+    ;(test-comparisons)
     ;(println
     ;	    (prob135 38 + 48 - 2 / 2))
     	    ;(prob128 "DQ"))

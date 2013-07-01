@@ -132,7 +132,7 @@
    	 cl (:class @seen-objects)
          c (if cl (.getName cl) nil)
          fname (:fname @seen-objects)
-         c-type (if c (get-type c) "nil")
+         c-type (if c (get-type c) "nil") ; perhaps want to rewrite this
          v (:value @seen-objects)
          v-print (pretty-print-value v c c-type)
          arg (arg-str (if n (Integer. n) (:arg-num @seen-objects)))]
