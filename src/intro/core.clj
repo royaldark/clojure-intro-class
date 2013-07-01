@@ -444,6 +444,7 @@
 			         (< [1 2 3] 9)
 			         (< [1 2 3] ["a" "b"])
 			         (< 7 nil)
+			         (and (<= 6 7 8) (> 8 9 "what?") (>= "what?" 8))
 			         )))
 
 ;; solutions for a few problems on 4clojure

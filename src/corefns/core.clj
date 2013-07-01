@@ -184,6 +184,34 @@
 (defn < [& args]
    {:pre [(check-if-numbers? "<" args 1)]}
    (apply clojure.core/< args))
+
+;;    (<= x)
+;;    (<= x y)
+;;    (<= x y & more)
+;; Returns non-nil if nums are in monotonically non-decreasing order,
+;; otherwise false.
+(defn <= [& args]
+   {:pre [(check-if-numbers? "<=" args 1)]}
+   (apply clojure.core/<= args))
+
+
+;;    (> x)
+;;    (> x y)
+;;    (> x y & more)
+;; Returns non-nil if nums are in monotonically decreasing order,
+;; otherwise false.
+(defn > [& args]
+   {:pre [(check-if-numbers? ">" args 1)]}
+   (apply clojure.core/> args))
+
+;;    (>= x)
+;;    (>= x y)
+;;    (>= x y & more)
+;; Returns non-nil if nums are in monotonically non-increasing order,
+;; otherwise false.
+(defn >= [& args]
+   {:pre [(check-if-numbers? ">=" args 1)]}
+   (apply clojure.core/>= args))
 		
 ;;;;; Functions for type-independent sequence handling ;;;;;;
 

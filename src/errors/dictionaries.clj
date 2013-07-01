@@ -41,7 +41,8 @@
 		      :java.util.Collection " a traversable collection (such as a vector, list, or set)" ; not sure if this makes sense in relation to the previous one
 		      ;; got this in a seesaw error message. Not sure what other types are "Named"
 		      ;; source: https://groups.google.com/forum/?fromgroups#!topic/clojure/rd-MDXvn3q8
-		      :clojure.lang.Named "a keyword or a symbol"})
+		      :clojure.lang.Named "a keyword or a symbol"
+		      :clojure.lang.nil "nil"})
 		      
 		      
 ;; matching type interfaces to beginner-friendly names. 
@@ -108,10 +109,11 @@
    "returns a pretty-printed value v based on its class, handles various messy cases"
    ; strings are printed in double quotes:
    (if (string? v) (str "\"" v "\"")
-     (if (= type "a function") 
+     (if (nil? v) "nil" 
+       (if (= type "a function") 
        ; extract a function from the class c (easier than from v):
-       (get-function-name c)
-       (str v))))
+         (get-function-name c)
+         (str v)))))
 
 (defn arg-str [n]
   (case n 
@@ -127,13 +129,14 @@
   global seen-objects hashmap, clears the hashmap"
   ;; and perhaps need manual error handling, in case the seen-object is empty
    (let [t (:check @seen-objects)
-         c (.getName (:class @seen-objects))
+   	 cl (:class @seen-objects)
+         c (if cl (.getName cl) nil)
          fname (:fname @seen-objects)
-         c-type (get-type c)
+         c-type (if c (get-type c) "nil")
          v (:value @seen-objects)
          v-print (pretty-print-value v c c-type)
          arg (arg-str (if n (Integer. n) (:arg-num @seen-objects)))]
-         ;(println t " " c " " v)
+         ; (println t " " c " " v)
          ;(println (class t) " " (class c-type) " " (class v-print))
    (empty-seen) ; empty the seen-objects hashmap 
    (make-preobj-hashes 
