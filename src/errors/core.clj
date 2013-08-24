@@ -2,8 +2,8 @@
   (:require [clj-stacktrace.core :as stacktrace])
   (:use [clojure.string :only [join]]
         [errors.dictionaries]
-	[errors.errorgui]
-	[errors.messageobj]
+	      [errors.errorgui]
+	      [errors.messageobj]
         [seesaw.core]))
 
 ;;(def ignore-nses #"(clojure|java)\..*")

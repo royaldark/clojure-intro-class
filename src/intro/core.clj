@@ -512,7 +512,7 @@
     ;(test-any-contains)
 
     ;(test-wrong-arg-type)
-    ;(test-contains-types)
+    (test-contains-types)
     ;(test-recur 1)
     ;(pack-a-seq [1 1 2 1 1 1 3 3])
 
