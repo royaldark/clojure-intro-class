@@ -1,8 +1,8 @@
 (ns intro.core 
-  (:require [errors.core :as errors])
-  (:use [corefns.core]
+  (:use [errors.core]
         [seesaw.core]
 	[turtle.core]))
+(refer 'corefns.core)
         ;[turtle.extended-turtle]))
 
 (defn basic-seesaw-frame []
@@ -19,7 +19,7 @@
   (try
     (println quoted-exp)
     (eval quoted-exp)
-    (catch Throwable e (println (errors/prettify-exception e)))
+    (catch Throwable e (println (prettify-exception e)))
     (finally (println "Are there any exceptions left?"))))
 
 (defn test-all-and-continue [quoted-exps]
@@ -40,15 +40,15 @@
 			    (conj "a" 2) ;; Attempted to use string, but collection was expected.
 			    )))
 
-;(defn test-nth []
- ; (test-all-and-continue '( ;(nth 3 [1 2 3]) ;; ERROR: Attempted to use a collection, but a number was expected.
-;			(nth [1 2 3] 3)
-;			(nth [1 2 3] [8 9])
-;			(nth #{1 2 3} 1 )
-;			(nth (seq {:a :b :c :d}) 1)
-;			(nth (seq {:a :b :c :d}) 2)
-;			(nth (seq #{1 0}) 2)
-;			(nth (seq "a b c") 1)  )))
+(defn test-nth []
+  (test-all-and-continue '( ;(nth 3 [1 2 3]) ;; ERROR: Attempted to use a collection, but a number was expected.
+			(nth [1 2 3] 3)
+			(nth [1 2 3] [8 9])
+			(nth #{1 2 3} 1 )
+			(nth (seq {:a :b :c :d}) 1)
+			(nth (seq {:a :b :c :d}) 2)
+			(nth (seq #{1 0}) 2)
+			(nth (seq "a b c") 1)  )))
 
 ;; try re-writing using reduce
 ;; (reduce f coll) ---> user=> (reduce + [1 2 3 4 5]) == 15
@@ -246,6 +246,7 @@
 	(test-all-and-continue '((doall (nth #{1 2 3} 1 ))
 			         (doall (nth {1 2 3 4} 1))
 			         (doall (nth nil 0))
+			         (doall (nth [2 3 4] nil))
 			         (doall (nth "abcd" 0))))) ; don't know how to create a sequence from a symbol? 
 
 (defn test-boolean-functions []
@@ -275,6 +276,205 @@
 		                 (rseq #{1 2 3})
 		                 (rseq '())
 		                 (rseq "abc"))))
+
+(defn test-sorted-collections []
+	(test-all-and-continue '((subseq [1 2 3 4] > 2)
+		                 (subseq #{1 2 3} = 2)
+		                 (subseq {1 2 3 4} > 2))))
+
+(defn test-arity [] 
+	(test-all-and-continue '((map [1 2 3])
+		                 (conj 7)
+		                 (drop [1 2 3])
+		                 (drop 2 [1 2 3] 7)
+		                 (#(+ % %) 1 3))))
+
+(defn test-asserts []
+	(test-all-and-continue '((map 6 7)
+				 (map [1 2 3] dec)
+				 (map dec inc)
+				 (nth 1 [2 3 4])
+				 (nth "banana" [1 2 3])
+				 (nth [1 2 3] "banana"))))
+
+(defn test-shuffle []
+	(test-all-and-continue '((shuffle 5) ;; fix the Collection type
+				 (shuffle inc)
+				 (shuffle "banana") ; doesn't work
+				 (shuffle [1 2 3]) ; works
+				 (shuffle {1 2 3 4}) ; doesn't work
+				 (shuffle #{1 2}) ; works
+				 (shuffle #{}) ; works
+				 ;(shuffle (range 1 1000000)) ; works, prints a ton of stuff
+				 ;(shuffle (range)) ; goes infinite, or so it seems
+				 (shuffle nil)))) ; doesn't work
+
+(defn test-drop-while [] 
+	(test-all-and-continue '((doall (drop-while 5 '(1 2 3)))
+			         (doall (drop-while inc 9))
+			         (doall (drop-while inc inc)) ;; actually, we probably want a function name here, not just "function"
+			         (doall (drop-while inc [1 2 3])) ; should work?
+			         (doall (drop-while cons '(1 2 3)))
+			         (doall (drop-while (fn [x y] x) '(1 2 3)))
+			         (defn myfunc [x y] (+ x y))
+			         (doall (drop-while myfunc '(1 2 3)))
+			         (doall (drop-while odd? '(5 "banana" 6)))
+			         (doall (drop-while odd? '(5 4 "banana" 6))) ; works (odd? is never applied to "banana")
+			         (doall (drop-while println '(1 2 3))))))
+		            
+
+(defn test-asserts-multiple-args []
+	(test-all-and-continue '((mapcat dec 4)
+                                 (mapcat dec inc)
+                                 (mapcat + [1 2 3] :a)
+                                 (mapcat + :a 9)
+                                 (mapcat + nil) ;; should work
+                                 (mapcat + ))))
+
+(defn test-asserts-multiple-args-map []
+	(test-all-and-continue '((map dec 4)
+                                 (map dec inc)
+                                 (map + [1 2 3] :a)
+                                 (map + :a 9)
+                                 (map + nil) ;; should work
+                                 (map + )
+                                 (nth (map #(+ %1 %2) [1 2 3] [3 4] [5 6]) 1))))
+
+(defn test-reduce []
+	(test-all-and-continue '((reduce + 4 [1 2 3]) ;; should work, return 10
+				 (reduce 4 [1 2 5])
+				 (reduce [1 2 3] +)
+				 (reduce + inc)
+				 (reduce + 2 3)
+				 (reduce #(+ %1 %2 %3) [1 2 3]))))
+
+(defn test-filter []
+	(test-all-and-continue '((filter 9 [1 2 3])
+		             (filter odd? *)
+		             (filter "abc" "123")
+		             (filter (+ 2 3) "123")
+		             (filter odd? even?) 
+		             (filter + (fn[x] (+ x 2))) 
+		             (filter odd? #(* % 2))
+		             (filter + [1 2 3])
+		             (nth (filter assoc [1 2 3]) 1) ; added nth because otherwise it's a lazy seq
+		             (filter #(< 5 %) [1 2 3] [4 5 6]))))
+
+(defn test-function-names []
+	(test-all-and-continue '((filter even? odd?)
+		                 (filter even? -)
+		                 (filter even? /)
+		                 (filter even? =)
+		                 (filter even? <)
+		                 (filter even? ==)
+		                 (filter even? >=)
+		                 (filter even? <=)
+		                 (filter even? not=)
+		                 ;(filter even? lazy-cat)
+		                 (filter even? list*))))
+
+(defn myf? [x] (+ x 2))
+
+(defn test-qmark-bang []
+	(test-all-and-continue '((filter even? nil?)
+		                 (filter even? identical?)
+		                 (filter even? zero?)
+		                 (filter even? pos?)
+		                 (filter even? neg?)
+		                 (filter even? keyword?)
+		                 (filter even? isa?)
+		                 (filter even? odd?)
+		                 (filter even? swap!)
+		                 (filter even? myf?))))
+
+(defn test-macros-names []
+	(test-all-and-continue '((filter even? lazy-cat)
+		                 (filter even? ->)
+		                 (filter even? ->>)
+		                 (filter even? cond)
+		                 (filter even? and))))
+		                 ;(filter even? -?>)
+		                 ;(filter even? -?>>))))
+(defn test-loop-recur []
+	(test-all-and-continue '((loop [n 1 m] (if (= n 1) 0 (recur (inc n))))
+			         (loop [n 1 m 2] (if (= n 1) 0 (recur (inc n))))
+			         (loop [1 2] (if (= n 1) 0 (recur (inc n))))
+			         (loop '(n 1) (if (= n 1) 0 (recur (inc n))))
+			         (loop [] (if (= 1 1) 0 (recur)))
+			         (loop [n 1] (if (= n 1) 0 (+ n (recur (dec n)))))
+			         (loop map (if (= n 1) 0 (recur (inc n)))))))
+
+(defn test-bindings []
+	(test-all-and-continue '((def 5 6)
+				 (defn a (+ 1 2))
+				 (defn a :k)
+				 (def f [x] (+ x 2))
+				 (def f (recur 2))
+				 (recur 3)
+				 (def f (+ 2 (recur 2))))))
+
+(defn test-let []
+	(test-all-and-continue '((let '(n 1) (+ n 1))
+				 (let [m 1 n] (+ m n))
+				 (let [] (+ 1 2)) ;; no error
+				 (let [] [] []) ;; no error
+				 (let (+ 2 3) 8))))
+
+(defn test-if []
+	(test-all-and-continue '((if true)
+				 (if 5)
+				 (if 5 6 7) ; works
+				 (if map 1 2) ; works 
+				 (if {6 7} 1 2) ; works
+				 (if (odd? 5) 1 2 3)
+				 (when true) ; works (because of do)
+				 (when 5 6 7) ; works (because of do)
+				 (if) 
+				 (when))))
+
+(defn test-cond []
+	(test-all-and-continue '((cond {7 8})
+				 (cond :else 5 :else 7) ; works
+				 (cond (odd? 8) 7 :else))))
+
+(defn test-comparisons []
+	(test-all-and-continue '((< "banana" 5)
+			         (< 6 "banana")
+			         (< true :n)
+			         (< :n :m)
+			         (< [1 2 3] 9)
+			         (< [1 2 3] ["a" "b"])
+			         (< 7 nil)
+			         (and (<= 6 7 8) (> 8 9 "what?") (>= "what?" 8))
+			         )))
+
+;; solutions for a few problems on 4clojure
+(def prob120 
+  (fn [c]
+    (let [sum-digits (fn [n] (reduce #(+ %1 (* (Character/digit %2 10) 
+    					       (Character/digit %2 10))) 
+    			             0 
+    			             (str n)))
+          smaller-than-sum-digits? (fn [n] (< n (sum-digits n)))]
+          (count (filter smaller-than-sum-digits? c)))))
+
+(def prob50
+  (fn [c]
+    (vals (group-by class c))))
+
+(def prob128
+ (fn [card]
+  (let [suits {\H :heart \C :club \D :diamond \S :spade}
+        ranks (conj (vec (map (comp first str) (range 2 10))) \T \J \Q \K \A)]
+        (assoc {} :suit (suits (first card)) :rank (+ (.indexOf ranks (second card)) 2)))))
+
+(def prob135
+  (fn [& c]
+    (reduce #((first %2) %1 (second %2)) (first c) (partition 2 (rest c)))))
+
+(defn erun  []   
+	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
+		(catch Throwable e (prettify-exception e))))
 				 
 
 (defn third [coll]
@@ -296,19 +496,7 @@
     	     ;(add-first 5 [1 2 3])
     	     ;(add-last 5 [1 2 3]))
     	     ;(add-last \s "pie"))
-    	     
-    ;(doall (add-last \s "pie"))
-    ;(take 2 (lazy-cat 
-    ;	    ;(list 1 2 3) 
-    ;	    (range)
-    ;	    [1 (/ 1 0)]))
-    ;(add-first 0 [1 2 3 4 5])
-    ;(pascals-triangle-helper [1 1])
     ;(pascals-triangle 11)
-    ;(add-last \s "pie")
-    ;(println (conj #{0 1} 1))
-    
-					;(reduce + +)
     ;(test-concat)
 					;(test-concat)
 					;(test-first-rest)
@@ -319,10 +507,7 @@
 
     ;(third [1 2 3 4])
     ;(test-seq)
-
-					;(test-seq)
     ;(def t (add-last 4 [2 3]))
-					;t
     ;(test-add-first-last)
     ;(test-any-contains)
 
@@ -333,8 +518,35 @@
 
     ;(test-wrong-arg-type)
     ;(test-contains-types)
-    ;(test-unsupported-ops)
+    (test-unsupported-ops)
     ;(test-pop-peek)
     ;(test-assoc)
-    (test-reversible)
-    (catch Throwable e (println (errors/prettify-exception e)))))
+    ;(test-reversible)
+    ;(test-arity)
+    ;(test-sorted-collections)
+    ;(test-asserts)
+    ;(test-shuffle)
+    ;(test-drop-while)
+    ;(test-asserts-multiple-args)
+    ;(test-asserts-multiple-args-map)
+    ;(test-filter)
+    ;(test-reduce)
+    ;(test-function-names)
+    ;(test-qmark-bang)
+    ;(test-macros-names)
+    ;(test-loop-recur)
+    ;(test-bindings)
+    ;(test-let)
+    ;(test-if)
+    ;(test-comparisons)
+    ;(println
+    ;	    (prob135 38 + 48 - 2 / 2))
+    	    ;(prob128 "DQ"))
+    	    ;(prob50 [1 :a 2 :b 3 :c])
+    	    ;(prob50 [:a "foo"  "bar" :b]))
+    ;(sum-digits 19)
+    ;(prob120 (range 10))
+    ;(prob120 (range 100))
+    ;(prob120 (range 1000)))
+    ;(test-cond)
+    (catch Throwable e (println (prettify-exception e)))))
