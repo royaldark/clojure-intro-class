@@ -2,23 +2,15 @@
   (:require [clj-stacktrace.core :as stacktrace])
   (:use [clojure.string :only [join]]
         [errors.dictionaries]
-<<<<<<< HEAD
 	      [errors.errorgui]
-=======
-	[errors.errorgui]
-	[errors.messageobj]
->>>>>>> upstream/master
+	      [errors.messageobj]
         [seesaw.core]))
 
 ;;(def ignore-nses #"(clojure|java)\..*")
 (def ignore-nses #"(user|clojure|java)\..*")
 
 (defn- first-match [e message]
-<<<<<<< HEAD
-	(println (class e) "Done with print") ; debugging print
-=======
 	(println (str (class e) " " message)) ; debugging print
->>>>>>> upstream/master
 	(first (filter #(and (instance? (:class %) e) (re-matches (:match %) message))
 			error-dictionary)))
 
