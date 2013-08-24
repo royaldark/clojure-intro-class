@@ -56,9 +56,10 @@
 (defn best-approximation [t]
   "returns a string representation of a type t not listed in the type-dictionary for user-friendly error messages"
   (let [attempt (resolve (symbol t))
-        type (if attempt attempt (resolve (symbol (str "clojure.lang." t)))) ;; may need to add clojure.lang. for some types
+        type (if attempt attempt (clojure.lang.RT/loadClassForName (str "clojure.lang." t))) ;; may need to add clojure.lang. for some types.
+        ;type (if attempt attempt (resolve (symbol (str "clojure.lang." t)))) There is a special case in resolve that throws an exception when there are periods in the type name.
         matched-type (if type (first (filter #(isa? type (first %)) general-types)))]
-        (if matched-type (second matched-type) (str "unrecognized type " type))))
+        (if matched-type (second matched-type) (str "unrecognized type " t))))
 
 (defn get-type [t]
   "returns a user-friendly representation of a type if it exists in the type-dictionary,
