@@ -48,8 +48,7 @@
 
 
 ;!!!!DANGER!!!!
-;running this /can/ crash, in a sequence, autoexepect, lein, and the JVM.
-;I can't always reproduce it, however. Crashed 3 out of 24 times.
+;if opened in a repl, it will launch infinite windows.
 
 (comment
 (expect :success
