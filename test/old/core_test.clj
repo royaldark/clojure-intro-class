@@ -3,6 +3,8 @@
          [errors.core]
          [errors.dictionaries]))
 
+;;; Stephen wrote this in August 2013 
+
 (def simple-non-match-exception (java.lang.Exception. "Test Message"))
 (def get-pretty-message (ns-resolve 'errors.core 'get-pretty-message))
 (def class-cast-exception (java.lang.ClassCastException. "oneType cannot be cast to anotherType"))

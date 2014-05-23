@@ -1,7 +1,6 @@
 (ns intro.core 
   (:use [errors.core]
-        [seesaw.core]
-	[turtle.core]))
+        [seesaw.core]))
 (refer 'corefns.core)
         ;[turtle.extended-turtle]))
 
@@ -182,11 +181,6 @@
 			   ([2 4] 1) ; Not an error, returns 4
 			   ([] 1)))) ; An index in a vector or a list is out of bounds
 
-(defn test-turtle []
-  (test-all-and-continue '(
-			   (pen-up turtle) ; using an unitialized turtle
-					; strangely the exception is that a function cannot be converted into a ref
-			   )))
 
 (defn our-reverse [coll]
   (reduce add-first '() coll))
@@ -485,7 +479,6 @@
 (defn -main [& args] 
   (try
     ;(basic-seesaw-frame)
-    ;(test-turtle)
     ;(test-exceptions)
     ;(test-nth)
     ;(duplicate-seq [1 2 3])
