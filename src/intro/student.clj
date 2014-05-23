@@ -1,7 +1,6 @@
 (ns intro.student
 	(:use [corefns.core]
-        [seesaw.core]
-	[turtle.core]))
+        [seesaw.core]))
 
 ;; Testing compilation errors
 
@@ -15,6 +14,6 @@
 ;(defn f[x y] 
 ;	(fn [x] (+ x y z)))
 
-(loop [x 1 y]
+(loop [x 1 y 2]
 	(if (= x 0) 1
 		(recur (dec x) 5)))
