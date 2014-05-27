@@ -14,7 +14,7 @@
 	([msg] (let [m (str msg)] 
 			{:msg m :stylekey :reg :length (count m)})))
 
-(defn- make-msg-preobj-hashes-helper [messages result]	
+(defn- make-msg-preobj-hashes-helper [messages result]
 	(if (empty? messages) result
 		(let [next (second messages)]
 			(if (keyword? next) (recur (rest (rest messages))
