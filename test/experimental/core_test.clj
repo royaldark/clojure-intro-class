@@ -33,7 +33,9 @@
              (catch Exception e e)))
 
 ;a helper function to cleanly test the above.
-(defn- exeception->string [e] (if (instance? Exception e)
+(defn- exeception->string
+  "Converts execeptions to strings, returning a string or the original "
+  [e] (if (instance? Exception e)
                                 (.getMessage e)
                                 e))
 
@@ -50,14 +52,61 @@
 ;!!!!DANGER!!!!
 ;if opened in a repl, it will launch infinite windows.
 
-(comment
+;(comment
 (expect :success
         (prettify-exception (run-and-catch '(2))))
-  )
+
+;  )
 
 ;holy ****!
 ;that's annoying.
 ;we really need a version of prettify-exception that's not throwing windows at my face.
+
+;temporary workspace
+;*************************************
+;Testing the message object stuff.
+
+
+;Tests for make-msg-preobj-hash
+
+(expect {:msg "Blue Jeans", :stylekey :reg, :length 10}
+        (make-msg-preobj-hash "Blue Jeans"))
+
+(expect {:msg "Bootcut", :stylekey :hippy, :length 7}
+        (make-msg-preobj-hash "Bootcut" :hippy))
+
+
+;Tests for make-preobj-hashes
+
+(expect [{:msg "Blue Jeans", :stylekey :reg, :length 10}
+         {:msg "Khakis", :stylekey :business-casual, :length 6}
+         {:msg "Bootcut", :stylekey :hippy, :length 7}
+         {:msg "Jeggings", :stylekey :casual, :length 8}]
+        (make-preobj-hashes "Blue Jeans"
+                            "Khakis" :business-casual
+                            "Bootcut" :hippy
+                            "Jeggings" :casual))
+
+;Tests for make-obj
+
+(expect [{:start 0, :msg "Blue Jeans", :stylekey :reg, :length 10}
+         {:start 10, :msg "Khakis", :stylekey :business-casual, :length 6}
+         {:start 16, :msg "Bootcut", :stylekey :hippy, :length 7}
+         {:start 23, :msg "Jeggings", :stylekey :casual, :length 8}]
+        (make-obj [{:msg "Blue Jeans", :stylekey :reg, :length 10}
+                   {:msg "Khakis", :stylekey :business-casual, :length 6}
+                   {:msg "Bootcut", :stylekey :hippy, :length 7}
+                   {:msg "Jeggings", :stylekey :casual, :length 8}]))
+
+
+
+
+
+
+
+
+
+
 
 
 
