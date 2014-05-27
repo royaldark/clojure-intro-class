@@ -24,3 +24,13 @@
 	[{:msg "Hi there" :stylekey :arg :length 8}
 	 {:msg "Hello" :stylekey :blah :length 5}])
 
+(expect (make-obj (make-preobj-hashes "Hi there" :arg "Hello"))
+	[{:msg "Hi there" :stylekey :arg :length 8 :start 0}
+	 {:msg "Hello" :stylekey :reg :length 5 :start 8}])
+
+(expect (get-all-text (make-obj (make-preobj-hashes "Hi there! " :arg "Hello")))
+	"Hi there! Hello")
+
+(expect (make-mock-preobj ["anything" "will be ignored"])
+	[{:msg "This is a" :stylekey :reg :length 9}
+	 {:msg "test" :stylekey :arg :length 4}]) 
