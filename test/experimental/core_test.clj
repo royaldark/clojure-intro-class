@@ -1,4 +1,5 @@
 (ns experimental.core_test
+  (:require [clj-stacktrace.core :as stacktrace])
   (:require [expectations :refer :all]
             [errors.messageobj :refer :all]
             [errors.core :refer :all]))
@@ -33,31 +34,45 @@
              (catch Exception e e)))
 
 ;a helper function to cleanly test the above.
-(defn- exeception->string [e] (if (instance? Exception e)
+(defn- exception->string
+  "Converts exceptions to strings, returning a string or the original e (if it is not an exception)"
+  [e] (if (instance? Exception e)
                                 (.getMessage e)
                                 e))
 
 (expect "java.lang.Long cannot be cast to clojure.lang.IFn"
-        (exeception->string (run-and-catch '(1 3))))
+        (exception->string (run-and-catch '(1 3))))
 
 (expect 3
-        (exeception->string (run-and-catch '(+ 1 2))))
+        (exception->string (run-and-catch '(+ 1 2))))
 
-;*************************************
-;*** Using the above with errors.core ***.
+;************************************
+
+(def st1 (stacktrace/parse-exception (run-and-catch '(1))))
+
+(last (stacktrace/parse-exception (run-and-catch '(1))))
 
 
-;!!!!DANGER!!!!
-;if opened in a repl, it will launch infinite windows.
+(def st2 (stacktrace/parse-exception (run-and-catch '(+ 2 "pie"))))
 
-(comment
-(expect :success
-        (prettify-exception (run-and-catch '(2))))
-  )
+(def st3 (stacktrace/parse-exception (run-and-catch '(5))))
 
-;holy ****!
-;that's annoying.
-;we really need a version of prettify-exception that's not throwing windows at my face.
+(def q 2)
+
+(def fst1 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st1))))
+
+(def fst2 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st2))))
+
+(def fst3 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st3))))
+
+
+
+
+
+
+
+
+
 
 
 
