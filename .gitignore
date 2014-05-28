@@ -2,6 +2,8 @@ pom.xml
 *jar
 /lib/
 /classes/
+/target/classes/*
+/target/stale/*
 .lein-deps-sum
 *.*~
 .*.*.swp
