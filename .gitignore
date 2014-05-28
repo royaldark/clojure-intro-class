@@ -1,4 +1,4 @@
-pom.xml
+.lein-repl-history pom.xml
 *jar
 /lib/
 /classes/
