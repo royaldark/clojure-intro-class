@@ -64,12 +64,13 @@
 
 (def st3 (stacktrace/parse-exception ex3))
 
-;(def fst1 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st1))))
+(def fst1 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st1))))
 
 ;(def fst2 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st2))))
 
 ;(def fst3 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st3))))
 
+(def path "exceptions/")
 
 (defn export-to-file
   ""
@@ -96,6 +97,5 @@
   )
 
 
-(spit "foo.ser" "")
-(export-to-file ex1 "foo.ser")
-(import-from-file "foo.ser")
+(export-to-file ex2 (str path "foo.ser"))
+(import-from-file (str path "foo.ser"))
