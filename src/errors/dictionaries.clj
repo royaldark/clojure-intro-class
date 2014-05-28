@@ -45,19 +45,19 @@
 		      :clojure.lang.nil "nil"})
 
 
-;; matching type interfaces to beginner-friendly names. 
-;; Note: since a type may implement more than one interface, 
+;; matching type interfaces to beginner-friendly names.
+;; Note: since a type may implement more than one interface,
 ;; the order is essential. The lookup is done in order, so
-;; the first match is returned. 
-;; That's why it's a vector, not a hashmap. 
-;; USE CAUTION WHEN ADDING NEW TYPES! 
+;; the first match is returned.
+;; That's why it's a vector, not a hashmap.
+;; USE CAUTION WHEN ADDING NEW TYPES!
 (def general-types [[Number "a number"]
                     [clojure.lang.IPersistentVector "a vector"]
                     [clojure.lang.IPersistentList "a list"]
                     [clojure.lang.IPersistentSet "a set"]
                     [clojure.lang.IPersistentMap "a map"]
                     [clojure.lang.ISeq "a sequence"]
-		    ;; collections - must go before functions since some collections 
+		    ;; collections - must go before functions since some collections
 		    ;; implement the IFn interface
 		    [clojure.lang.IPersistentCollection "a collection"]
 		    [clojure.lang.IFn "a function"]])
@@ -81,7 +81,7 @@
   (fn [matches] (f (map get-type (rest matches)))))
 
 ;; hashmap of internal function names and their user-friendly versions
-(def predefined-names {:_PLUS_ "+"  :_ "-" :_SLASH_ "/" }) 
+(def predefined-names {:_PLUS_ "+"  :_ "-" :_SLASH_ "/" })
 
 (defn- lookup-funct-name [fname]
   "looks up pre-defined function names, such as _PLUS_. If not found,
@@ -98,7 +98,7 @@
 (defn- get-function-name [fname]
   "extract a function name from a qualified name"
   (if-let [matching-name (lookup-funct-name (nth (re-matches #"(.*)\$(.*)" fname) 2))]
-    (if (or (= matching-name "fn") (re-matches #"fn_(.*)" matching-name)) 
+    (if (or (= matching-name "fn") (re-matches #"fn_(.*)" matching-name))
       "anonymous function" matching-name)
     fname))
 
@@ -110,23 +110,23 @@
   "returns a pretty-printed value v based on its class, handles various messy cases"
                                         ; strings are printed in double quotes:
   (if (string? v) (str "\"" v "\"")
-      (if (nil? v) "nil" 
-          (if (= type "a function") 
+      (if (nil? v) "nil"
+          (if (= type "a function")
                                         ; extract a function from the class c (easier than from v):
             (get-function-name c)
             (str v)))))
 
 (defn arg-str [n]
-  (case n 
-    1 "first argument" 
-    2 "second argument" 
-    3 "third argument" 
-    4 "fourth argument" 
-    5 "fifth argument" 
-    (str n "th argument ")))  	  
+  (case n
+    1 "first argument"
+    2 "second argument"
+    3 "third argument"
+    4 "fourth argument"
+    5 "fifth argument"
+    (str n "th argument ")))
 
-(defn process-asserts-obj [n] 
-  "Returns a message object generated for an assert failure based on the 
+(defn process-asserts-obj [n]
+  "Returns a message object generated for an assert failure based on the
 	global seen-objects hashmap, clears the hashmap"
   ;; and perhaps need manual error handling, in case the seen-object is empty
   (let [t (:check @seen-objects)
@@ -139,28 +139,28 @@
         arg (arg-str (if n (Integer. n) (:arg-num @seen-objects)))]
                                         ; (println t " " c " " v)
                                         ;(println (class t) " " (class c-type) " " (class v-print))
-    (empty-seen) ; empty the seen-objects hashmap 
-    (make-preobj-hashes 
-     "in function " fname :arg " " arg " " v-print :arg 
-     " must be a " t :type " but is " c-type :type)))	
+    (empty-seen) ; empty the seen-objects hashmap
+    (make-preobj-hashes
+     "in function " fname :arg " " arg " " v-print :arg
+     " must be a " t :type " but is " c-type :type)))
 
 (def error-dictionary [{:class AssertionError
-                        :match #"Assert failed: \((.*) argument(.*)\)"  
+                        :match #"Assert failed: \((.*) argument(.*)\)"
                         :make-preobj (fn [matches] (process-asserts-obj (nth matches 2)))}
                        {:class AssertionError
-                        :match #"Assert failed: \((.*)\)"  
+                        :match #"Assert failed: \((.*)\)"
                         :make-preobj (fn [matches] (process-asserts-obj nil))}
                        {:class ClassCastException
                         :match #"(.*) cannot be cast to (.*)"
                                         ;:replace (replace-types #(str "Attempted to use " (nth %1 0) ", but " (nth %1 1) " was expected."))
-                        :make-preobj (fn [matches] (make-preobj-hashes "Attempted to use " 
-                                                                       (get-type (nth matches 1)) :type ", but " 
-                                                                       (get-type (nth matches 2)) :type " was expected."))} 
+                        :make-preobj (fn [matches] (make-preobj-hashes "Attempted to use "
+                                                                       (get-type (nth matches 1)) :type ", but "
+                                                                       (get-type (nth matches 2)) :type " was expected."))}
                        {:class IllegalArgumentException
                         :match #"Don't know how to create (.*) from: (.*)"
                                         ;:replace (replace-types #(str "Don't know how to create " (nth %1 0) " from " (nth %1 1)))
-                        :make-preobj (fn [matches] (make-preobj-hashes "Don't know how to create " 
-                                                                       (get-type (nth matches 1)) :type 
+                        :make-preobj (fn [matches] (make-preobj-hashes "Don't know how to create "
+                                                                       (get-type (nth matches 1)) :type
                                                                        " from "(get-type (nth matches 2)) :type))}
                        {:class IllegalArgumentException
                         :match #"(.*) requires an even number of forms"
@@ -173,22 +173,22 @@
                                                                        (nth matches 3) " in the file " (nth matches 2)))}
                        {:class IllegalArgumentException
                         :match #"(.*) requires a vector for its binding in (.*):(.*)"
-                        :make-preobj (fn [matches] (make-preobj-hashes "When declaring a " (nth matches 1) 
+                        :make-preobj (fn [matches] (make-preobj-hashes "When declaring a " (nth matches 1)
                                                                        ", you need to pass it a vector of arguments. Line "
                                                                        (nth matches 3) " in the file " (nth matches 2)))}
                        {:class IllegalArgumentException
                         :match #"(.*) not supported on type: (.*)"
-                        :make-preobj (fn [matches] (make-preobj-hashes "Function " (nth matches 1) :arg 
+                        :make-preobj (fn [matches] (make-preobj-hashes "Function " (nth matches 1) :arg
                                                                        " does not allow " (get-type (nth matches 2)) :type " as an argument"))}
                        {:class IllegalArgumentException
                         :match #"Parameter declaration (.*) should be a vector"
                         :make-preobj (fn [matches] (make-preobj-hashes "Parameters in " "defn" :arg " should be a vector, but is " (nth matches 1) :arg))}
-                       {:class IndexOutOfBoundsException 
+                       {:class IndexOutOfBoundsException
                         :match #"(\d+)"
                                         ;:replace "An index in a sequence is out of bounds. The index is: $1"
-                        :make-preobj (fn [matches] (make-preobj-hashes 
-                                                    "An index in a sequence is out of bounds." 			
-                                                    "The index is:" 
+                        :make-preobj (fn [matches] (make-preobj-hashes
+                                                    "An index in a sequence is out of bounds."
+                                                    "The index is:"
                                                     (nth matches 0) :arg))}
                        {:class IndexOutOfBoundsException
                         :match #"" ; an empty message
@@ -196,14 +196,14 @@
                         :make-preobj (fn [matches] (make-preobj-hashes "An index in a sequence is out of bounds"))}
                        {:class clojure.lang.ArityException
                         :match #"Wrong number of args \((.*)\) passed to: (.*)"
-                        :make-preobj (fn [matches] 
+                        :make-preobj (fn [matches]
                                        (let [fstr (get-function-name (nth matches 2))
                                              funstr (if (= fstr "anonymous function")
                                                       "an "
                                                       (str "a function "))]
                                          (make-preobj-hashes "Wrong number of arguments ("
                                                              (nth matches 1) ")  passed to " funstr fstr :arg)))}
-                       {:class NullPointerException  
+                       {:class NullPointerException
                         :match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
                                         ;:replace "An attempt to access a non-existing object: $1 \n(NullPointerException)"
                         :make-preobj (fn [matches] (make-preobj-hashes "An attempt to access a non-existing object: "
@@ -211,42 +211,42 @@
                        {:class NullPointerException
                         :match  #""
                                         ;:replace "An attempt to access a non-existing object \n(NullPointerException)"
-		        :make-preobj (fn [matches] (make-preobj-hashes "An attempt to access a non-existing object. \n(NullPointerException)"))}
+		                    :make-preobj (fn [matches] (make-preobj-hashes "An attempt to access a non-existing object. \n(NullPointerException)"))}
                        {:class UnsupportedOperationException
                         :match #"(.*) not supported on this type: (.*)"
                                         ;:replace #(str  "Function " (nth % 1) " does not allow " (get-type (nth % 2)) " as an argument")
-		        :make-preobj (fn [matches] (make-preobj-hashes "Function " (nth matches 1) :arg 
+		                    :make-preobj (fn [matches] (make-preobj-hashes "Function " (nth matches 1) :arg
                                                                        " does not allow " (get-type (nth matches 2)) :type " as an argument"))}
                        {:class java.lang.Exception
                         :match #"Unsupported binding form: (.*)"
                         :make-preobj (fn [matches] (make-preobj-hashes "You cannot use " (nth matches 1) :arg
                                                                        " as a variable."))}
-                       ;; Compilation errors 
+                       ;; Compilation errors
                        {:class clojure.lang.Compiler$CompilerException
                         :match #"(.+): Too many arguments to (.+), compiling:(.+)"
                                         ;:replace "Compilation error: too many arguments to $2 while compiling $3"
-		        :make-preobj (fn [matches] (make-preobj-hashes "Compilation error: Too many arguments to "
+		                    :make-preobj (fn [matches] (make-preobj-hashes "Compilation error: Too many arguments to "
                                                                        (nth matches 2) :arg ", while compiling "
                                                                        (nth matches 3) :arg))}
                        {:class clojure.lang.Compiler$CompilerException
                         :match #"(.+): Too few arguments to (.+), compiling:(.+)"
                                         ;:replace "Compilation error: too many arguments to $2 while compiling $3"
-		        :make-preobj (fn [matches] (make-preobj-hashes "Compilation error: Too few arguments to "
+		                    :make-preobj (fn [matches] (make-preobj-hashes "Compilation error: Too few arguments to "
                                                                        (nth matches 2) :arg  ", while compiling "
                                                                        (nth matches 3) :arg))}
-                       {:class clojure.lang.Compiler$CompilerException    
+                       {:class clojure.lang.Compiler$CompilerException
                         :match #"(.+): EOF while reading, starting at line (.+), compiling:(.+)"
                         :replace "Compilation error: end of file, starting at line $2, while compiling $3.\nProbabbly a non-closing parentheses or bracket."
                         :make-preobj make-mock-preobj}
                        {:class clojure.lang.Compiler$CompilerException
                         :match #"(.+): Unmatched delimiter: (.+), compiling:(.+)"
                                         ;:replace "Compilation error: a closing $2 without a matching opening one while compiling $3."
-		        :make-preobj make-mock-preobj}
+		                    :make-preobj make-mock-preobj}
                        {:class clojure.lang.Compiler$CompilerException
                         :match #"(.+): Unable to resolve symbol: (.+) in this context, compiling:\((.+)\)"
                                         ;:replace "Compilation error: name $2 is undefined in this context, while compiling $3."
-		        :make-preobj (fn [matches] (make-preobj-hashes "Compilation error: " "name " 
-                                                                       (nth matches 2) :arg " is undefined, while compiling " 
+		                    :make-preobj (fn [matches] (make-preobj-hashes "Compilation error: " "name "
+                                                                       (nth matches 2) :arg " is undefined, while compiling "
                                                                        (nth matches 3) :arg))}
                        {:class clojure.lang.Compiler$CompilerException
                         :match #"(.*): (.*) requires an even number of forms, compiling:\((.+)\)"
@@ -258,8 +258,8 @@
                                                                        ;; TODO: handle singular/plural arguments
                                                                        (nth matches 2) " arguments, but you are passing " (nth matches 3)
                                                                        ", while compiling " (nth matches 4)))
-                        :hints "1. You are pssing a wrong number of arguments to recur. Check its function or loop.
-		        		2. recur might be outside of the scope of its function or loop"}
+                        :hints "1. You are passing a wrong number of arguments to recur. Check its function or loop.
+		        		                2. recur might be outside of the scope of its function or loop"}
                        {:class clojure.lang.Compiler$CompilerException
                         :match #"(.*) First argument to (.*) must be a Symbol, compiling:\((.+)\)"
                         :make-preobj (fn [matches] (make-preobj-hashes (nth matches 2) :arg
@@ -268,7 +268,7 @@
                         :match #"(.*) Can only recur from tail position, compiling:(.*)"
                         :make-preobj (fn [matches] (make-preobj-hashes "recur" :arg
                                                                        " can only occur as a tail call (no operations can be done after its return)."
-                                                                       " Compiling " (nth matches 2)))} 
+                                                                       " Compiling " (nth matches 2)))}
                        ;; This is probably somewhat fragile: it occurs in an unbounded recur, but
                        ;; may occur elsewhere. We need to be careful to not catch a wider rnage of exceptions:
                        {:class clojure.lang.Compiler$CompilerException
@@ -278,8 +278,8 @@
                                                                        " Compiling " (nth matches 2)))}
                        {:class clojure.lang.Compiler$CompilerException
                         :match #"(.+): Can't take value of a macro: (.+), compiling:\((.+)\)"
-                        :make-preobj (fn [matches] (make-preobj-hashes "Compilation error: " 
-                                                                       (get-macro-name (nth matches 2)) :arg 
+                        :make-preobj (fn [matches] (make-preobj-hashes "Compilation error: "
+                                                                       (get-macro-name (nth matches 2)) :arg
                                                                        " is a macro, cannot be passed to a function, while compiling "
                                                                        (nth matches 3)))}])
 
