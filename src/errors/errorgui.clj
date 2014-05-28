@@ -2,6 +2,8 @@
   (:use [seesaw.core]
   	[errors.messageobj]))
 
+(def error-prefix "ERROR: ")
+
 ;; Swing must be initialized to prefer native skinning before any elements are created
 (invoke-now (native!))
 

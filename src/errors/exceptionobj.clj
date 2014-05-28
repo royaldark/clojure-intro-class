@@ -12,4 +12,4 @@
     {:message-object msg-obj
      :stacktrace st
      :filtered-stacktrace fst
-     :hints hint})
+     :hints hint}))

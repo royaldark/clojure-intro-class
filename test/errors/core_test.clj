@@ -109,7 +109,7 @@
 ;***Testing make-mock-preobj***
 
 (expect (make-mock-preobj ["anything" "will be ignored"])
--	[{:msg "This is a" :stylekey :reg :length 9}
+	[{:msg "This is a" :stylekey :reg :length 9}
 	 {:msg "test" :stylekey :arg :length 4}])
 
 ;####################################
