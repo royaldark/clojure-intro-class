@@ -1,4 +1,4 @@
-(ns intro.core 
+(ns intro.core
   (:use [errors.core]
         [seesaw.core]))
 (refer 'corefns.core)
@@ -10,7 +10,7 @@
     (def f (frame :title "Hello",
                   :content (button :text "Seesaw Rocks!"),
                   :on-close :exit))
-    (-> f pack! show!))) 
+    (-> f pack! show!)))
 
 
 (defn test-and-continue [quoted-exp]
@@ -22,8 +22,8 @@
     (finally (println "Are there any exceptions left?"))))
 
 (defn test-all-and-continue [quoted-exps]
-  ;; doall is needed because map is lazy 
-  (doall (map test-and-continue quoted-exps))) 
+  ;; doall is needed because map is lazy
+  (doall (map test-and-continue quoted-exps)))
 
 (defn test-arithmetic-expressions []
   ;; 3 exceptions thrown:
@@ -31,7 +31,7 @@
 
 ;; Some of the error messages below would change once we create enough preconditions
 (defn test-sequences []
-  (test-all-and-continue '( ;(nth 0 [1 2 3]) ;; attempted to use collection but number was expected 
+  (test-all-and-continue '( ;(nth 0 [1 2 3]) ;; attempted to use collection but number was expected
 			    ;(nth '(1 2 3) 7) ;; An index in a vector or a list is out of bounds
 			    (into 6 [1 2]) ;; attempted to use number but collection was expected
 			    (into {} [1 2 3]) ;; don't know how to create sequence from number. into on a hashmap requires a collection of pairs.
@@ -51,14 +51,14 @@
 
 ;; try re-writing using reduce
 ;; (reduce f coll) ---> user=> (reduce + [1 2 3 4 5]) == 15
-;(defn duplicate-seq [coll] 
+;(defn duplicate-seq [coll]
 ;	(loop [s coll result []] ;; result can work with vector or a list
 ;		(if (empty? s) result
 ;			(recur (rest s) (add-last (add-last result (first s)) (first s))))))
 
 
 
-(defn duplicate-seq [coll] 
+(defn duplicate-seq [coll]
 	(interleave (reduce add-last '() coll) coll))
 
 ;(defn flatten-helper [coll returnStuff]
@@ -71,21 +71,21 @@
 				 (concat returnStuff coll)))
 
 (defn flatten-seq [coll]
-	(loop [s coll result '()] 
+	(loop [s coll result '()]
 		(if (empty? s) result
 		(recur (rest s)(do (if (coll? (first s)) (flatten-helper (first s) result )
 					 (add-last result (first s))))))))
 
 ;; Maybe try to work without loop-recur? If possible that is.
 (defn interleave-seq [c1 c2]
-	(loop [s1 c1 s2 c2 result []] 
-		(if (or (empty? s1) (empty? s2) ) result 
-			(recur (rest s1) (rest s2) 
+	(loop [s1 c1 s2 c2 result []]
+		(if (or (empty? s1) (empty? s2) ) result
+			(recur (rest s1) (rest s2)
 				(add-last (add-last result (first s1)) (first s2) ) ) ) ) )
 
 
 ;(defn flatten-seq [coll]
-;	(loop [s coll result '()] 
+;	(loop [s coll result '()]
 ;		(if (empty? s) result
 ;		(recur (rest s)(do (if (coll? (first s)) (concat result (flatten-seq [first s]))
 ;					 (add-last result (first s))))))))
@@ -99,9 +99,9 @@
 	(loop [r rotations s coll]
 		(if (zero? r) s
 			(recur (inc r) (drop-last (add-first s (last s))) ) )))
-	
+
 (defn rotate-seq [rotations coll]
-		(if (pos? rotations) (rotate-left rotations coll) 
+		(if (pos? rotations) (rotate-left rotations coll)
 			             (rotate-right rotations coll)))
 
 (defn pascals-triangle-helper [coll]
@@ -112,7 +112,7 @@
 (defn pascals-triangle [iterations]
 	(loop [n 0 result [[1]]]
 		(if (= n iterations) (last result)
-			(recur (inc n) (add-last result (pascals-triangle-helper (last result))))))) 
+			(recur (inc n) (add-last result (pascals-triangle-helper (last result)))))))
 
 (defn pack-a-seq-helper [n coll]
 	(loop [s coll result '()]
@@ -128,7 +128,7 @@
 
 (defn pack-a-seq [coll]
 	(loop [c coll result '()]
-		(if (empty? c) result 
+		(if (empty? c) result
 		(recur (drop (pack-a-seq-helper2 (first c) c) c)
 			(add-last result (pack-a-seq-helper (first c) c))
 			))))
@@ -150,7 +150,7 @@
   (test-all-and-continue '( (concat :banana [1 2]) ; need doall because concat is lazy
 			   (concat [:banana] +)
 			   (concat [:banana] [:banana] [] 4))))
-			   
+
 
 (defn test-first-rest []
   (test-all-and-continue '((first 1) ; Don't know how to create a sequence from a number
@@ -187,14 +187,14 @@
 
 (defn our-map [f coll]
   (reduce (fn [res x] (add-last res (f x))) '() coll))
-  
+
 
 (defn add-first-last-examples []
   (test-all-and-continue '((our-reverse [1 2 3])
 			   (our-reverse '(1 2 3))
 			   (our-map inc [1 2 3])
 			   (our-map inc '(1 2 3)))
-			 
+
 			 ))
 
 (defn test-seq []
@@ -207,7 +207,7 @@
 (defn test-any-contains []
 	(test-all-and-continue '((any? 6 :k)
 				 (any? [1 2 3] odd?)
-				 (any? odd? {2 3 4 5}) ; ERROR: Argument must be an integer: [2 3] 
+				 (any? odd? {2 3 4 5}) ; ERROR: Argument must be an integer: [2 3]
 				 (any? #(+ % 2) [1 2 5])
 				 (some? #(+ % 2) [:k :v]) ; the point is that it's a wrong type of argument
 				 (some? [1 2] [3 4])
@@ -226,7 +226,7 @@
 		                 (contains? [1 2 3] \a)
 		                 (contains? nil 2))))
 
-(defn test-wrong-arg-type [] 
+(defn test-wrong-arg-type []
 	(test-all-and-continue '( (+ 6 :k)
 		                  (+ 6 +)
 		                  (* 6 "hello")
@@ -241,15 +241,15 @@
 			         (doall (nth {1 2 3 4} 1))
 			         (doall (nth nil 0))
 			         (doall (nth [2 3 4] nil))
-			         (doall (nth "abcd" 0))))) ; don't know how to create a sequence from a symbol? 
+			         (doall (nth "abcd" 0))))) ; don't know how to create a sequence from a symbol?
 
 (defn test-boolean-functions []
 	(test-all-and-continue '( (not 5) ; not an error
-			 	  (and true +) ; not an error 
-			 	  (and nil) ; not an error 
+			 	  (and true +) ; not an error
+			 	  (and nil) ; not an error
 			 	  (every? #(and %) [1 2 3])))) ; not an error, returns true
 
-(defn test-pop-peek [] 
+(defn test-pop-peek []
 	(test-all-and-continue '((peek [])
 			         (pop nil)
 			         (peek #{1 2 3})
@@ -257,7 +257,7 @@
 			         (peek "abc")
 			         (peek 5))))
 
-(defn test-assoc [] 
+(defn test-assoc []
 	(test-all-and-continue '((assoc [1 2 3] 5 6)
 		                 (assoc #{1 2} 3 4)
 		                 (dissoc '(1 2 3) 3)
@@ -276,7 +276,7 @@
 		                 (subseq #{1 2 3} = 2)
 		                 (subseq {1 2 3 4} > 2))))
 
-(defn test-arity [] 
+(defn test-arity []
 	(test-all-and-continue '((map [1 2 3])
 		                 (conj 7)
 		                 (drop [1 2 3])
@@ -303,7 +303,7 @@
 				 ;(shuffle (range)) ; goes infinite, or so it seems
 				 (shuffle nil)))) ; doesn't work
 
-(defn test-drop-while [] 
+(defn test-drop-while []
 	(test-all-and-continue '((doall (drop-while 5 '(1 2 3)))
 			         (doall (drop-while inc 9))
 			         (doall (drop-while inc inc)) ;; actually, we probably want a function name here, not just "function"
@@ -315,7 +315,7 @@
 			         (doall (drop-while odd? '(5 "banana" 6)))
 			         (doall (drop-while odd? '(5 4 "banana" 6))) ; works (odd? is never applied to "banana")
 			         (doall (drop-while println '(1 2 3))))))
-		            
+
 
 (defn test-asserts-multiple-args []
 	(test-all-and-continue '((mapcat dec 4)
@@ -347,8 +347,8 @@
 		             (filter odd? *)
 		             (filter "abc" "123")
 		             (filter (+ 2 3) "123")
-		             (filter odd? even?) 
-		             (filter + (fn[x] (+ x 2))) 
+		             (filter odd? even?)
+		             (filter + (fn[x] (+ x 2)))
 		             (filter odd? #(* % 2))
 		             (filter + [1 2 3])
 		             (nth (filter assoc [1 2 3]) 1) ; added nth because otherwise it's a lazy seq
@@ -418,12 +418,12 @@
 	(test-all-and-continue '((if true)
 				 (if 5)
 				 (if 5 6 7) ; works
-				 (if map 1 2) ; works 
+				 (if map 1 2) ; works
 				 (if {6 7} 1 2) ; works
 				 (if (odd? 5) 1 2 3)
 				 (when true) ; works (because of do)
 				 (when 5 6 7) ; works (because of do)
-				 (if) 
+				 (if)
 				 (when))))
 
 (defn test-cond []
@@ -443,11 +443,11 @@
 			         )))
 
 ;; solutions for a few problems on 4clojure
-(def prob120 
+(def prob120
   (fn [c]
-    (let [sum-digits (fn [n] (reduce #(+ %1 (* (Character/digit %2 10) 
-    					       (Character/digit %2 10))) 
-    			             0 
+    (let [sum-digits (fn [n] (reduce #(+ %1 (* (Character/digit %2 10)
+    					       (Character/digit %2 10)))
+    			             0
     			             (str n)))
           smaller-than-sum-digits? (fn [n] (< n (sum-digits n)))]
           (count (filter smaller-than-sum-digits? c)))))
@@ -466,17 +466,17 @@
   (fn [& c]
     (reduce #((first %2) %1 (second %2)) (first c) (partition 2 (rest c)))))
 
-(defn erun  []   
-	(try (load-reader (java.io.FileReader. "src/intro/student.clj")) 
+(defn erun  []
+	(try (load-reader (java.io.FileReader. "src/intro/student.clj"))
 		(catch Throwable e (prettify-exception e))))
-				 
+
 
 (defn third [coll]
   "Returns the third element in a collection,
    or nil if the collection has fewer than three elements"
   (first (rest (rest coll))))
 
-(defn -main [& args] 
+(defn -main [& args]
   (try
     ;(basic-seesaw-frame)
     ;(test-exceptions)
@@ -486,17 +486,17 @@
     ;(interleave-seq [1 2 3] [:a :b :c])
     ;(rotate-seq -6 [1 2 3 4 5])
     ;(println ;(add-first \s "pie")
-    	     ;(add-first 5 [1 2 3])
-    	     ;(add-last 5 [1 2 3]))
-    	     ;(add-last \s "pie"))
+   ; 	     (add-first 5 [1 2 3])
+   ; 	     (add-last 5 [1 2 3]))
+   ; 	     (add-last \s "pie"))
     ;(pascals-triangle 11)
     ;(test-concat)
-					;(test-concat)
-					;(test-first-rest)
-					;(test-conj-into)
-					;(test-add-first-last)
-					;(test-forgetting-a-quote)
-					;(add-first-last-examples)
+	;				(test-concat)
+;					(test-first-rest)
+;					(test-conj-into)
+		;			(test-add-first-last)
+	;				(test-forgetting-a-quote)
+		;			(add-first-last-examples)
 
     ;(third [1 2 3 4])
     ;(test-seq)
@@ -505,13 +505,13 @@
     ;(test-any-contains)
 
     ;(test-wrong-arg-type)
-    (test-contains-types)
+    ;(test-contains-types)
     ;(test-recur 1)
     ;(pack-a-seq [1 1 2 1 1 1 3 3])
 
     ;(test-wrong-arg-type)
     ;(test-contains-types)
-    (test-unsupported-ops)
+    ;(test-unsupported-ops)
     ;(test-pop-peek)
     ;(test-assoc)
     ;(test-reversible)
@@ -520,7 +520,7 @@
     ;(test-asserts)
     ;(test-shuffle)
     ;(test-drop-while)
-    ;(test-asserts-multiple-args)
+    (test-asserts-multiple-args)
     ;(test-asserts-multiple-args-map)
     ;(test-filter)
     ;(test-reduce)
@@ -529,17 +529,17 @@
     ;(test-macros-names)
     ;(test-loop-recur)
     ;(test-bindings)
-    ;(test-let)
-    ;(test-if)
-    ;(test-comparisons)
-    ;(println
-    ;	    (prob135 38 + 48 - 2 / 2))
-    	    ;(prob128 "DQ"))
-    	    ;(prob50 [1 :a 2 :b 3 :c])
-    	    ;(prob50 [:a "foo"  "bar" :b]))
-    ;(sum-digits 19)
+   ;(test-let)
+   ;(test-if)
+   ;(test-comparisons)
+   ;(println
+   ; 	    (prob135 38 + 48 - 2 / 2))
+   ; 	    (prob128 "DQ")
+   ; 	    (prob50 [1 :a 2 :b 3 :c])
+    ;	    (prob50 [:a "foo"  "bar" :b])
+    ;(prob120 19)
     ;(prob120 (range 10))
     ;(prob120 (range 100))
-    ;(prob120 (range 1000)))
+    ;(prob120 (range 1000))
     ;(test-cond)
     (catch Throwable e (println (prettify-exception e)))))
