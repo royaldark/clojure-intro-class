@@ -57,7 +57,9 @@
   [filename]
   (import-from-file (str path filename)))
 
-(def java-arraylist (new java.util.ArrayList))
+;*** testing reading and writing to file ***
+
+(def java-arraylist (new java.util.ArrayList 5))
 
 (expect (.equals java-arraylist
            (let [filename "testfile.silly"

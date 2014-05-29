@@ -97,5 +97,4 @@
   )
 
 
-;(export-to-file ex2 (str path "foo.ser"))
-;(import-from-file (str path "foo.ser"))
+(export-to-file ex2 (str path "classcast1.ser"))
