@@ -1,9 +1,13 @@
 (ns experimental.core_test
-  (:require [clj-stacktrace.core :as stacktrace])
-  (:require [expectations :refer :all]
+  (:require [clj-stacktrace.core :as stacktrace]
+            [expectations :refer :all]
             [errors.messageobj :refer :all]
             [errors.core :refer :all]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io])
+  (:import [java.io.FileInputStream]
+           [java.io.ObjectInputStream]
+           [java.io.FileOutputStream]
+           [java.io.ObjectOutputStream]))
 
 ;;;; A space for prototypes, examples, and experimental features.
 ;; NEVER refer to this file in other files.
@@ -60,43 +64,38 @@
 
 (def st3 (stacktrace/parse-exception ex3))
 
-;(def fst1 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st1))))
+(def fst1 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st1))))
 
 ;(def fst2 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st2))))
 
 ;(def fst3 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st3))))
 
+(def path "exceptions/")
 
-(defn serialize
-  "Writes an exception to a file, in a way that preserves the stacktrace's data"
-  [exception filename]
-  (with-out-writer
-    (java.io.File. filename)
-    (binding [*print-dup* true] (prn exception))))
+(defn export-to-file
+  ""
+  [e filepath]
+  (let [file-stream (java.io.FileOutputStream. filepath)
+        obj-stream (java.io.ObjectOutputStream. file-stream)
+        ]
+    (.writeObject obj-stream e)
+    (.close obj-stream)
+    (.close file-stream)
+    (println (str "data saved in project folder or: " filepath))
+  )
+)
 
-(defn write-file2 []
-  (with-open [w (clojure.java.io/writer  "f:/w.txt" :append true)]
-    (.write w (str "hello" "world"))))
-
-(defn deserialize [filename]
-  (with-open [r (PushbackReader. (FileReader. filename))]
-    (read r)))
-
-(serialize ex1 "test.exception")
-
-(instance? java.io.Serializable ex1)
-
-(defn write-file
-  [except file]
-
-  (spit file "" :append false)
-  (with-open [out-data (.writeObject except (io/writer file))]
-     (.write out-data file)))
-
-(write-file ex1 "foo.bar")
-
-(.writeObject ex1 (io/writer "foo.bark"))
+(defn import-from-file
+  ""
+  [filepath]
+  (let [file-stream (java.io.FileInputStream. filepath)
+        obj-stream (java.io.ObjectInputStream. file-stream)
+        e (.readObject obj-stream)]
+    (.close file-stream)
+    (.close obj-stream)
+    e)
+  )
 
 
-
-
+(export-to-file ex2 (str path "foo.ser"))
+(import-from-file (str path "foo.ser"))
