@@ -12,25 +12,31 @@
 ;;;; A space for prototypes, examples, and experimental features.
 ;; NEVER refer to this file in other files.
 
-;***********************************************
-;*** examples of Clojure's try/catch system. ***
+;*****************************
+;*** comparing stacktraces ***
 
-;the clojuredocs canon example.
+(defn get-fns-in-stacktrace
+  "takes a parsed exception, returns a seq"
+  [trace]
+  (filter
+   (fn [ele]
+     (not (nil? ele)))
+   (map :fn (:trace-elems trace))))
 
-(expect "caught exception: Divide by zero"
-        (try
-          (/ 1 0)
-          (catch Exception e (str "caught exception: " (.getMessage e)))))
+(defn get-keyword-in-stacktrace
+  "takes a parsed exception, returns a seq"
+  [a-keyword trace]
+  (filter
+   (fn [ele]
+     (not (nil? ele)))
+   (map a-keyword (:trace-elems trace))))
 
-;My example.
-
-(expect "clojure.lang.Symbol cannot be cast to clojure.lang.IPersistentCollection"
-        (try
-          (conj 'a 3)
-          (catch Exception e (.getMessage e))))
+;(get-fns-in-stacktrace (stacktrace/parse-exception ex6))
+;(get-fns-in-stacktrace (stacktrace/parse-exception ex1))
+;(get-fns-in-stacktrace (stacktrace/parse-exception ex4))
 
 ;************************************
-;*** try/catch function prototype ***.
+;*** try/catch function prototype ***
 
 (defn run-and-catch
   "A function that takes quoted code and runs it, attempting to catch any exceptions it may throw. Returns the exeception or nil."
@@ -58,43 +64,15 @@
 
 (def ex3 (run-and-catch '(5)))
 
-(def st1 (stacktrace/parse-exception ex1))
+(def ex4 (run-and-catch '(def w 4 5)))
 
-(def st2 (stacktrace/parse-exception ex2))
+(def ex5 (run-and-catch '(defn foo (q) q)))
 
-(def st3 (stacktrace/parse-exception ex3))
+(def ex6 (run-and-catch '(count 6)))
 
-(def fst1 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st1))))
+(def st1 (stacktrace/parse-exception ex3))
 
-;(def fst2 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st2))))
-
-;(def fst3 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st3))))
-
-(def path "exceptions/")
-
-(defn export-to-file
-  ""
-  [e filepath]
-  (let [file-stream (java.io.FileOutputStream. filepath)
-        obj-stream (java.io.ObjectOutputStream. file-stream)
-        ]
-    (.writeObject obj-stream e)
-    (.close obj-stream)
-    (.close file-stream)
-    (println (str "data saved in project folder or: " filepath))
-  )
-)
-
-(defn import-from-file
-  ""
-  [filepath]
-  (let [file-stream (java.io.FileInputStream. filepath)
-        obj-stream (java.io.ObjectInputStream. file-stream)
-        e (.readObject obj-stream)]
-    (.close file-stream)
-    (.close obj-stream)
-    e)
-  )
+;(def fst1 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st1))))
 
 
-;(export-to-file ex2 (str path "classcast1.ser"))
+
