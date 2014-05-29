@@ -26,12 +26,17 @@
 ;; Graphics 
 ;; msg-obj will contain parts and styles and lengths 
 (defn show-error [msg-obj e]
+  (let [dummy 2
+					;msg-obj (:message-object exc-obj)
+	]
   (try
     (let ;; styles for formatting various portions of a message
-      [styles [[:arg :font "monospace" :bold true] [:reg] [:stack] [:err] [:type] [:causes]]
-       errormsg (styled-text :wrap-lines? true :text (get-all-text msg-obj) :styles styles)
-       stacktrace (text :multi-line? true :editable? false :rows 12 :text (format-stacktrace e))
-       d (dialog :title "Clojure Error",
+	[
+	 ;trace (:stacktrace exc-obj)
+	 styles [[:arg :font "monospace" :bold true] [:reg] [:stack] [:err] [:type] [:causes]]
+	 errormsg (styled-text :wrap-lines? true :text (get-all-text msg-obj) :styles styles)
+	 stacktrace (text :multi-line? true :editable? false :rows 12 :text (format-stacktrace e))
+	 d (dialog :title "Clojure Error",
                  :content (tabbed-panel :placement :bottom
                                         :overflow :scroll
                                         :tabs [{:title "Error"
@@ -58,4 +63,4 @@
         (throw e)))
     (catch java.awt.HeadlessException e
       ; If there is no GUI available on Linux, it simply throws a HeadlessException - print the erorr.
-      (println (get-all-text msg-obj)))))
+      (println (get-all-text msg-obj))))))
