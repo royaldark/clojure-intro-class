@@ -1,7 +1,10 @@
-(ns errors.exceptions (:import [java.io.FileInputStream]
-                               [java.io.ObjectInputStream]
-                               [java.io.FileOutputStream]
-                               [java.io.ObjectOutputStream]))
+(ns errors.exceptions
+  (:require [expectations :refer :all])
+  (:import [java.io.FileInputStream]
+           [java.io.ObjectInputStream]
+           [java.io.FileOutputStream]
+           [java.io.ObjectOutputStream]
+           [java.util.ArrayList]))
 
 ;### vars ###
 
@@ -22,7 +25,7 @@
 ;;The following two functions are dependent
 ;;on events occurring in chronological order.
 
-(defn- export-to-file
+(defn export-to-file
   "Uses Java's Serializable to write a (java) object to a file"
   [obj filepath]
   (let [file-stream (java.io.FileOutputStream. filepath)
@@ -34,7 +37,7 @@
     (println (str "data saved in project folder or: " filepath))
   ))
 
-(defn- import-from-file
+(defn import-from-file
   "Uses Java's Serializable to read a (java) object from a file"
   [filepath]
   (let [file-stream (java.io.FileInputStream. filepath)
@@ -42,17 +45,22 @@
         e (.readObject obj-stream)]
     (.close obj-stream)
     (.close file-stream)
-    e)  )
+    e))
 
-(defn write-objects-local
+(defn- write-objects-local
   "writes a java object to a file, creating it if it does not exist, in path (see errors.exceptions)"
   [object filename]
   (export-to-file object (str path filename)))
 
-(defn read-objects-local
+(defn- read-objects-local
   "reads a file in path (see errors.exceptions) as a java-object"
   [filename]
   (import-from-file (str path filename)))
 
-;(expect () (let [filename "testfile.silly"]
- ;            (read-objects-local ))
+(def java-arraylist (new java.util.ArrayList))
+
+(expect (.equals java-arraylist
+           (let [filename "testfile.silly"
+                 object java-arraylist]
+             (write-objects-local object filename)
+             (read-objects-local filename))))
