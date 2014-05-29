@@ -9,3 +9,5 @@ pom.xml
 .*.*.swp
 *.nrepl-port
 target/
+.lein-plugins
+.gitignore.swp
