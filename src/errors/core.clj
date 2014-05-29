@@ -2,8 +2,8 @@
   (:require [clj-stacktrace.core :as stacktrace])
   (:use [clojure.string :only [join]]
         [errors.dictionaries]
-	      [errors.errorgui]
-	      [errors.messageobj]
+	[errors.errorgui]
+	[errors.messageobj]
         [seesaw.core]))
 
 ;;(def ignore-nses #"(clojure|java)\..*")
@@ -22,16 +22,18 @@
   	  	  ((:make-preobj entry) (re-matches  (:match entry) message)) 
   	  	  (make-preobj-hashes message))))
 
-(defn filter-stacktrace [trace]
+(defn filter-stacktrace [exc]
   (filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %))))
-                        (:trace-elems trace)))
+                        (:trace-elems exc)))
 
+(defn trace->string [trace-elem]
+  (#(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") trace-elem))
 
 ;; All together:
 (defn prettify-exception [e]
-  (let [trace (stacktrace/parse-exception e)
-        filtered-trace (filter-stacktrace trace) 
-        errstrs (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") filtered-trace)]
+  (let [exc (stacktrace/parse-exception e)
+        filtered-trace (filter-stacktrace exc) 
+        errstrs (map trace->string filtered-trace)]
     (show-error (make-obj (concat (make-preobj-hashes error-prefix :err) (get-pretty-message e) 
     		    (make-preobj-hashes (str "\nSequence of function calls:\n" (join "\n" errstrs)) :causes)))
 		e)))
