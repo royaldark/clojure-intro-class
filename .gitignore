@@ -11,3 +11,4 @@ pom.xml
 target/
 .lein-plugins
 .gitignore.swp
+*.silly
