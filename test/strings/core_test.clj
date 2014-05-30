@@ -4,12 +4,11 @@
 
 ; testing for make-string
 (expect "hello world"
-  (make-string
-   '(\h \e \l \l \o \space \w \o \r \l \d)))
+  (make-string '(\h \e \l \l \o \space \w \o \r \l \d)))
 
 ; testing for index-of
 (expect 5
-        (index-of "emmahenryaaronelena" "e" 4))
+  (index-of "emmahenryaaronelena" "e" 4))
 (expect 0
   (index-of "emmahenryaaronelena" "e"))
 (expect -1

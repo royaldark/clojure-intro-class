@@ -8,12 +8,14 @@
 
 ;Emma Sax, Aaron Lemmon, Henry Fellows.
 
+;The following 13 functions were written by Emma Sax
+
 ;;; make-string: sequence of escaped characters -> string
 (defn make-string
-  "Takes a word as a sequence of escaped characters and turns
-  it into a string."
-  [word-as-sequence]
-  (apply str word-as-sequence))
+  "Takes a word as a sequence of escaped characters and returns
+  a string of the characters."
+  [sequence-of-escaped-characters]
+  (apply str sequence-of-escaped-characters))
 
 ;;; index-of: string, string, optional number -> number
 (defn index-of
@@ -38,14 +40,14 @@
 
 ;;; append: any amount of strings -> string
 (defn append
-  "Takes any number of strings and appends them together, returns an empty string
-  if there are no strings given or if the string(s) given are nil."
+  "Takes any number of strings and returns a string which appends them together,
+  returns an empty strings if there are no strings given or if the string(s) given are nil."
   [& strings]
   (apply str strings))
 
 ;;; substring: string, number, optional number -> string
 (defn substring
-  "Takes a string and 1-2 index numbers and returns a substring from either the
+  "Takes a string and one or two indices and returns a substring from either the
   given index to the end of the string or from the first index (inclusive) to
   the second index (exclusive), throws IndexOutOfBoundsException if the first
   index is negative, either index is larger than the length of hte string, or if
@@ -107,15 +109,6 @@
 
 ;;; reverse-string: string -> string
 (defn reverse-string
-  "Takes a string and reverses all of the characters."
+  "Takes a string and returns a new string with the charactes reversed."
   [string]
   (apply str (reverse string)))
-
-
-
-
-
-
-
-
-
