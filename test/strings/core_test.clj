@@ -9,6 +9,12 @@
 ; testing for make-string
 (expect "hello world" (make-string '(\h \e \l \l \o \space \w \o \r \l \d)))
 (expect ""(make-string '()))
+(expect "123" (make-string [1 2 3]))
+(expect "[1][2]" (make-string [[1] [2]]))
+(expect "true" (make-string (list (odd? 3))))
+;;; This test fails, and we either need to make it pass, or rethink what
+;;; this function is supposed to take -- Elena
+;(expect "hi" (make-string "hi"))
 
 ; testing for index-of
 (expect 5 (index-of "emmahenryaaronelena" "e" 4))
@@ -26,6 +32,7 @@
 
 ; testing for append
 (expect "" (append nil))
+(expect "" (append ""))
 (expect "" (append))
 (expect "abc" (append "abc"))
 (expect "abcdef" (append "abc" "def"))
