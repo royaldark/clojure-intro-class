@@ -6,7 +6,7 @@
 ;; 1. remove references to contracts, trammel (from project.clj as well) - Done
 ;; 2. modify our type-checking functions to record the type (or the arg? or the message?) - Done
 ;; 3. modify error-handling for asserts to check the recorded info - Done
-;; 4. rewrite messages similar to the standard ones (perhaps abstract over?) - maybe? 
+;; 4. rewrite messages similar to the standard ones (perhaps abstract over?) - maybe?
 ;; 5. don't forget to clear the queue at the end (post-cond? or the end of pre-cond? or finally?) --
 ;;    not in post-cond since if we got to post-cond, there were no errors. Perhaps after we
 ;;    process the queue? We aren't going to handle nested errors. finally may be the place - Done
@@ -15,49 +15,49 @@
 ;; 8. Change the messsage for only one arg
 ;; 9. Handle anonymous functions - Done?
 ;; 10. Add a function name to the error message - Done
-;; inf. why didn't I think of this earlier? 
+;; inf. why didn't I think of this earlier?
 
 ;; a global hashmap of recorded types/messages
 (def seen-objects (atom {}))
 
-(defn add-to-seen [binds] 
+(defn add-to-seen [binds]
   "adds bindings to seen objects"
-  (swap! seen-objects merge binds)) ; merge overwrites the same fields but adds new ones 
+  (swap! seen-objects merge binds)) ; merge overwrites the same fields but adds new ones
 
-(defn empty-seen [] 
+(defn empty-seen []
   "removes all bindings from seen objects"
   (swap! seen-objects {}))
 
-;; Functions to check pre-conditions and record the offenders for 
+;; Functions to check pre-conditions and record the offenders for
 ;; error processing
 (defn check-if-function? [fname x]
   (if (fn? x) true
-  	      (do (add-to-seen {:check "function" 
+  	      (do (add-to-seen {:check "function"
   	      		        :class (class x)
   	      		        :value x
   	      		        :fname fname})
-  	      	   false)))   
+  	      	   false)))
 
 
 (defn check-if-seqable? [fname x & [n]]
   "returns true if x is seqable and false otherwise, sets data
-  in seen-objects. If the second argument is present, it's added 
+  in seen-objects. If the second argument is present, it's added
   to the seen-objects as the number of the argument"
   (if (seqable? x) true
-  	      (do (add-to-seen {:check "sequence" 
+  	      (do (add-to-seen {:check "sequence"
   	      		        :class (class x)
   	      		        :value x
   	      		        :fname fname})
   	      	   (if n (add-to-seen {:arg-num n}))
-  	      	   false)))  
+  	      	   false)))
 
 (defn check-if-number? [fname x]
   (if (number? x) true
-  	      (do (add-to-seen {:check "number" 
+  	      (do (add-to-seen {:check "number"
   	      		        :class (class x)
   	      		        :value x
   	      		        :fname fname})
-  	      	   false)))  
+  	      	   false)))
 
 ;; should pass the strating arg number: it's different for different functions
 (defn check-if-seqables? [fname arguments start]
@@ -77,8 +77,8 @@
             false)
         (recur (rest args) (inc n))))))
 
-;; Including the standard Clojure documentation to make sure that asserts 
-;; and cases are consistent with the standard Clojure. 
+;; Including the standard Clojure documentation to make sure that asserts
+;; and cases are consistent with the standard Clojure.
 
 ;; (map f coll)
 ;; (map f c1 c2)
@@ -113,7 +113,7 @@
   {:pre [(check-if-seqable? "conj" argument1)]}
   (apply clojure.core/conj argument1 args))
 
-;; 
+;;
 (defn into [argument1 argument2]
    {:pre [(check-if-seqable? "into" argument1) (check-if-seqable? "into" argument2)]}
    (clojure.core/into argument1 argument2))
@@ -133,8 +133,8 @@
    {:pre [(check-if-function? "reduce" argument1) (if (= (count args) 1)
    		   			     (check-if-seqable? "reduce" (first args) 2)
    		   			     (check-if-seqable? "reduce" (second args) 3))]}
-   (apply clojure.core/reduce argument1 args))  
-                                               
+   (apply clojure.core/reduce argument1 args))
+
 
 
 ;; (nth coll index)
@@ -143,7 +143,7 @@
 ;; bounds, nth throws an exception unless not-found is supplied. nth
 ;; also works for strings, Java arrays, regex Matchers and Lists, and,
 ;; in O(n) time, for sequences.
-(defn nth [argument1 argument2 & args] ;; there may be an optional 3rd arg, no restrictions 
+(defn nth [argument1 argument2 & args] ;; there may be an optional 3rd arg, no restrictions
    {:pre [(check-if-seqable? "nth" argument1) (check-if-number? "nth" argument2)]}
    (apply clojure.core/nth argument1 argument2 args))
 
@@ -159,7 +159,7 @@
 ;; Returns the result of applying concat to the result of applying map
 ;; to f and colls. Thus function f should return a collection.
 ;; !!!! TODO: add a condition for the number of args to mapcat !!!!
-;; (the error message refers to the number of args to map) 
+;; (the error message refers to the number of args to map)
 (defn mapcat [argument1 & args]
   {:pre [(check-if-function? "mapcat" argument1) (check-if-seqables? "mapcat" args 2)]}
   (apply clojure.core/mapcat argument1 args))
@@ -212,7 +212,7 @@
 (defn >= [& args]
    {:pre [(check-if-numbers? ">=" args 1)]}
    (apply clojure.core/>= args))
-		
+
 ;;;;; Functions for type-independent sequence handling ;;;;;;
 
 (defn add-first [argument1 argument2]
@@ -230,9 +230,11 @@
 		(not (every? #(not= x %) values))))
 
 (def contains-key? contains?)
-		
-;; more content tests 
-(defn any? [pred coll] (not (not-any? pred coll))) ; yes, I know :-(
-(defn some? [pred coll] (not (not-any? pred coll)))
 
-;; String functions
+;; more content tests
+(defn any? [pred coll]
+  (not (not-any? pred coll)))
+    ; yes, I know :-(
+(defn some? [pred coll]
+  (not (not-any? pred coll)))
+; is defining both some? and any? a little repetitive?
