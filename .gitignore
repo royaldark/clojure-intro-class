@@ -12,3 +12,4 @@ target/
 .lein-plugins
 .gitignore.swp
 *.silly
+.lein-repl-history

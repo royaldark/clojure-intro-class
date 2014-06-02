@@ -115,6 +115,20 @@
 (expect "" (trim-string "   "))
 (expect "d   s  i" (trim-string "d   s  i   "))
 
+; testing for triml-string
+(expect "k   " (triml-string "     k   "))
+(expect "" (triml-string "   "))
+(expect "d   s  i   " (triml-string "d   s  i   "))
+
+; testing for trimr-string
+(expect "     k" (trimr-string "     k   "))
+(expect "" (trimr-string "   "))
+(expect "d   s  i" (trimr-string "d   s  i   "))
+
+; testing for trim-newline-string
+(expect "testing " (trim-newline-string "testing \n"))
+(expect "testing again..." (trim-newline-string "testing again...\r"))
+
 ; testing for string-blank?
 (expect true (string-blank? nil))
 (expect true (string-blank? false))

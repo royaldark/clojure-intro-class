@@ -10,6 +10,12 @@
 
 ;Author: Emma Sax
 
+;; TODO: escape
+;;       re-quote-replacement
+
+;;;; Be careful, when a function returns a character as a string, it will NOT pass
+;;;; char?, as in (char? %) would return false however (string? %) would return true
+
 ;;; make-string: sequence of escaped characters -> string
 (defn make-string
   "Takes a word as a sequence of escaped characters and returns
@@ -239,6 +245,33 @@
   {:pre [(string? string)]
    :post [(string? %)]}
   (clojure.string/trim string))
+
+;;; triml-string: string -> string
+(defn triml-string
+  "Takes a string and returns a string with whitespace from only the left end of the
+  string removed."
+  [string]
+  {:pre [(string? string)]
+   :post [(string? %)]}
+  (clojure.string/triml string))
+
+;;; trimr-string: string -> string
+(defn trimr-string
+  "Takes a string and returns a string with whitespace from only the right end of the
+  string removed."
+  [string]
+  {:pre [(string? string)]
+   :post [(string? %)]}
+  (clojure.string/trimr string))
+
+;;; trim-newline-string: string -> string
+(defn trim-newline-string
+  "Takes a string and returns a new stirng with all trailing newline \n or return
+  \r characters removed."
+  [string]
+  {:pre [(string? string)]
+   :post [(string? %)]}
+  (clojure.string/trim-newline string))
 
 ;;; string-blank?: string -> boolean
 (defn string-blank?
