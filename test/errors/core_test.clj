@@ -3,6 +3,7 @@
 	    [errors.messageobj :refer :all]
 	    [errors.exceptionobj :refer :all]
 	    [errors.exceptions :refer :all]
+	    [errors.core :refer :all]
 	    [clj-stacktrace.core :as stacktrace]))
 
 ;;1. Functions
@@ -213,3 +214,11 @@
 {:method "main", :class "clojure.main", :java true, :file "main.java", :line 37}))
 
 (expect the-trace (:trace-elems classcast-exc-parsed))
+
+;*** Testing trace->string ****
+
+;; copied the matching string for easier testing:
+;(#(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")
+(expect "\tautoexpect.runner/run-tests (runner.clj line 50)"
+	(trace-elem->string {:anon-fn true, :fn "run-tests", :ns "autoexpect.runner", :clojure true,
+			:file "runner.clj", :line 50}))
