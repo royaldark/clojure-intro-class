@@ -4,6 +4,7 @@
 	    [errors.exceptionobj :refer :all]
 	    [errors.exceptions :refer :all]
 	    [errors.core :refer :all]
+	    [errors.errorgui :refer :all]
 	    [clj-stacktrace.core :as stacktrace]))
 
 ;;1. Functions

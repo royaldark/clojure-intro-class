@@ -5,12 +5,12 @@
 (defn exception->exceptionobj
   ""
   [e]
-  (let [eclass nil
+  (let [e-class nil
 	msg-obj nil
         st nil
         fst nil
         hints nil]
-    {:exception-class eclass
+    {:exception-class e-class
      :message-object msg-obj ;; without the stack trace
      :stacktrace st
      :filtered-stacktrace fst

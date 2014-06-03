@@ -15,6 +15,9 @@
     (.printStackTrace e (java.io.PrintWriter. writer))
     (.toString writer)))
 
+(defn trace-elem->string [trace-elem]
+  (#(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") trace-elem))
+
 (defn- display-msg-object! [msg-obj msg-area] 
   "add text and styles from msg-obj to msg-area"
   (doall (map #(style-text! msg-area 
@@ -23,25 +26,27 @@
                             (:length %)) 
               msg-obj)))
 
+
+
 ;; Graphics 
 ;; msg-obj will contain parts and styles and lengths 
-(defn show-error [msg-obj e]
-  (let [dummy 2
-					;msg-obj (:message-object exc-obj)
-	]
+(defn display-error [exc-obj]
+  (let [msg-obj  (:message-object exc-obj)]
   (try
     (let ;; styles for formatting various portions of a message
 	[
-	 ;trace (:stacktrace exc-obj)
+	 trace (:stack-trace exc-obj)
 	 styles [[:arg :font "monospace" :bold true] [:reg] [:stack] [:err] [:type] [:causes]]
-	 errormsg (styled-text :wrap-lines? true :text (get-all-text msg-obj) :styles styles)
-	 stacktrace (text :multi-line? true :editable? false :rows 12 :text (format-stacktrace e))
+	 errormsg (styled-text :wrap-lines? true :text (get-all-text msg-obj)
+			       :styles styles)
+	 stacktrace (text :multi-line? true :editable? false :rows 12 :text (trace-elem->string trace))
 	 d (dialog :title "Clojure Error",
                  :content (tabbed-panel :placement :bottom
                                         :overflow :scroll
                                         :tabs [{:title "Error"
                                                 :tip "The simplified error message"
-                                                :content (do (display-msg-object! msg-obj errormsg) (scrollable errormsg))}
+                                                :content (do (display-msg-object! msg-obj errormsg)
+							     (scrollable errormsg))}
                                                {:title "Stacktrace"
                                                 :tip "The full Java stacktrace of the error"
                                                 :content (scrollable stacktrace)}])
@@ -64,3 +69,4 @@
     (catch java.awt.HeadlessException e
       ; If there is no GUI available on Linux, it simply throws a HeadlessException - print the erorr.
       (println (get-all-text msg-obj))))))
+
