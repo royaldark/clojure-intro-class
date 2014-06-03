@@ -90,7 +90,7 @@
 (expect (string? (append "abc" "def")))
 (expect (string? (append "abc" "def" "ghi")))
 (expect (string? (append "")))
-(expect(string? (append "abc" "def" nil)))
+(expect (string? (append "abc" "def" nil)))
 (expect (string? (append "abc" 123)))
 (expect (string? (append "abc" 123 \0 nil [1 3 4])))
 
