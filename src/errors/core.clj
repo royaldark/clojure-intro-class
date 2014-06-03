@@ -1,6 +1,6 @@
 (ns errors.core
   (:require [clj-stacktrace.core :as stacktrace])
-  (:use [clojure.string :only [join]]
+  (:use 
         [errors.dictionaries]
 	[errors.errorgui]
 	[errors.messageobj]

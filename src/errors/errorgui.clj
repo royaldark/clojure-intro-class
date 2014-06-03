@@ -1,5 +1,6 @@
 (ns errors.errorgui
   (:use [seesaw.core]
+	[clojure.string :only [join]]
   	[errors.messageobj]))
 
 (def error-prefix "ERROR: ")
@@ -18,6 +19,9 @@
 (defn trace-elem->string [trace-elem]
   (#(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") trace-elem))
 
+(defn trace->string [trace-elems]
+  (map trace-elem->string trace-elems))
+
 (defn- display-msg-object! [msg-obj msg-area] 
   "add text and styles from msg-obj to msg-area"
   (doall (map #(style-text! msg-area 
@@ -35,11 +39,12 @@
   (try
     (let ;; styles for formatting various portions of a message
 	[
-	 trace (:stack-trace exc-obj)
+	 trace (:stacktrace exc-obj)
 	 styles [[:arg :font "monospace" :bold true] [:reg] [:stack] [:err] [:type] [:causes]]
 	 errormsg (styled-text :wrap-lines? true :text (get-all-text msg-obj)
 			       :styles styles)
-	 stacktrace (text :multi-line? true :editable? false :rows 12 :text (trace-elem->string trace))
+	 stacktrace (text :multi-line? true :editable? false :rows 12 :text
+			  (join "\n" (trace->string trace)))
 	 d (dialog :title "Clojure Error",
                  :content (tabbed-panel :placement :bottom
                                         :overflow :scroll
@@ -51,6 +56,7 @@
                                                 :tip "The full Java stacktrace of the error"
                                                 :content (scrollable stacktrace)}])
                  )]
+      (println exc-obj) ; debug print
       (invoke-now
         (scroll! errormsg :to :top) ;; Scrollboxes default to being scrolled to the bottom - not what we want
         (scroll! stacktrace :to :top)
