@@ -1,9 +1,8 @@
 (ns experimental.core_test
   (:require [clj-stacktrace.core :as stacktrace]
             [expectations :refer :all]
-            [errors.messageobj :refer :all]
-            [errors.core :refer :all]
-            [clojure.java.io :as io])
+            [strings.core :refer :all]
+            [errors.core-test :as errors])
   (:import [java.io.FileInputStream]
            [java.io.ObjectInputStream]
            [java.io.FileOutputStream]
@@ -16,49 +15,39 @@
 ;*** comparing stacktraces ***
 
 (defn get-fns-in-stacktrace
-  "takes a parsed exception, returns a seq"
+  "gets all of the functions mentioned in a parsed stacktrace"
   [trace]
-  (filter
-   (fn [ele]
-     (not (nil? ele)))
-   (map :fn (:trace-elems trace))))
+  (get-keyword-but-not-x-in-stacktrace
+   :fn
+   (fn [ele] (not (strings.core/string-blank? (re-matches #"eval.*" ele))))
+   trace))
 
 (defn get-keyword-in-stacktrace
-  "takes a parsed exception, returns a seq"
+  "gets all of the functions mentioned in a parsed stacktrace"
   [a-keyword trace]
   (filter
    (fn [ele]
      (not (nil? ele)))
    (map a-keyword (:trace-elems trace))))
 
-;(get-fns-in-stacktrace (stacktrace/parse-exception ex6))
+(defn get-keyword-but-not-x-in-stacktrace
+  "Don't actually use this - wrap it in a helper function. Gets all the values of a keyword mentioned in a parsed stacktrace, except those that the predicate returns true fo  "
+  [a-keyword pred trace]
+  (filter
+   (fn [ele]
+     (not (or (nil? ele)
+              (pred ele))))
+   (map (a-keyword (:trace-elems trace)))))
+
+;; expect a k/v pair in a map.
+;expect {:foo 1} (in {:foo 1 :cat 4}))
+
+(get-fns-in-stacktrace (stacktrace/parse-exception ex1))
 ;(get-fns-in-stacktrace (stacktrace/parse-exception ex1))
 ;(get-fns-in-stacktrace (stacktrace/parse-exception ex4))
 
 ;************************************
-;*** try/catch function prototype ***
-
-(defn run-and-catch
-  "A function that takes quoted code and runs it, attempting to catch any exceptions it may throw. Returns the exeception or nil."
-  [code] (try
-             (eval code)
-             (catch Exception e e)))
-
-;a helper function to cleanly test the above.
-(defn- exception->string
-  "Converts exceptions to strings, returning a string or the original e (if it is not an exception)"
-  [e] (if (instance? Exception e)
-                                (.getMessage e)
-                                e))
-
-(expect "java.lang.Long cannot be cast to clojure.lang.IFn"
-        (exception->string (run-and-catch '(1 3))))
-
-(expect 3
-        (exception->string (run-and-catch '(+ 1 2))))
-
-;************************************
-(def ex1 (run-and-catch '(1)))
+(def ex1 (error/run-and-catch '(1)))
 
 (def ex2 (run-and-catch '(+ 2 "pie")))
 

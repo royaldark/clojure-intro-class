@@ -1,29 +1,32 @@
 (ns errors.exceptions
-  (:require [expectations :refer :all])
+  (:require [expectations :refer :all]
+            [clj-stacktrace.core :as stacktrace])
   (:import [java.io.FileInputStream]
            [java.io.ObjectInputStream]
            [java.io.FileOutputStream]
            [java.io.ObjectOutputStream]
            [java.util.ArrayList]))
 
-;### vars ###
+;;; INDEX ;;;
 
+;1. Writing/Reading to file
+;;1.1 functions
+;;1.2 tests
+;2. Comparing Stacktraces
+
+;################################
+;## 1. Writing/Reading to file ##
+;################################
+
+;## global vars ##
 (def path "exceptions/")
 
-;##########
+; 1.1 : functions
+
 ;## NOTE ##
-;##########
-
-;definition of 'let'
-;(let [bindings...] exprs..)
-
-;;The second part of let is a series of expressions
-;;that evaluate in order, returning the last expression.
-
+;;The second part of let is a series of expressions that evaluate in /order/, returning the last expression.
 ;;This is Important:
-
-;;The following two functions are dependent
-;;on events occurring in chronological order.
+;;The following two functions are dependent on events occurring in chronological order.
 
 (defn export-to-file
   "Uses Java's Serializable to write a (java) object to a file"
@@ -53,11 +56,11 @@
   (export-to-file object (str path filename)))
 
 (defn- read-objects-local
-  "reads a file in path (see errors.exceptions) as a java-object"
+  "reads a file in path (see errors.exceptions) as a java object"
   [filename]
   (import-from-file (str path filename)))
 
-;*** testing reading and writing to file ***
+; 1.2 : testing reading/writing to file
 
 (def java-arraylist (new java.util.ArrayList 5))
 
@@ -66,3 +69,11 @@
                  object java-arraylist]
              (write-objects-local object filename)
              (read-objects-local filename))))
+
+
+;###########################
+;## Comparing Stacktraces ##
+;###########################
+
+
+
