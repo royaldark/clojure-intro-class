@@ -21,24 +21,7 @@
 
 (defn ignore-stacktrace [trace1 trace2] true)
 
-(defn run-and-catch
-  "A function that takes quoted code and runs it, attempting to catch any exceptions it may throw. Returns the exeception or nil."
-  [code] (try
-             (eval code)
-             (catch Exception e e)))
 
-(defn exception->string
-  "Converts exceptions to strings, returning a string or the original e if it is not an exception"
-  [e] (if (instance? Exception e)
-                                (.getMessage e)
-                                e))
-;; Testing the above
-
-(expect "java.lang.Long cannot be cast to clojure.lang.IFn"
-        (exception->string (run-and-catch '(1 3))))
-
-(expect 3
-        (exception->string (run-and-catch '(+ 1 2))))
 
 ;###############################
 ;### 2. Prebuilt Exceptions ####
