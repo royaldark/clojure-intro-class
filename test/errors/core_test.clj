@@ -226,8 +226,6 @@
 {:method "main", :class "clojure.main", :java true, :file "main.java", :line 37}))
 
 (expect the-trace (:trace-elems classcast-exc-parsed))
-<<<<<<< HEAD
-=======
 
 ;*** Testing trace->string ****
 
@@ -236,4 +234,3 @@
 (expect "\tautoexpect.runner/run-tests (runner.clj line 50)"
 	(trace-elem->string {:anon-fn true, :fn "run-tests", :ns "autoexpect.runner", :clojure true,
 			:file "runner.clj", :line 50}))
->>>>>>> d2c429b1e8a57e86ae563665a2ea932c00bb817e
