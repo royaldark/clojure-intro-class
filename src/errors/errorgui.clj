@@ -17,7 +17,13 @@
     (.toString writer)))
 
 (defn trace-elem->string [trace-elem]
-  (#(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")") trace-elem))
+  (let [ns (:ns trace-elem)
+	ns-not-nil (if ns ns "clojure.lang")
+	fn (:fn trace-elem)
+	fn-or-method (if fn fn (:method trace-elem))
+	file (:file trace-elem)
+	line (:line trace-elem)]
+    (str "\t" ns-not-nil "/" fn " (" file " line " line ")")))
 
 (defn trace->string [trace-elems]
   (map trace-elem->string trace-elems))

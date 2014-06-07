@@ -216,4 +216,10 @@
 ;(#(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")
 (expect "\tautoexpect.runner/run-tests (runner.clj line 50)"
 	(trace-elem->string {:anon-fn true, :fn "run-tests", :ns "autoexpect.runner", :clojure true,
-			:file "runner.clj", :line 50}))
+			     :file "runner.clj", :line 50}))
+
+; this is just to see what the stacktrace looks like, and it is pretty horrific
+;(expect "" (format-stacktrace classcast-exc))
+
+; also just a placeholder for now:
+;(expect "" (trace->string (:trace-elems classcast-exc-parsed)))
