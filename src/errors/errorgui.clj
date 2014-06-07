@@ -16,10 +16,14 @@
     (.printStackTrace e (java.io.PrintWriter. writer))
     (.toString writer)))
 
-; might want to handle java methods differently from clojure
 (defn trace-elem->string [trace-elem]
+  "Takes a stack trace element from a parsed exception
+   and converts it into a string to be displayed"
+  ; might need to change to separate handling for
+  ; java and coljure elements and add
+  ; handling for anonymous functions
   (let [ns (:ns trace-elem)
-	ns-not-nil (if ns ns "clojure.lang")
+	ns-not-nil (if ns ns (:class trace-elem))
 	fn (:fn trace-elem)
 	fn-or-method (if fn fn (:method trace-elem))
 	file (:file trace-elem)
@@ -27,6 +31,8 @@
     (str "\t" ns-not-nil "/" fn-or-method " (" file " line " line ")")))
 
 (defn trace->string [trace-elems]
+  "Takes a stack trace from a parsed exception
+   and converts it into a string to be displayed"
   (map trace-elem->string trace-elems))
 
 (defn- display-msg-object! [msg-obj msg-area] 

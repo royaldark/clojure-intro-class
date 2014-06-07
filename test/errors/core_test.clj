@@ -217,6 +217,8 @@
 (expect "\tautoexpect.runner/run-tests (runner.clj line 50)"
 	(trace-elem->string {:anon-fn true, :fn "run-tests", :ns "autoexpect.runner", :clojure true,
 			     :file "runner.clj", :line 50}))
+(expect "\tclojure.lang.Numbers/add (Numbers.java line 126)"
+	(trace-elem->string  (first the-trace)))
 
 ; this is just to see what the stacktrace looks like, and it is pretty horrific
 ;(expect "" (format-stacktrace classcast-exc))
