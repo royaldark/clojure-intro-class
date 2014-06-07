@@ -16,6 +16,7 @@
     (.printStackTrace e (java.io.PrintWriter. writer))
     (.toString writer)))
 
+; might want to handle java methods differently from clojure
 (defn trace-elem->string [trace-elem]
   (let [ns (:ns trace-elem)
 	ns-not-nil (if ns ns "clojure.lang")
@@ -23,7 +24,7 @@
 	fn-or-method (if fn fn (:method trace-elem))
 	file (:file trace-elem)
 	line (:line trace-elem)]
-    (str "\t" ns-not-nil "/" fn " (" file " line " line ")")))
+    (str "\t" ns-not-nil "/" fn-or-method " (" file " line " line ")")))
 
 (defn trace->string [trace-elems]
   (map trace-elem->string trace-elems))
