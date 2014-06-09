@@ -108,7 +108,7 @@
 ; 3.1 functions
 
 (defn get-keyword-in-stacktrace
-  "gets all of the keywords mentioned in a parsed stacktrace"
+  "Gets all of the keywords mentioned in a parsed stacktrace"
   [a-keyword trace]
   (filter
    (fn [ele]
@@ -126,12 +126,19 @@
 
 ;; an example of what get-keyword-but-not-x-in-stacktrace
 (defn get-fns-in-stacktrace
-  "gets all of the functions mentioned in a parsed stacktrace"
+  "Gets all of the functions mentioned in a parsed stacktrace"
   [trace]
   (get-keyword-but-not-x-in-stacktrace
    :fn
    (fn [ele] (not (clojure.string/blank? (re-matches #"eval\d.*" ele))))
    trace))
+
+
+(defn get-eval-nums
+  "Gets all evaulation numbers - a random number (confirm?) that is attached to all evals in the stacktrace. Used to confirm that two stacktraces came from the same exception."
+  [trace]
+  (map (fn [ele] ele)
+       (get-keyword-in-stacktrace :fn trace))
 
 ; 3.2 tests
 
