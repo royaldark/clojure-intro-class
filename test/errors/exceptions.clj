@@ -138,7 +138,7 @@
   "Gets all evaulation numbers - a random number (confirm?) that is attached to all evals in the stacktrace. Used to confirm that two stacktraces came from the same exception."
   [trace]
   (map (fn [ele] ele)
-       (get-keyword-in-stacktrace :fn trace))
+       (get-keyword-in-stacktrace :fn trace)))
 
 ; 3.2 tests
 

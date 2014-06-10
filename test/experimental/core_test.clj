@@ -27,6 +27,3 @@
 (def st1 (stacktrace/parse-exception ex3))
 
 ;(def fst1 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st1))))
-
-
-

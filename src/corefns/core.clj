@@ -33,9 +33,9 @@
 (defn check-if-function? [fname x]
   (if (fn? x) true
   	      (do (add-to-seen {:check "function"
-  	      		        :class (class x)
-  	      		        :value x
-  	      		        :fname fname})
+  	      		              :class (class x)
+  	      		              :value x
+  	      		              :fname fname})
   	      	   false)))
 
 
@@ -45,19 +45,19 @@
   to the seen-objects as the number of the argument"
   (if (seqable? x) true
   	      (do (add-to-seen {:check "sequence"
-  	      		        :class (class x)
-  	      		        :value x
-  	      		        :fname fname})
-  	      	   (if n (add-to-seen {:arg-num n}))
-  	      	   false)))
+  	      		              :class (class x)
+  	      		              :value x
+  	      		              :fname fname})
+  	      	  (if n (add-to-seen {:arg-num n}))
+  	      	  false)))
 
 (defn check-if-number? [fname x]
   (if (number? x) true
   	      (do (add-to-seen {:check "number"
-  	      		        :class (class x)
-  	      		        :value x
-  	      		        :fname fname})
-  	      	   false)))
+  	      		              :class (class x)
+  	      		              :value x
+  	      		              :fname fname})
+  	      	  false)))
 
 ;; should pass the strating arg number: it's different for different functions
 (defn check-if-seqables? [fname arguments start]
@@ -92,6 +92,7 @@
 (defn map [argument1 & args]
  {:pre [(check-if-function? "map" argument1) (check-if-seqables? "map" args 2)]}
   (apply clojure.core/map argument1 args))
+(map "jimmy" [1 2 3])
 
 ;; count, into, conj, nth, drop, take, concat, filter, reduce
 ;; Maps and the like: key, val, keys, vals - careful with pre-conds for key!
@@ -191,8 +192,8 @@
 ;; Returns non-nil if nums are in monotonically non-decreasing order,
 ;; otherwise false.
 (defn <= [& args]
-   {:pre [(check-if-numbers? "<=" args 1)]}
-   (apply clojure.core/<= args))
+  {:pre [(check-if-numbers? "<=" args 1)]}
+  (apply clojure.core/<= args))
 
 
 ;;    (> x)
