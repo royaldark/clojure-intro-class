@@ -16,8 +16,8 @@
 ;|-2.1 functions
 ;|-2.2 tests
 ;3. Comparing Stacktraces
-;|-2.1 functions
-;|-2.2 tests
+;|-3.1 functions
+;|-3.2 tests
 
 ;################################
 ;## 1. Writing/Reading to file ##
@@ -55,12 +55,12 @@
     (.close file-stream)
     e))
 
-(defn- write-objects-local
+(defn write-objects-local
   "writes a java object to a file, creating it if it does not exist, in path (see errors.exceptions)"
   [object filename]
   (export-to-file object (str path filename)))
 
-(defn- read-objects-local
+(defn read-objects-local
   "reads a file in path (see errors.exceptions) as a java object"
   [filename]
   (import-from-file (str path filename)))

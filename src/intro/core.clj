@@ -1,6 +1,7 @@
 (ns intro.core
   (:use [errors.core]
-        [seesaw.core]))
+        [seesaw.core]
+        [errors.exceptions :refer :all]))
 (refer 'corefns.core)
         ;[turtle.extended-turtle]))
 
@@ -520,7 +521,7 @@
     ;(test-asserts)
     ;(test-shuffle)
     ;(test-drop-while)
-    (test-asserts-multiple-args)
+    ;(test-asserts-multiple-args)
     ;(test-asserts-multiple-args-map)
     ;(test-filter)
     ;(test-reduce)
@@ -536,10 +537,12 @@
    ; 	    (prob135 38 + 48 - 2 / 2))
    ; 	    (prob128 "DQ")
    ; 	    (prob50 [1 :a 2 :b 3 :c])
-    ;	    (prob50 [:a "foo"  "bar" :b])
-    ;(prob120 19)
+   ;	    (prob50 [:a "foo"  "bar" :b])
+   ;(prob120 19)
     ;(prob120 (range 10))
     ;(prob120 (range 100))
     ;(prob120 (range 1000))
     ;(test-cond)
+    (def classcast-exc (import-from-file (str path "classcast1.ser")))
+    (throw classcast-exc)
     (catch Throwable e (println (prettify-exception e)))))
