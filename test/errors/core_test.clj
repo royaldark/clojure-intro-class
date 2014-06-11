@@ -5,15 +5,18 @@
 	    [errors.exceptions :refer :all]
 	    [errors.core :refer :all]
 	    [errors.errorgui :refer :all]
-	    [clj-stacktrace.core :as stacktrace]))
+	    [clj-stacktrace.core :as stacktrace]
+      [errors.dictionaries :refer :all]))
 
 ;;; INDEX ;;;
+
 
 ;;1. Functions
 ;;2. Prebuilt Exceptions
 ;;3. errors.messageobj
 ;;4. errors.exceptionobj
 ;;5. errors.core, errorgui tests
+;;6. Testing basics of dictionaries.clj
 
 ;####################
 ;### 1. Functions ###
@@ -67,7 +70,7 @@
 
 (expect (make-preobj-hashes "Hi there" "Hello")
 	[{:msg "Hi there" :stylekey :reg :length 8}
-	 {:msg "Hello" :stylekey :reg :length 5}])
+   {:msg "Hello" :stylekey :reg :length 5}])
 
 (expect (make-preobj-hashes "Hi there" :arg "Hello" :blah)
 	[{:msg "Hi there" :stylekey :arg :length 8}
@@ -215,5 +218,19 @@
 ;; copied the matching string for easier testing:
 ;(#(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")
 (expect "\tautoexpect.runner/run-tests (runner.clj line 50)"
-	(trace-elem->string {:anon-fn true, :fn "run-tests", :ns "autoexpect.runner", :clojure true,
-			:file "runner.clj", :line 50}))
+	(trace-elem->string {:anon-fn true, :fn "run-tests", :ns "autoexpect.runner", :clojure true,			:file "runner.clj", :line 50}))
+
+
+;#############################################
+;### 6. Testing basics of dictionaries.clj ###
+;#############################################
+
+;; type-dictionary tests
+(expect "a number" (type-dictionary :java.lang.Float))
+(expect "a regular expression matcher" (type-dictionary :java.util.regex.Matcher))
+
+(expect "a vector" (second (general-types 1)))
+
+;; testing for best-approximation
+(expect "unrecognized type atom" (best-approximation 'atom))
+(expect "a map" (best-approximation 'clojure.lang.IPersistentMap))
