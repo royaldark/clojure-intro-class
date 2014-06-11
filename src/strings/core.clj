@@ -111,8 +111,7 @@
   "Takes an index and a string and returns a new string which drops all of
   the characters from 0-index (inclusive)."
   [index string]
-  {:pre [(number? index) (string? string)]
-   :post [(string? %)]}
+  {:pre [(number? index) (string? string)]}
   (apply str (drop index string)))
 
 ;;; take-from-string: number, string -> string
@@ -120,8 +119,7 @@
   "Takes a string and an index and returns a new string with only the characters
   from 0-index (exclusive)."
   [index string]
-  {:pre [(number? index) (string? string)]
-   :post [(string? %)]}
+  {:pre [(number? index) (string? string)]}
   (apply str (take index string)))
 
 ;#########################################################################
