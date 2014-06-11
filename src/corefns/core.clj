@@ -92,7 +92,6 @@
 (defn map [argument1 & args]
  {:pre [(check-if-function? "map" argument1) (check-if-seqables? "map" args 2)]}
   (apply clojure.core/map argument1 args))
-(map "jimmy" [1 2 3])
 
 ;; count, into, conj, nth, drop, take, concat, filter, reduce
 ;; Maps and the like: key, val, keys, vals - careful with pre-conds for key!
