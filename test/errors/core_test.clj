@@ -255,7 +255,30 @@
 (expect "_testingRocks_" (lookup-funct-name '_testingRocks_))
 
 ;; testing for get-function-name
+;;(expect "anonymous function" (get-function-name "_fn_"))
+;;fn
+;;'fn
+;;()
+;;#()
+;;"_NIL_"
+;;"fn"
+;;"_fn_"
 
+;;;; AFTER A LOT OF MESSING AROUND, WE DON'T KNOW WHAT TO USE TO TEST get-function-name, SO WE SHOULD PLAN
+;;;; TO ASK ELENA ABOUT THIS....
 
+;; testing for get-macro-name
+(expect "regex" (get-macro-name "clojure.string/regex"))
+(expect "emma" (get-macro-name "lemmon/emma")) ;emma isn't a macro?
+(expect "henry" (get-macro-name "lemmon/emma/henry"))
+(expect "" (get-macro-name "andHereComesTheSlash: /"))
+(expect nil (get-macro-name "andThisTestWon'tHaveASlash"))
+
+;; testing for pretty-print-value
+(expect "\"happy\"" (pretty-print-value "happy" 'clojure.lang.IPersistentMap "a function"))
+;(expect "" (pretty-print-value 2 'IPersistentCollection "a function")) ;; we keep getting class cast exceptions
+                                                                        ;; here, having trouble with making it go to get-function-name
+(expect "nil" (pretty-print-value nil 'clojure.lang.IPersistentMap "a function"))
+(expect "2" (pretty-print-value 2 'clojure.lang.IPersistentMap "foo_bang"))
 
 

@@ -101,11 +101,11 @@
       "anonymous function" matching-name)
     fname))
 
-(defn- get-macro-name [mname]
+(defn get-macro-name [mname]
   "extract a macro name from a qualified name"
   (nth (re-matches #"(.*)/(.*)" mname) 2))
 
-(defn- pretty-print-value [v c type]
+(defn pretty-print-value [v c type]
   "returns a pretty-printed value v based on its class, handles various messy cases"
                                         ; strings are printed in double quotes:
   (if (string? v) (str "\"" v "\"")
