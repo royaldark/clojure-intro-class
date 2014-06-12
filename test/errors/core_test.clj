@@ -227,11 +227,35 @@
 
 ;; type-dictionary tests
 (expect "a number" (type-dictionary :java.lang.Float))
+(expect "a number" (:java.lang.Float type-dictionary))
 (expect "a regular expression matcher" (type-dictionary :java.util.regex.Matcher))
 
+;; really simple testing for general-types
 (expect "a vector" (second (general-types 1)))
 
 ;; testing for best-approximation
 (expect "unrecognized type atom" (best-approximation 'atom))
 (expect "a map" (best-approximation 'clojure.lang.IPersistentMap))
-;(expect "clojure.lang.Fn" (best-approximation 'Fn))
+(expect "a collection" (best-approximation 'IPersistentStack)) ; this checks that the function best-approximation can
+                                                               ; add in "clojure.lang." by itself
+
+;; testing for get-type
+(expect "a boolean" (get-type 'java.lang.Boolean))
+(expect "unrecognized type bogus_thingy" (get-type 'bogus_thingy))
+
+;; testing for predefined-names
+(expect "+" (predefined-names :_PLUS_))
+(expect "/" (:_SLASH_ predefined-names))
+(expect "-" (:_ predefined-names))
+(expect nil (:_UNKNOWN_ predefined-names))
+
+;; testing for lookup-funct-name
+(expect "/" (lookup-funct-name '_SLASH_))
+(expect "*" (lookup-funct-name '_STAR_))
+(expect "_testingRocks_" (lookup-funct-name '_testingRocks_))
+
+;; testing for get-function-name
+
+
+
+

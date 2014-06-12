@@ -82,7 +82,7 @@
 ;; hashmap of internal function names and their user-friendly versions
 (def predefined-names {:_PLUS_ "+"  :_ "-" :_SLASH_ "/" })
 
-(defn- lookup-funct-name [fname]
+(defn lookup-funct-name [fname]
   "looks up pre-defined function names, such as _PLUS_. If not found,
 	returns the original"
   (let [lookup ((keyword fname) predefined-names)]
@@ -94,7 +94,7 @@
                           (clojure.string/replace #"_GT_" ">")
                           (clojure.string/replace #"_STAR_" "*")))))
 
-(defn- get-function-name [fname]
+(defn get-function-name [fname]
   "extract a function name from a qualified name"
   (if-let [matching-name (lookup-funct-name (nth (re-matches #"(.*)\$(.*)" fname) 2))]
     (if (or (= matching-name "fn") (re-matches #"fn_(.*)" matching-name))
