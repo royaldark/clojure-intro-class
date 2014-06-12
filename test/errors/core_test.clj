@@ -218,7 +218,7 @@
 ;; copied the matching string for easier testing:
 ;(#(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")
 (expect "\tautoexpect.runner/run-tests (runner.clj line 50)"
-	(trace-elem->string {:anon-fn true, :fn "run-tests", :ns "autoexpect.runner", :clojure true,			:file "runner.clj", :line 50}))
+	(trace-elem->string {:anon-fn true, :fn "run-tests", :ns "autoexpect.runner", :clojure true, :file "runner.clj", :line 50}))
 
 
 ;#############################################
@@ -234,3 +234,4 @@
 ;; testing for best-approximation
 (expect "unrecognized type atom" (best-approximation 'atom))
 (expect "a map" (best-approximation 'clojure.lang.IPersistentMap))
+;(expect "clojure.lang.Fn" (best-approximation 'Fn))
