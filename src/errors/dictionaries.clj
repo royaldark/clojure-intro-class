@@ -4,6 +4,7 @@
 
 ;; A dictionary of known types and their user-friendly representations
 ;; potentially we can have multiple dictionaries, depending on the level
+
 (def type-dictionary {:java.lang.String "a string"
                       :java.lang.Number "a number"
                       :clojure.lang.Keyword "a keyword"
@@ -51,6 +52,7 @@
 ;; the first match is returned.
 ;; That's why it's a vector, not a hashmap.
 ;; USE CAUTION WHEN ADDING NEW TYPES!
+
 (def general-types [[Number "a number"]
                     [clojure.lang.IPersistentVector "a vector"]
                     [clojure.lang.IPersistentList "a list"]
@@ -63,6 +65,7 @@
 		                [clojure.lang.IFn "a function"]])
 
 ;; The best approximation of a type t not listed in the type-dictionary (as a string)
+;;; best-approximation: type -> string
 (defn best-approximation [t]
   "returns a string representation of a type t not listed in the type-dictionary for user-friendly error messages"
   (let [attempt (resolve (symbol t))
@@ -70,21 +73,24 @@
         matched-type (if type (first (filter #(isa? type (first %)) general-types)))]
     (if matched-type (second matched-type) (str "unrecognized type " t))))
 
+;;; get-type: type -> string
 (defn get-type [t]
   "returns a user-friendly representation of a type if it exists in the type-dictionary,
 	or its default representation as an unknown type"
   ((keyword t) type-dictionary (best-approximation t)))
 
-(defn- replace-types [f]
-  "returns a function that maps get-type over a list of matches"
-  (fn [matches] (f (map get-type (rest matches)))))
+;;; replace-types: _______ -> function
+;(defn- replace-types [f]
+; "returns a function that maps get-type over a list of matches"
+; (fn [matches] (f (map get-type (rest matches)))))
 
 ;; hashmap of internal function names and their user-friendly versions
 (def predefined-names {:_PLUS_ "+"  :_ "-" :_SLASH_ "/" })
 
+;;; lookup-funct-name: predefined function name -> string
 (defn lookup-funct-name [fname]
   "looks up pre-defined function names, such as _PLUS_. If not found,
-	returns the original"
+	returns the original"2
   (let [lookup ((keyword fname) predefined-names)]
     (if lookup lookup (-> fname
                           (clojure.string/replace #"_QMARK_" "?")
@@ -94,6 +100,7 @@
                           (clojure.string/replace #"_GT_" ">")
                           (clojure.string/replace #"_STAR_" "*")))))
 
+;;; get-function-name: string -> string
 (defn get-function-name [fname]
   "extract a function name from a qualified name"
   (if-let [matching-name (lookup-funct-name (nth (re-matches #"(.*)\$(.*)" fname) 2))]
@@ -101,19 +108,21 @@
       "anonymous function" matching-name)
     fname))
 
+;;; get-macro-name: string -> string
 (defn get-macro-name [mname]
   "extract a macro name from a qualified name"
-  (nth (re-matches #"(.*)/(.*)" mname) 2))
+    (nth (re-matches #"(.*)/(.*)" mname) 2))
 
-(defn pretty-print-value [v c type]
-  "returns a pretty-printed value v based on its class, handles various messy cases"
-                                        ; strings are printed in double quotes:
-  (if (string? v) (str "\"" v "\"")
-      (if (nil? v) "nil"
+;;; pretty-print-value: anything, string, string -> string
+(defn pretty-print-value [value fname type]
+  "returns a pretty-printed value based on its class, handles various messy cases"
+    ; strings are printed in double quotes:
+  (if (string? value) (str "\"" value "\"")
+      (if (nil? value) "nil"
           (if (= type "a function")
-            ; extract a function from the class c (easier than from v):
-            (get-function-name c)
-            (str v)))))
+            ; extract a function from the class fname (easier than from value):
+            (get-function-name fname)
+            (str value)))))
 
 (defn arg-str [n]
   (case n
@@ -136,8 +145,8 @@
         v (:value @seen-objects)
         v-print (pretty-print-value v c c-type)
         arg (arg-str (if n (Integer. n) (:arg-num @seen-objects)))]
-                                        ; (println t " " c " " v)
-                                        ;(println (class t) " " (class c-type) " " (class v-print))
+          ; (println t " " c " " v)
+          ;(println (class t) " " (class c-type) " " (class v-print))
     (empty-seen) ; empty the seen-objects hashmap
     (make-preobj-hashes
      "in function " fname :arg " " arg " " v-print :arg
@@ -279,4 +288,3 @@
                                                                        (get-macro-name (nth matches 2)) :arg
                                                                        " is a macro, cannot be passed to a function, while compiling "
                                                                        (nth matches 3)))}])
-

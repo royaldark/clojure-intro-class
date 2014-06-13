@@ -236,8 +236,9 @@
 ;; testing for best-approximation
 (expect "unrecognized type atom" (best-approximation 'atom))
 (expect "a map" (best-approximation 'clojure.lang.IPersistentMap))
-(expect "a collection" (best-approximation 'IPersistentStack)) ; this checks that the function best-approximation can
-                                                               ; add in "clojure.lang." by itself
+(expect "a collection" (best-approximation 'IPersistentStack)) \
+; this checks that the function best-approximation can add in
+; "clojure.lang." by itself
 
 ;; testing for get-type
 (expect "a boolean" (get-type 'java.lang.Boolean))
@@ -246,39 +247,35 @@
 ;; testing for predefined-names
 (expect "+" (predefined-names :_PLUS_))
 (expect "/" (:_SLASH_ predefined-names))
-(expect "-" (:_ predefined-names))
+(expect "-" (predefined-names :_))
 (expect nil (:_UNKNOWN_ predefined-names))
 
 ;; testing for lookup-funct-name
 (expect "/" (lookup-funct-name '_SLASH_))
-(expect "*" (lookup-funct-name '_STAR_))
-(expect "_testingRocks_" (lookup-funct-name '_testingRocks_))
+(expect "*" (lookup-funct-name "_STAR_"))
+(expect "testingRocks" (lookup-funct-name 'testingRocks))
 
 ;; testing for get-function-name
-;;(expect "anonymous function" (get-function-name "_fn_"))
-;;fn
-;;'fn
-;;()
-;;#()
-;;"_NIL_"
-;;"fn"
-;;"_fn_"
-
-;;;; AFTER A LOT OF MESSING AROUND, WE DON'T KNOW WHAT TO USE TO TEST get-function-name, SO WE SHOULD PLAN
-;;;; TO ASK ELENA ABOUT THIS....
+(expect "*" (get-function-name "clojure.core$_STAR_"))
+(expect "even?" (get-function-name "clojure.core$even_QMARK_"))
+(expect "anonymous function" (get-function-name "intro.core$eval6393$fn__6394"))
+(expect "-" (get-function-name "clojure.core$_"))
+(expect ">=" (get-function-name "corefns.core$_GT__EQ_"))
+(expect "swap!" (get-function-name "clojure.core$swap_BANG_"))
+(expect "anonymous function" (get-function-name "intro.core$eval6397$fn__6398"))
+(expect "/" (get-function-name "clojure.core$_SLASH_"))
 
 ;; testing for get-macro-name
 (expect "regex" (get-macro-name "clojure.string/regex"))
-(expect "emma" (get-macro-name "lemmon/emma")) ;emma isn't a macro?
-(expect "henry" (get-macro-name "lemmon/emma/henry"))
-(expect "" (get-macro-name "andHereComesTheSlash: /"))
-(expect nil (get-macro-name "andThisTestWon'tHaveASlash"))
+(expect "->>" (get-macro-name "clojure.core/->>"))
+(expect "lazy-cat" (get-macro-name "clojure.core/lazy-cat"))
+(expect "cond" (get-macro-name "clojure.core/cond"))
+(expect "and" (get-macro-name "clojure.core/and"))
 
 ;; testing for pretty-print-value
-(expect "\"happy\"" (pretty-print-value "happy" 'clojure.lang.IPersistentMap "a function"))
-;(expect "" (pretty-print-value 2 'IPersistentCollection "a function")) ;; we keep getting class cast exceptions
-                                                                        ;; here, having trouble with making it go to get-function-name
-(expect "nil" (pretty-print-value nil 'clojure.lang.IPersistentMap "a function"))
-(expect "2" (pretty-print-value 2 'clojure.lang.IPersistentMap "foo_bang"))
+(expect "\"happy\"" (pretty-print-value "happy" '"clojure.core$_STAR_" "a function"))
+(expect "*" (pretty-print-value 2 "clojure.core$_STAR_" "a function"))
+(expect "nil" (pretty-print-value nil "clojure.core$_STAR_" "a function"))
+(expect "2" (pretty-print-value 2 "clojure.core$_STAR_" "foo_bang"))
 
 
