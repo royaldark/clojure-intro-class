@@ -17,7 +17,7 @@
 (defn test-and-continue [quoted-exp]
   (in-ns 'intro.core) ; eval by default evaluates in its own namespace
   (try
-    (println quoted-exp)
+   ;(println quoted-exp)
     (eval quoted-exp)
     (catch Throwable e (println (prettify-exception e)))
     (finally (println "Are there any exceptions left?"))))

@@ -222,7 +222,7 @@
 
 
 ;#############################################
-;### 6. Testing basics of dictionaries.clj ###
+;### 6. Testing in dictionaries.clj ###
 ;#############################################
 
 ;; type-dictionary tests
@@ -278,4 +278,7 @@
 (expect "nil" (pretty-print-value nil "clojure.core$_STAR_" "a function"))
 (expect "2" (pretty-print-value 2 "clojure.core$_STAR_" "foo_bang"))
 
-
+;; testing for arg-str
+(expect "first argument" (arg-str 1))
+(expect "21th argument" (arg-str 21))
+(expect "210528th argument" (arg-str 210528))

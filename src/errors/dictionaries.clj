@@ -124,6 +124,7 @@
             (get-function-name fname)
             (str value)))))
 
+;;; arg-str: number -> string
 (defn arg-str [n]
   (case n
     1 "first argument"
@@ -131,7 +132,7 @@
     3 "third argument"
     4 "fourth argument"
     5 "fifth argument"
-    (str n "th argument ")))
+    (str n "th argument")))
 
 (defn process-asserts-obj [n]
   "Returns a message object generated for an assert failure based on the
