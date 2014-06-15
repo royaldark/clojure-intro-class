@@ -35,18 +35,18 @@
    and converts it into a string to be displayed"
   (map trace-elem->string trace-elems))
 
-(defn- display-msg-object! [msg-obj msg-area] 
+(defn- display-msg-object! [msg-obj msg-area]
   "add text and styles from msg-obj to msg-area"
-  (doall (map #(style-text! msg-area 
+  (doall (map #(style-text! msg-area
                             (:stylekey %)
-                            (:start %) 
-                            (:length %)) 
+                            (:start %)
+                            (:length %))
               msg-obj)))
 
 
 
-;; Graphics 
-;; msg-obj will contain parts and styles and lengths 
+;; Graphics
+;; msg-obj will contain parts and styles and lengths
 (defn display-error [exc-obj]
   (let [msg-obj  (:message-object exc-obj)]
   (try
@@ -70,7 +70,7 @@
                                                 :tip "The full Java stacktrace of the error"
                                                 :content (scrollable stacktrace)}])
                  )]
-      (println exc-obj) ; debug print
+      ;(println exc-obj) ; debug print
       (invoke-now
         (scroll! errormsg :to :top) ;; Scrollboxes default to being scrolled to the bottom - not what we want
         (scroll! stacktrace :to :top)
