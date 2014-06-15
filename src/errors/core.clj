@@ -24,9 +24,9 @@
     ;; else just make a message pre-obj out the message itself
     (make-preobj-hashes message)))
 
-(defn filter-stacktrace [exc]
+(defn filter-stacktrace [stack-trace]
   (filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %))))
-                        (:trace-elems exc)))
+                        stack-trace))
 
 ;; All together:
 (defn prettify-exception [e]
@@ -35,7 +35,7 @@
 	message  (if m m "") ; converting an empty message from nil to ""
 	exc (stacktrace/parse-exception e)
 	stack-trace (:trace-elems exc)
-        filtered-trace (filter-stacktrace exc)	
+        filtered-trace (filter-stacktrace stack-trace)	
         errstrs (map trace-elem->string filtered-trace)]
     ;; create an exception object and pass it to display-error
     (display-error {:exception-class e-class

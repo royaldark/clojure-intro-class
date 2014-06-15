@@ -54,7 +54,7 @@
 	[
 	 trace (:stacktrace exc-obj)
 	 styles [[:arg :font "monospace" :bold true] [:reg] [:stack] [:err] [:type] [:causes]]
-	 errormsg (styled-text :wrap-lines? true :text (get-all-text msg-obj)
+	 errormsg (styled-text :wrap-lines? true :text (str (get-all-text msg-obj)  (:filtered-trace exc-obj))
 			       :styles styles)
 	 stacktrace (text :multi-line? true :editable? false :rows 12 :text
 			  (join "\n" (trace->string trace)))
@@ -64,7 +64,8 @@
                                         :tabs [{:title "Error"
                                                 :tip "The simplified error message"
                                                 :content (do (display-msg-object! msg-obj errormsg)
-							     (scrollable errormsg))}
+							     (scrollable (str errormsg)))}
+									     
                                                {:title "Stacktrace"
                                                 :tip "The full Java stacktrace of the error"
                                                 :content (scrollable stacktrace)}])

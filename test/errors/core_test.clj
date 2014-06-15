@@ -5,15 +5,18 @@
 	    [errors.exceptions :refer :all]
 	    [errors.core :refer :all]
 	    [errors.errorgui :refer :all]
-	    [clj-stacktrace.core :as stacktrace]))
+	    [clj-stacktrace.core :as stacktrace]
+      [errors.dictionaries :refer :all]))
 
 ;;; INDEX ;;;
+
 
 ;;1. Functions
 ;;2. Prebuilt Exceptions
 ;;3. errors.messageobj
 ;;4. errors.exceptionobj
 ;;5. errors.core, errorgui tests
+;;6. Testing basics of dictionaries.clj
 
 ;####################
 ;### 1. Functions ###
@@ -67,7 +70,7 @@
 
 (expect (make-preobj-hashes "Hi there" "Hello")
 	[{:msg "Hi there" :stylekey :reg :length 8}
-	 {:msg "Hello" :stylekey :reg :length 5}])
+   {:msg "Hello" :stylekey :reg :length 5}])
 
 (expect (make-preobj-hashes "Hi there" :arg "Hello" :blah)
 	[{:msg "Hi there" :stylekey :arg :length 8}
@@ -220,8 +223,65 @@
 (expect "\tclojure.lang.Numbers/add (Numbers.java line 126)"
 	(trace-elem->string  (first the-trace)))
 
-; this is just to see what the stacktrace looks like, and it is pretty horrific
-;(expect "" (format-stacktrace classcast-exc))
+;#############################################
+;### 6. Testing basics of dictionaries.clj ###
+;#############################################
 
-; also just a placeholder for now:
-;(expect "" (trace->string (:trace-elems classcast-exc-parsed)))
+;; type-dictionary tests
+(expect "a number" (type-dictionary :java.lang.Float))
+(expect "a number" (:java.lang.Float type-dictionary))
+(expect "a regular expression matcher" (type-dictionary :java.util.regex.Matcher))
+
+;; really simple testing for general-types
+(expect "a vector" (second (general-types 1)))
+
+;; testing for best-approximation
+(expect "unrecognized type atom" (best-approximation 'atom))
+(expect "a map" (best-approximation 'clojure.lang.IPersistentMap))
+(expect "a collection" (best-approximation 'IPersistentStack)) ; this checks that the function best-approximation can
+                                                               ; add in "clojure.lang." by itself
+
+;; testing for get-type
+(expect "a boolean" (get-type 'java.lang.Boolean))
+(expect "unrecognized type bogus_thingy" (get-type 'bogus_thingy))
+
+;; testing for predefined-names
+(expect "+" (predefined-names :_PLUS_))
+(expect "/" (:_SLASH_ predefined-names))
+(expect "-" (:_ predefined-names))
+(expect nil (:_UNKNOWN_ predefined-names))
+
+;; testing for lookup-funct-name
+(expect "/" (lookup-funct-name '_SLASH_))
+(expect "*" (lookup-funct-name '_STAR_))
+(expect "_testingRocks_" (lookup-funct-name '_testingRocks_))
+
+;; testing for get-function-name
+;;(expect "anonymous function" (get-function-name "_fn_"))
+;;fn
+;;'fn
+;;()
+;;#()
+;;"_NIL_"
+;;"fn"
+;;"_fn_"
+
+;;;; AFTER A LOT OF MESSING AROUND, WE DON'T KNOW WHAT TO USE TO TEST get-function-name, SO WE SHOULD PLAN
+;;;; TO ASK ELENA ABOUT THIS....
+
+;; testing for get-macro-name
+(expect "regex" (get-macro-name "clojure.string/regex"))
+(expect "emma" (get-macro-name "lemmon/emma")) ;emma isn't a macro?
+(expect "henry" (get-macro-name "lemmon/emma/henry"))
+(expect "" (get-macro-name "andHereComesTheSlash: /"))
+(expect nil (get-macro-name "andThisTestWon'tHaveASlash"))
+
+;; testing for pretty-print-value
+(expect "\"happy\"" (pretty-print-value "happy" 'clojure.lang.IPersistentMap "a function"))
+;(expect "" (pretty-print-value 2 'IPersistentCollection "a function")) ;; we keep getting class cast exceptions
+                                                                        ;; here, having trouble with making it go to get-function-name
+(expect "nil" (pretty-print-value nil 'clojure.lang.IPersistentMap "a function"))
+(expect "2" (pretty-print-value 2 'clojure.lang.IPersistentMap "foo_bang"))
+
+
+>>>>>>> 51ad15bb296c3ab73bc5b26cf18c0e4c5801c24f
