@@ -73,16 +73,6 @@
         (my-prettify-exception
          (run-and-catch '(rest 1))))
 
-(expect [{:msg "Don't know how to create ", :stylekey :reg, :length 25}
-         {:msg "a sequence", :stylekey :type, :length 10}
-         {:msg " from ", :stylekey :reg :length 19}
-         {:msg "name ", :stylekey :reg, :length 5}
-         {:msg "some?", :stylekey :arg, :length 5}
-         {:msg " is undefined, while compiling ", :stylekey :reg, :length 31}
-         {:msg "NO_SOURCE_PATH:105:26", :stylekey :arg, :length 21}]
-        (my-prettify-exception
-         (run-and-catch '(some? #(+ % 2) [:k :v]))))
-
 (expect [{:msg "Attempted to use ", :stylekey :reg, :length 17}
          {:msg "a function", :stylekey :type, :length 10}
          {:msg ", but ", :stylekey :reg, :length 6}
@@ -91,22 +81,69 @@
         (my-prettify-exception
          (run-and-catch '(conj + 1))))
 
+;; This is a group
+;;###################################################################
+;(expect [{:msg "Don't know how to create ", :stylekey :reg, :length 25}
+;         {:msg "a sequence", :stylekey :type, :length 10}
+;         {:msg " from ", :stylekey :reg :length 19}
+;         {:msg "name ", :stylekey :reg, :length 5}
+;         {:msg "some?", :stylekey :arg, :length 5}
+;         {:msg " is undefined, while compiling ", :stylekey :reg, :length 31}
+;         {:msg "NO_SOURCE_PATH:105:26", :stylekey :arg, :length 21}]
+;        (my-prettify-exception
+;         (run-and-catch '(some? #(+ % 2) [:k :v]))))
+
+;(expect [{:msg "Don't know how to create ", :stylekey :reg, :length 25}
+;         {:msg "a sequence", :stylekey :type, :length 10}
+;         {:msg " from ", :stylekey :reg :length 19}
+;         {:msg "name ", :stylekey :reg, :length 5}
+;         {:msg "some?", :stylekey :arg, :length 5}
+;         {:msg " is undefined, while compiling ", :stylekey :reg, :length 31}
+;         {:msg "NO_SOURCE_PATH:105:26", :stylekey :arg, :length 21}]
+;        (my-prettify-exception
+;         (run-and-catch '(some? #(+ % 2) [:k :v]))))
+
+;(expect [{:msg "Don't know how to create ", :stylekey :reg, :length 25}
+;         {:msg "a sequence", :stylekey :type, :length 10}
+;         {:msg " from ", :stylekey :reg :length 19}
+;         {:msg "name ", :stylekey :reg, :length 5}
+;         {:msg "some?", :stylekey :arg, :length 5}
+;         {:msg " is undefined, while compiling ", :stylekey :reg, :length 31}]
+;        (butlast
+;         (my-prettify-exception
+;          (run-and-catch '(some? #(+ % 2) [:k :v])))))
+
+;; This is a group
+;;###################################################################
+;(expect [{:msg "Compilation error: ", :stylekey :reg, :length 19}
+;         {:msg "name ", :stylekey :reg, :length 5}
+;         {:msg "add-first", :stylekey :arg, :length 9}
+;         {:msg " is undefined, while compiling ", :stylekey :reg, :length 31}
+;         {:msg "NO_SOURCE_PATH:97:26", :stylekey :arg, :length 20}]
+;        (my-prettify-exception
+;         (run-and-catch '(add-first 1 []))))
+
 (expect [{:msg "Compilation error: ", :stylekey :reg, :length 19}
          {:msg "name ", :stylekey :reg, :length 5}
          {:msg "add-first", :stylekey :arg, :length 9}
-         {:msg " is undefined, while compiling ", :stylekey :reg, :length 31}
-         {:msg "NO_SOURCE_PATH:97:26", :stylekey :arg, :length 20}]
-        (my-prettify-exception
-         (run-and-catch '(add-first 1 []))))
+         {:msg " is undefined, while compiling ", :stylekey :reg, :length 31}]
+        (butlast
+         (my-prettify-exception
+           (run-and-catch '(add-first 1 [])))))
 
-(expect [{:msg "Compilation error: ", :stylekey :reg, :length 19}
-         {:msg "name ", :stylekey :reg, :length 5}
-         {:msg "some?", :stylekey :arg, :length 5}
-         {:msg " is undefined, while compiling ", :stylekey :reg, :length 31}
-         {:msg "NO_SOURCE_PATH:105:26", :stylekey :arg, :length 21}]
-        (my-prettify-exception
-         (run-and-catch '(some? #(+ % 2) [:k :v]))))
+(expect #"NO_SOURCE_PATH"
+        (:msg
+         (last
+           (my-prettify-exception
+             (run-and-catch '(add-first 1 []))))))
 
-(expect ""
-        (my-prettify-exception
-         (run-and-catch '(contains-value? {:a :b :c :d} :a))))
+;; This is a group
+;;###################################################################
+;(expect [{:msg "Compilation error: ", :stylekey :reg, :length 19}
+;         {:msg "name ", :stylekey :reg, :length 5}
+;         {:msg "some?", :stylekey :arg, :length 5}
+;         {:msg " is undefined, while compiling ", :stylekey :reg, :length 31}
+;         {:msg "NO_SOURCE_PATH:105:26", :stylekey :arg, :length 21}]
+;        (my-prettify-exception
+;         (run-and-catch '(some? #(+ % 2) [:k :v]))))
+
