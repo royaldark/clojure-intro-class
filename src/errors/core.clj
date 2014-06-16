@@ -1,8 +1,8 @@
 (ns errors.core
   (:require [clj-stacktrace.core :as stacktrace])
   (:use [errors.dictionaries]
-	      [errors.errorgui]
-	      [errors.messageobj]
+	[errors.messageobj]
+	[errors.errorgui]
         [seesaw.core]))
 
 ;;(def ignore-nses #"(clojure|java)\..*")
@@ -34,12 +34,11 @@
 	message  (if m m "") ; converting an empty message from nil to ""
 	exc (stacktrace/parse-exception e)
 	stack-trace (:trace-elems exc)
-        filtered-trace (filter-stacktrace stack-trace)	
-        errstrs (map trace-elem->string filtered-trace)]
+        filtered-trace (filter-stacktrace stack-trace)]
+        ;errstrs (map trace-elem->string filtered-trace)]
     ;; create an exception object and pass it to display-error
     (display-error {:exception-class e-class
-		                :message-object (make-obj (concat (make-preobj-hashes error-prefix :err)
-						                                          (get-pretty-message e-class message)))
+		                :message-object (get-pretty-message e-class message)
 		                :stacktrace stack-trace
 		                :filtered-stacktrace filtered-trace
 		                :hints nil})))
