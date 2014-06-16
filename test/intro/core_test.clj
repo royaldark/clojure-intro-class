@@ -75,10 +75,13 @@
 
 (expect [{:msg "Don't know how to create ", :stylekey :reg, :length 25}
          {:msg "a sequence", :stylekey :type, :length 10}
-         {:msg " from ", :stylekey :reg, :length 6}
-         {:msg "a number", :stylekey :type, :length 8}]
+         {:msg " from ", :stylekey :reg :length 19}
+         {:msg "name ", :stylekey :reg, :length 5}
+         {:msg "some?", :stylekey :arg, :length 5}
+         {:msg " is undefined, while compiling ", :stylekey :reg, :length 31}
+         {:msg "NO_SOURCE_PATH:105:26", :stylekey :arg, :length 21}]
         (my-prettify-exception
-         (run-and-catch '(empty? 1))))
+         (run-and-catch '(some? #(+ % 2) [:k :v]))))
 
 (expect [{:msg "Attempted to use ", :stylekey :reg, :length 17}
          {:msg "a function", :stylekey :type, :length 10}
@@ -104,5 +107,6 @@
         (my-prettify-exception
          (run-and-catch '(some? #(+ % 2) [:k :v]))))
 
-
-
+(expect ""
+        (my-prettify-exception
+         (run-and-catch '(contains-value? {:a :b :c :d} :a))))
