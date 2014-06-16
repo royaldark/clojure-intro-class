@@ -79,11 +79,6 @@
 	or its default representation as an unknown type"
   ((keyword t) type-dictionary (best-approximation t)))
 
-;;; replace-types: _______ -> function
-;(defn- replace-types [f]
-; "returns a function that maps get-type over a list of matches"
-; (fn [matches] (f (map get-type (rest matches)))))
-
 ;; hashmap of internal function names and their user-friendly versions
 (def predefined-names {:_PLUS_ "+"  :_ "-" :_SLASH_ "/" })
 
