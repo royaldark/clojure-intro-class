@@ -38,7 +38,7 @@
   (join trace-lines-separator (map #(trace-elem->string % trace-elems-separator) trace-elems)))
 
 (defn- display-msg-object! [msg-obj msg-area]
-  "add text and styles from msg-obj to msg-areapreobj"
+  "add text and styles from msg-obj to msg-area"
   (doall (map #(style-text! msg-area
                             (:stylekey %)
                             (:start %)
