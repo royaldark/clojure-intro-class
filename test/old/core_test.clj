@@ -3,7 +3,7 @@
          [errors.core]
          [errors.dictionaries]))
 
-;;; Stephen wrote this in August 2013 
+;;; Stephen wrote this in August 2013
 
 (def simple-non-match-exception (java.lang.Exception. "Test Message"))
 (def get-pretty-message (ns-resolve 'errors.core 'get-pretty-message))

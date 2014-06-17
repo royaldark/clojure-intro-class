@@ -35,7 +35,7 @@
   (test-all-and-continue '( ;(nth 0 [1 2 3]) ;; attempted to use collection but number was expected
 			    ;(nth '(1 2 3) 7) ;; An index in a vector or a list is out of bounds
 			    (into 6 [1 2]) ;; attempted to use number but collection was expected
-			    (into {} [1 2 3]) ;; don't know how to create sequence from number. into on a hashmap requires a collection of pairs.
+			    (into {} [1 2 3]) ;; don't know how to create sequence from number. into on a hash-map requires a collection of pairs.
 			    (into {} [1 2 3 4]) ;; same as above. A correct one would be (into {} [[1 2] [3 4]])
 			    (conj "a" 2) ;; Attempted to use string, but collection was expected.
 			    )))

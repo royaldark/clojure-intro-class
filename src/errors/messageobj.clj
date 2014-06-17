@@ -1,14 +1,14 @@
 (ns errors.messageobj)
   ;(:refer corefn/core :only [add-fisrt add-last]))
-;; Functions related to a message object. Message object
+;; Functions related to a message object. msg-info-obj
 ;; is a vector of parts of a message (in order). Each
-;; part is a hash map that contains the message text :msg,
+;; part is a hash-map that contains the message text :msg,
 ;; the formatting id (e.g. :reg), the length of the text
-;; :length, and the start of the message :start
+;; :length
 ;; A msg-info-obj doesn't have :start
 
 (defn make-msg-info-hash
-	"creates a hash map for a msg-info-obj out of a msg and style, with the form {:msg message :stylekey style :length n}"
+	"creates a hash-map for a msg-info-obj out of a msg and style, with the form {:msg message :stylekey style :length n}"
 	([msg style] (let [m (str msg)]
 			{:msg m :stylekey style :length (count m)}))
 	([msg] (let [m (str msg)]
@@ -23,15 +23,15 @@
 				            	   (conj result (make-msg-info-hash (first messages))))))))
 
 (defn make-msg-info-hashes [& args]
-	"creates a vector of hash maps out of a vector that are strings, possibly followed by optional keywords"
+	"creates a vector of hash-maps out of a vector that are strings, possibly followed by optional keywords"
 	(make-msg-info-hashes-helper args []))
 
 ;(defn make-msg-info-hashes  [messages]
-;	"creates a vector of hash maps out of a vector of vectors of msg + optional style"
+;	"creates a vector of hash-maps out of a vector of vectors of msg + optional style"
 ;	;; apply is needed since messages contains vectors of 1 or 2 elements
 ;	(map #(apply make-msg-info-hash %) messages))
 
-(defn make-display-msg [msg-info-obj] ; msg-info-obj is a vector of hashmaps
+(defn make-display-msg [msg-info-obj] ; msg-info-obj is a vector of hash-maps
   "fills in the starting points of objects in the hash maps, in the context of the output from make-msg-info-hashes "
   (loop [hashes msg-info-obj start 0 res []]
     (if (empty? hashes) res

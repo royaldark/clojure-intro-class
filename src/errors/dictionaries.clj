@@ -132,19 +132,17 @@
 ;; TODO: ADD NO SOURCE PATH FORMATTING
 
 (defn process-asserts-obj [n]
-  "Returns a message object generated for an assert failure based on the
+  "Returns a msg-info-obj generated for an assert failure based on the
 	global seen-objects hashmap, clears the hashmap"
   ;; and perhaps need manual error handling, in case the seen-object is empty
   (let [t (:check @seen-objects)
-  	cl (:class @seen-objects)
-  	c (if cl (.getName cl) nil)
-  	fname (:fname @seen-objects)
+        cl (:class @seen-objects)
+        c (if cl (.getName cl) nil)
+        fname (:fname @seen-objects)
         c-type (if c (get-type c) "nil") ; perhaps want to rewrite this
         v (:value @seen-objects)
         v-print (pretty-print-value v c c-type)
         arg (arg-str (if n (Integer. n) (:arg-num @seen-objects)))]
-          ; (println t " " c " " v)
-          ;(println (class t) " " (class c-type) " " (class v-print))
     (empty-seen) ; empty the seen-objects hashmap
     (make-msg-info-hashes
      "in function " fname :arg " " arg " " v-print :arg

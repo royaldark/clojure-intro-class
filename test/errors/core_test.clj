@@ -1,12 +1,12 @@
 (ns errors.core-test
   (:require [expectations :refer :all]
-	    [errors.messageobj :refer :all]
-	    [errors.exceptionobj :refer :all]
-	    [errors.exceptions :refer :all]
-	    [errors.core :refer :all]
-	    [errors.errorgui :refer :all]
-	    [clj-stacktrace.core :as stacktrace]
-      [errors.dictionaries :refer :all]))
+	          [errors.messageobj :refer :all]
+	          [errors.exceptionobj :refer :all]
+	          [errors.exceptions :refer :all]
+	          [errors.core :refer :all]
+	          [errors.errorgui :refer :all]
+	          [clj-stacktrace.core :as stacktrace]
+            [errors.dictionaries :refer :all]))
 
 ;;; INDEX ;;;
 
@@ -23,7 +23,6 @@
 ;####################
 
 (defn ignore-stacktrace [trace1 trace2] true)
-
 
 
 ;###############################
@@ -93,9 +92,9 @@
          {:msg "Hello" :stylekey :reg :length 5 :start 8}])
 
 (expect (make-display-msg [{:msg "Blue Jeans", :stylekey :reg, :length 10}
-                               {:msg "Khakis", :stylekey :business-casual, :length 6}
-                               {:msg "Bootcut", :stylekey :hippy, :length 7}
-                               {:msg "Jeggings", :stylekey :casual, :length 8}])
+                           {:msg "Khakis", :stylekey :business-casual, :length 6}
+                           {:msg "Bootcut", :stylekey :hippy, :length 7}
+                           {:msg "Jeggings", :stylekey :casual, :length 8}])
 
  [{:start 0, :msg "Blue Jeans", :stylekey :reg, :length 10}
   {:start 10, :msg "Khakis", :stylekey :business-casual, :length 6}

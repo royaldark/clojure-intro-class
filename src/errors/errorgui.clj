@@ -1,7 +1,7 @@
 (ns errors.errorgui
   (:use [seesaw.core]
-	[clojure.string :only [join]]
-  	[errors.messageobj]))
+	      [clojure.string :only [join]]
+       	[errors.messageobj]))
 
 (def error-prefix "ERROR: ")
 (def trace-elems-separator "\t")
@@ -37,16 +37,16 @@
    and converts it into a string to be displayed"
   (join trace-lines-separator (map #(trace-elem->string % trace-elems-separator) trace-elems)))
 
-(defn- display-msg-object! [msg-obj msg-area]
+(defn- display-msg-object! [display-msg msg-area]
   "add text and styles from msg-obj to msg-area"
   (doall (map #(style-text! msg-area
                             (:stylekey %)
                             (:start %)
                             (:length %))
-              msg-obj)))
+              display-msg)))
 
 (defn- make-message-with-filtered-trace [exc-obj]
-  "returns a message object that includes the filtered stacktrace"
+  "returns a display-msg that includes the filtered stacktrace"
   (make-display-msg (concat (make-msg-info-hashes error-prefix :err)
 		                            (:msg-info-obj exc-obj)
                                 (make-msg-info-hashes trace-lines-separator) ; to separate the message from the stacktrace

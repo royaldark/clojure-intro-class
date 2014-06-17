@@ -9,7 +9,6 @@
 (def ignore-nses #"(user|clojure|java)\..*")
 
 (defn first-match [e-class message]
-	;(println (str e-class " " message)) ; debugging print
 	(first (filter #(and (= (:class %) e-class) (re-matches (:match %) message))
 			error-dictionary)))
 

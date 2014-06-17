@@ -2,11 +2,12 @@
   (:require [clj-stacktrace.core :as stacktrace])
   (:use [errors.messageobj]))
 
+;; Not currently used anywhere
 (defn exception->exceptionobj
   ""
   [e]
   (let [e-class nil
-	msg-obj nil
+        msg-obj nil
         st nil
         fst nil
         hints nil]
