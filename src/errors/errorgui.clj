@@ -18,7 +18,7 @@
 ;    (.printStackTrace e (java.io.PrintWriter. writer))
 ;    (.toString writer)))
 
-(defn trace-elem->string [trace-elem]
+(defn trace-elem->string [trace-elem trace-elems-separator]
   "Takes a stack trace element from a parsed exception
    and converts it into a string to be displayed"
   ; might need to change to separate handling for
@@ -32,10 +32,10 @@
 	line (:line trace-elem)]
     (str trace-elems-separator ns-not-nil "/" fn-or-method " (" file " line " line ")")))
 
-(defn trace->string [trace-elems]
+(defn trace->string [trace-elems trace-elems-separator]
   "Takes a stack trace from a parsed exception
    and converts it into a string to be displayed"
-  (join trace-lines-separator (map trace-elem->string trace-elems)))
+  (join trace-lines-separator (map #(trace-elem->string % trace-elems-separator) trace-elems )))
 
 (defn- display-msg-object! [msg-obj msg-area]
   "add text and styles from msg-obj to msg-area"
@@ -50,7 +50,7 @@
   (make-obj (concat (make-preobj-hashes error-prefix :err)
 		    (:message-object exc-obj)
 		    (make-preobj-hashes trace-lines-separator) ; to separate the message from the stack trace
-		    (make-preobj-hashes (trace->string (:filtered-stacktrace exc-obj))
+		    (make-preobj-hashes (trace->string (:filtered-stacktrace exc-obj) trace-elems-separator)
 					:stack))))
 
 ;; Graphics
@@ -64,11 +64,11 @@
     (try
       (let ;; styles for formatting various portions of a message
 	  [styles [[:arg :font "monospace" :bold true] [:reg] [:stack] [:err] [:type] [:causes]]
-	   ;; forming graphical elements of the swing panel 
+	   ;; forming graphical elements of the swing panel
 	   errormsg (styled-text :wrap-lines? true :text (str (get-all-text msg-filtered-trace))
 				 :styles styles)
-	   stacktrace (text :multi-line? true :editable? false :rows 12 :text 
-			    (trace->string trace))
+	   stacktrace (text :multi-line? true :editable? false :rows 12 :text
+			    (trace->string trace trace-elems-separator))
 	   d (dialog :title "Clojure Error",
 		     :content (tabbed-panel :placement :bottom
 					    :overflow :scroll
@@ -90,10 +90,10 @@
 	(if (instance? java.awt.HeadlessException (.getCause e))
 	; If there is no GUI available on Windows, this throws an InvocationTargetException
         ; wrapping a HeadlessException - print the error instead of showing a window.
-	  (println (get-all-text msg-filtered-trace)) 
+	  (println (get-all-text msg-filtered-trace))
 	; And if the error does not originate from a HeadlessException, throw it again.
 	  (throw e)))
       (catch java.awt.HeadlessException e
       ; If there is no GUI available on Linux, it simply throws a HeadlessException - print the erorr.
-	(println (get-all-text msg-filtered-trace)))))) 
+	(println (get-all-text msg-filtered-trace))))))
 
