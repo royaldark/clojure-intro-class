@@ -292,7 +292,7 @@
 	(test-all-and-continue '((shuffle 5) ;; fix the Collection type
 				 (shuffle inc)
 				 (shuffle "banana") ; doesn't work
-				 (shuffle [1 2 3]) ; w$orks
+				 (shuffle [1 2 3]) ; works
 				 (shuffle {1 2 3 4}) ; doesn't work
 				 (shuffle #{1 2}) ; works
 				 (shuffle #{}) ; works
@@ -436,7 +436,7 @@
 			         (< [1 2 3] 9)
 			         (< [1 2 3] ["a" "b"])
 			         (< 7 nil)
-			         (and (<= 6 7 8)$ (> 8 9 "what?") (>= "what?" 8))
+			         (and (<= 6 7 8) (> 8 9 "what?") (>= "what?" 8))
 			         )))
 
 ;; solutions for a few problems on 4clojure
