@@ -1,8 +1,8 @@
-(ns errors.core
+(ns errors.prettify_exception
   (:require [clj-stacktrace.core :as stacktrace])
   (:use [errors.dictionaries]
-	[errors.messageobj]
-	[errors.errorgui]
+	      [errors.messageobj]
+	      [errors.errorgui]
         [seesaw.core]))
 
 ;;(def ignore-nses #"(clojure|java)\..*")

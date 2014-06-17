@@ -1,6 +1,6 @@
-(ns intro.core-test
+(ns intro.core_test
   (:require [expectations :refer :all]
-            [errors.core :refer :all]
+            [errors.prettify_exception :refer :all]
             [errors.exceptions :refer :all]))
 
 (defn my-prettify-exception [e]

@@ -1,6 +1,6 @@
-  (ns strings.core_test
+(ns strings.strings_test
   (:require [expectations :refer :all]
-            [strings.core :refer :all]))
+            [strings.strings :refer :all]))
 
 ;Testing for our String Library
 

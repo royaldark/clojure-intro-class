@@ -1,6 +1,6 @@
-(ns errors.core_test
+(ns errors.prettify_exception_test
    (:use [clojure.test]
-         [errors.core]
+         [errors.prettify_exception]
          [errors.dictionaries]))
 
 ;;; Stephen wrote this in August 2013

@@ -1,4 +1,4 @@
-(ns corefns.core
+(ns corefns.corefns
   (:use [clojure.core.incubator])
   (:refer-clojure :exclude [map nth]))
 

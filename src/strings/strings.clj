@@ -1,4 +1,4 @@
-(ns strings.core)
+(ns strings.strings)
 
 ;#######################
 ;## Better String Fns ##

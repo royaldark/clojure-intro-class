@@ -1,5 +1,5 @@
 (ns errors.dictionaries
-  (:use [corefns.core]
+  (:use [corefns.corefns]
         [errors.messageobj]))
 
 ;; A dictionary of known types and their user-friendly representations

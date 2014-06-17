@@ -1,8 +1,8 @@
 (ns intro.core
-  (:use [errors.core]
+  (:use [errors.prettify_exception]
         [seesaw.core]
         [errors.exceptions :refer :all]))
-(refer 'corefns.core)
+(refer 'corefns.corefns)
         ;[turtle.extended-turtle]))
 
 (defn basic-seesaw-frame []

@@ -1,5 +1,5 @@
 (ns intro.student
-	(:use [corefns.core]
+	(:use [corefns.corefns]
         [seesaw.core]))
 
 ;; Testing compilation errors
@@ -11,7 +11,7 @@
 
 ;(defn f[x] (+ x y))
 
-;(defn f[x y] 
+;(defn f[x y]
 ;	(fn [x] (+ x y z)))
 
 (loop [x 1 y 2]

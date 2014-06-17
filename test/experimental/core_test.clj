@@ -1,7 +1,7 @@
 (ns experimental.core_test
   (:require [clj-stacktrace.core :as stacktrace]
             [expectations :refer :all]
-            [strings.core :refer :all]
+            [strings.strings :refer :all]
             [errors.exceptions :as errors])
   (:import [java.io.FileInputStream]
            [java.io.ObjectInputStream]

@@ -1,6 +1,6 @@
-(ns corefns.core-test
+(ns corefns.corefns_test
   (:require [expectations :refer :all]
-            [corefns.core :refer :all]))
+            [corefns.corefns :refer :all]))
 
 ;; testing for the expectations framework
 (expect 4 (+ 2 2))
