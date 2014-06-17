@@ -10,7 +10,6 @@
 
 ;;; INDEX ;;;
 
-
 ;;1. Functions
 ;;2. Prebuilt Exceptions
 ;;3. errors.messageobj
@@ -24,18 +23,13 @@
 
 (defn ignore-stacktrace [trace1 trace2] true)
 
-
 ;###############################
 ;### 2. Prebuilt Exceptions ####
 ;###############################
 
-
-
 (def function-call-on-value (run-and-catch '(4 + "pie")))
 
 (def class-cast-exception (run-and-catch '(+ 4 "pie")))
-
-
 
 ;##################################
 ;### 3. errors.messageobj tests ###
@@ -115,7 +109,6 @@
 ;####################################
 ;### 4. errors.exceptionobj tests ###
 ;####################################
-
 
 ;######################################
 ;### 5. errors.core, errorgui tests ###
@@ -218,7 +211,6 @@
 ;(#(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")
 (expect "\tautoexpect.runner/run-tests (runner.clj line 50)"
 	(trace-elem->string {:anon-fn true, :fn "run-tests", :ns "autoexpect.runner", :clojure true, :file "runner.clj", :line 50} "\t"))
-
 
 ;#############################################
 ;### 6. Testing in dictionaries.clj ###

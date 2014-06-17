@@ -52,7 +52,6 @@
 ;### Skipped from duplicate-seq to a-nil-key, they seem hard. ###
 ;################################################################
 
-
 (expect [{:msg "An attempt to access a non-existing object: ", :stylekey :reg, :length 44}
          {:msg "some message", :stylekey :arg, :length 12}
          {:msg "\n(NullPointerException)", :stylekey :reg, :length 23}]
@@ -146,4 +145,3 @@
 ;         {:msg "NO_SOURCE_PATH:105:26", :stylekey :arg, :length 21}]
 ;        (my-prettify-exception
 ;         (run-and-catch '(some? #(+ % 2) [:k :v]))))
-

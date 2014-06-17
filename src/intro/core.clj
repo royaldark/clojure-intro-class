@@ -13,7 +13,6 @@
                   :on-close :exit))
     (-> f pack! show!)))
 
-
 (defn test-and-continue [quoted-exp]
   (in-ns 'intro.core) ; eval by default evaluates in its own namespace
   (try
@@ -57,8 +56,6 @@
 ;		(if (empty? s) result
 ;			(recur (rest s) (add-last (add-last result (first s)) (first s))))))
 
-
-
 (defn duplicate-seq [coll]
 	(interleave (reduce add-last '() coll) coll))
 
@@ -83,7 +80,6 @@
 		(if (or (empty? s1) (empty? s2) ) result
 			(recur (rest s1) (rest s2)
 				(add-last (add-last result (first s1)) (first s2) ) ) ) ) )
-
 
 ;(defn flatten-seq [coll]
 ;	(loop [s coll result '()]
@@ -296,7 +292,7 @@
 	(test-all-and-continue '((shuffle 5) ;; fix the Collection type
 				 (shuffle inc)
 				 (shuffle "banana") ; doesn't work
-				 (shuffle [1 2 3]) ; works
+				 (shuffle [1 2 3]) ; w$orks
 				 (shuffle {1 2 3 4}) ; doesn't work
 				 (shuffle #{1 2}) ; works
 				 (shuffle #{}) ; works
@@ -440,7 +436,7 @@
 			         (< [1 2 3] 9)
 			         (< [1 2 3] ["a" "b"])
 			         (< 7 nil)
-			         (and (<= 6 7 8) (> 8 9 "what?") (>= "what?" 8))
+			         (and (<= 6 7 8)$ (> 8 9 "what?") (>= "what?" 8))
 			         )))
 
 ;; solutions for a few problems on 4clojure
