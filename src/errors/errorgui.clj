@@ -18,7 +18,7 @@
 ;    (.printStackTrace e (java.io.PrintWriter. writer))
 ;    (.toString writer)))
 
-(defn trace-elem->string [trace-elem trace-elems-separator] ;!!!
+(defn trace-elem->string [trace-elem trace-elems-separator]
   "Takes a stack trace element from a parsed exception
    and converts it into a string to be displayed"
   ; might need to change to separate handling for
@@ -35,7 +35,7 @@
 (defn trace->string [trace-elems trace-elems-separator trace-lines-separator]
   "Takes a stack trace from a parsed exception
    and converts it into a string to be displayed"
-  (join trace-lines-separator (map #(trace-elem->string % trace-elems-separator) trace-elems))) ;!!!
+  (join trace-lines-separator (map #(trace-elem->string % trace-elems-separator) trace-elems)))
 
 (defn- display-msg-object! [msg-obj msg-area]
   "add text and styles from msg-obj to msg-area"
@@ -50,7 +50,7 @@
   (make-obj (concat (make-preobj-hashes error-prefix :err)
 		                (:message-object exc-obj)
 		                (make-preobj-hashes trace-lines-separator) ; to separate the message from the stack trace
-		                (make-preobj-hashes (trace->string (:filtered-stacktrace exc-obj) trace-elems-separator trace-lines-separator) ;!!!
+		                (make-preobj-hashes (trace->string (:filtered-stacktrace exc-obj) trace-elems-separator trace-lines-separator)
 				                              	:stack))))
 
 ;; Graphics
@@ -68,7 +68,7 @@
 	         errormsg (styled-text :wrap-lines? true :text (str (get-all-text msg-filtered-trace))
 				                         :styles styles)
 	         stacktrace (text :multi-line? true :editable? false :rows 12 :text
-			                      (trace->string trace trace-elems-separator trace-lines-separator)) ;!!!
+			                      (trace->string trace trace-elems-separator trace-lines-separator))
 	         d (dialog :title "Clojure Error",
 		                 :content (tabbed-panel :placement :bottom
 					                                  :overflow :scroll
