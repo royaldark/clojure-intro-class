@@ -38,7 +38,7 @@
   (join trace-lines-separator (map #(trace-elem->string % trace-elems-separator) trace-elems)))
 
 (defn- display-msg-object! [msg-obj msg-area]
-  "add text and styles from msg-obj to msg-area"
+  "add text and styles from msg-obj to msg-areapreobj"
   (doall (map #(style-text! msg-area
                             (:stylekey %)
                             (:start %)
@@ -47,11 +47,11 @@
 
 (defn- make-message-with-filtered-trace [exc-obj]
   "returns a message object that includes the filtered stacktrace"
-  (make-obj (concat (make-preobj-hashes error-prefix :err)
-		                (:message-object exc-obj)
-		                (make-preobj-hashes trace-lines-separator) ; to separate the message from the stack trace
-		                (make-preobj-hashes (trace->string (:filtered-stacktrace exc-obj) trace-elems-separator trace-lines-separator)
-				                              	:stack))))
+  (make-display-msg (concat (make-msg-info-hashes error-prefix :err)
+		                            (:msg-info-obj exc-obj)
+                                (make-msg-info-hashes trace-lines-separator) ; to separate the message from the stacktrace
+                                (make-msg-info-hashes (trace->string (:filtered-stacktrace exc-obj) trace-elems-separator trace-lines-separator)
+                                                    :stack))))
 
 ;; Graphics
 ;; msg-obj will contain parts and styles and lengths
@@ -96,4 +96,3 @@
       (catch java.awt.HeadlessException e
         ; If there is no GUI available on Linux, it simply throws a HeadlessException - print the erorr.
         (println (get-all-text msg-filtered-trace))))))
-

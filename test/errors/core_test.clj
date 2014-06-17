@@ -42,60 +42,60 @@
 ;### 3. errors.messageobj tests ###
 ;##################################
 
-;***Testing make-preobj-hashes***
+;***Testing make-msg-info-hashes***
 
-(expect (make-preobj-hashes) [])
+(expect (make-msg-info-hashes) [])
 
-;***Testing make-msg-preobj-hash***
+;***Testing make-msg-info-hash***
 
-(expect (make-msg-preobj-hash "Hi there")
+(expect (make-msg-info-hash "Hi there")
 	{:msg "Hi there" :stylekey :reg :length 8})
 
-(expect (make-msg-preobj-hash "Hi there" :arg)
+(expect (make-msg-info-hash "Hi there" :arg)
 	{:msg "Hi there" :stylekey :arg :length 8})
 
-(expect (make-msg-preobj-hash "Blue Jeans")
+(expect (make-msg-info-hash "Blue Jeans")
  {:msg "Blue Jeans", :stylekey :reg, :length 10})
 
-(expect (make-msg-preobj-hash "Bootcut" :hippy)
+(expect (make-msg-info-hash "Bootcut" :hippy)
  {:msg "Bootcut", :stylekey :hippy, :length 7})
 
-;***Testing make-preobj-hashes***
+;***Testing make-msg-info-hashes***
 
-(expect (make-preobj-hashes "Hi there")
+(expect (make-msg-info-hashes "Hi there")
 	[{:msg "Hi there" :stylekey :reg :length 8}])
 
-(expect (make-preobj-hashes "Hi there" :arg)
+(expect (make-msg-info-hashes "Hi there" :arg)
 	[{:msg "Hi there" :stylekey :arg :length 8}])
 
-(expect (make-preobj-hashes "Hi there" "Hello")
+(expect (make-msg-info-hashes "Hi there" "Hello")
 	[{:msg "Hi there" :stylekey :reg :length 8}
    {:msg "Hello" :stylekey :reg :length 5}])
 
-(expect (make-preobj-hashes "Hi there" :arg "Hello" :blah)
+(expect (make-msg-info-hashes "Hi there" :arg "Hello" :blah)
 	[{:msg "Hi there" :stylekey :arg :length 8}
 	 {:msg "Hello" :stylekey :blah :length 5}])
 
-(expect (make-preobj-hashes "Blue Jeans"
-                             "Khakis" :business-casual
-                             "Bootcut" :hippy
-                             "Jeggings" :casual)
+(expect (make-msg-info-hashes "Blue Jeans"
+                            "Khakis" :business-casual
+                            "Bootcut" :hippy
+                            "Jeggings" :casual)
 
  [{:msg "Blue Jeans", :stylekey :reg, :length 10}
   {:msg "Khakis", :stylekey :business-casual, :length 6}
   {:msg "Bootcut", :stylekey :hippy, :length 7}
   {:msg "Jeggings", :stylekey :casual, :length 8}])
 
-;***Testing make-obj***
+;***Testing make-display-msg***
 
-(expect (make-obj (make-preobj-hashes "Hi there" :arg "Hello"))
-	[{:msg "Hi there" :stylekey :arg :length 8 :start 0}
-	 {:msg "Hello" :stylekey :reg :length 5 :start 8}])
+(expect (make-display-msg (make-msg-info-hashes "Hi there" :arg "Hello"))
+        [{:msg "Hi there" :stylekey :arg :length 8 :start 0}
+         {:msg "Hello" :stylekey :reg :length 5 :start 8}])
 
-(expect (make-obj [{:msg "Blue Jeans", :stylekey :reg, :length 10}
-                   {:msg "Khakis", :stylekey :business-casual, :length 6}
-                   {:msg "Bootcut", :stylekey :hippy, :length 7}
-                   {:msg "Jeggings", :stylekey :casual, :length 8}])
+(expect (make-display-msg [{:msg "Blue Jeans", :stylekey :reg, :length 10}
+                               {:msg "Khakis", :stylekey :business-casual, :length 6}
+                               {:msg "Bootcut", :stylekey :hippy, :length 7}
+                               {:msg "Jeggings", :stylekey :casual, :length 8}])
 
  [{:start 0, :msg "Blue Jeans", :stylekey :reg, :length 10}
   {:start 10, :msg "Khakis", :stylekey :business-casual, :length 6}
@@ -104,8 +104,8 @@
 
 ;***Testing get-all-text***
 
-(expect (get-all-text (make-obj (make-preobj-hashes "Hi there! " :arg "Hello")))
-	"Hi there! Hello")
+(expect (get-all-text (make-display-msg (make-msg-info-hashes "Hi there! " :arg "Hello")))
+        "Hi there! Hello")
 
 ;***Testing make-mock-preobj***
 

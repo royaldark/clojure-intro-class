@@ -5,35 +5,35 @@
 ;; part is a hash map that contains the message text :msg,
 ;; the formatting id (e.g. :reg), the length of the text
 ;; :length, and the start of the message :start
-;; A message pre-object doesn't have :start
+;; A msg-info-obj doesn't have :start
 
-(defn make-msg-preobj-hash
-	"creates a hash map for a msg pre-object out of a msg and style, with the form {:msg message :stylekey style :length n}"
+(defn make-msg-info-hash
+	"creates a hash map for a msg-info-obj out of a msg and style, with the form {:msg message :stylekey style :length n}"
 	([msg style] (let [m (str msg)]
 			{:msg m :stylekey style :length (count m)}))
 	([msg] (let [m (str msg)]
 			{:msg m :stylekey :reg :length (count m)})))
 
-(defn- make-msg-preobj-hashes-helper [messages result]
+(defn- make-msg-info-hashes-helper [messages result]
 	(if (empty? messages) result
 		(let [next (second messages)]
 			(if (keyword? next) (recur (rest (rest messages))
-					           (conj result (make-msg-preobj-hash (first messages) next)))
+					           (conj result (make-msg-info-hash (first messages) next)))
 				            (recur (rest messages)
-				            	   (conj result (make-msg-preobj-hash (first messages))))))))
+				            	   (conj result (make-msg-info-hash (first messages))))))))
 
-(defn make-preobj-hashes [& args]
+(defn make-msg-info-hashes [& args]
 	"creates a vector of hash maps out of a vector that are strings, possibly followed by optional keywords"
-	(make-msg-preobj-hashes-helper args []))
+	(make-msg-info-hashes-helper args []))
 
-;(defn make-preobj-hashes [messages]
+;(defn make-msg-info-hashes  [messages]
 ;	"creates a vector of hash maps out of a vector of vectors of msg + optional style"
 ;	;; apply is needed since messages contains vectors of 1 or 2 elements
-;	(map #(apply make-msg-preobj-hash %) messages))
+;	(map #(apply make-msg-info-hash %) messages))
 
-(defn make-obj [pre-obj] ; pre-obj is a vector of hashmaps
-  "fills in the starting points of objects in the hash maps, in the context of the output from make-preobj-hashes"
-  (loop [hashes pre-obj start 0 res []]
+(defn make-display-msg [msg-info-obj] ; msg-info-obj is a vector of hashmaps
+  "fills in the starting points of objects in the hash maps, in the context of the output from make-msg-info-hashes "
+  (loop [hashes msg-info-obj start 0 res []]
     (if (empty? hashes) res
       (recur (rest hashes)
       	     (+ start (:length (first hashes)))
@@ -45,6 +45,5 @@
    (reduce #(str %1 (:msg %2)) "" msg-obj))
 
 (defn make-mock-preobj [matches]
-  "creates a test message pre-obj. Used for testing so that things don't break"
-  (make-preobj-hashes "This is a" "test" :arg))
-
+  "creates a test msg-info-obj. Used for testing so that things don't break"
+  (make-msg-info-hashes  "This is a" "test" :arg))

@@ -11,7 +11,7 @@
         fst nil
         hints nil]
     {:exception-class e-class
-     :message-object msg-obj ;; without the stack trace
+     :msg-info-obj msg-obj ;; without the stack trace
      :stacktrace st
      :filtered-stacktrace fst
      :hints hints}))

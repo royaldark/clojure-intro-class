@@ -17,11 +17,10 @@
 (defn get-pretty-message [e-class message]
   (if-let [entry (first-match e-class message)]
     ;; if there's a match for the exception and the message, replace the
-    ;; message according to the dictionary and make a message
-    ;; pre-obj out of it
-    ((:make-preobj entry) (re-matches (:match entry) message))
-    ;; else just make a message pre-obj out the message itself
-    (make-preobj-hashes message)))
+    ;; message according to the dictionary and make a msg-info-obj out of it
+    ((:make-msg-info-obj entry) (re-matches (:match entry) message))
+    ;; else just make a msg-info-obj out the message itself
+    (make-msg-info-hashes message)))
 
 (defn filter-stacktrace [stacktrace]
   (filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %))))
@@ -37,7 +36,7 @@
         filtered-trace (filter-stacktrace stacktrace)]
     ;; create an exception object and pass it to display-error
     (display-error {:exception-class e-class
-		    :message-object (get-pretty-message e-class message)
+		    :msg-info-obj (get-pretty-message e-class message)
 		    :stacktrace stacktrace
 		    :filtered-stacktrace filtered-trace
 		    :hints nil})))
