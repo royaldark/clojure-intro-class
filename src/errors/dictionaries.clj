@@ -49,7 +49,7 @@
 ;; matching type interfaces to beginner-friendly names.
 ;; Note: since a type may implement more than one interface,
 ;; the order is essential. The lookup is done in order, so
-;; the first match is returned.$
+;; the first match is returned.
 ;; That's why it's a vector, not a hashmap.
 ;; USE CAUTION WHEN ADDING NEW TYPES!
 
