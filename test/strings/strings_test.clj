@@ -8,6 +8,10 @@
 
 ;; as a note: all clojure characters signified with a \ are stored as java characters
 
+;#########################################
+;### Testing for the better string fns ###
+;#########################################
+
 ; testing for seq->string
 (expect "hello world" (seq->string '(\h \e \l \l \o \space \w \o \r \l \d)))
 (expect "" (seq->string '()))
@@ -16,11 +20,24 @@
 (expect "true" (seq->string (list (odd? 3))))
 (expect "hi" (seq->string "hi"))
 (expect "" (seq->string nil))
+(expect (more-of x
+                4 (count x)
+                true (string-contains? x "1")
+                true (string-contains? x "2")
+                true (string-contains? x "3")
+                true (string-contains? x "5"))
+        (seq->string #{3 2 1 5}))
+(expect (more-of x
+                43 (count x)
+                true (string-contains? x "[:ten 10]")
+                true (string-contains? x "[:twenty-two 22]")
+                true (string-contains? x "[:four 4]")
+                true (string-contains? x "[:five 5]"))
+        (seq->string {:ten 10 :twenty-two 22 :four 4 :five 5}))
 
 ; these should throw an assertion error because seq->string expects a sequence, string, or nil
 (expect AssertionError (seq->string 123))
 (expect AssertionError (seq->string \e))
-(expect AssertionError (seq->string {:e \e :d \d :j \j}))
 
 ; type-checking for seq->string - should return a string
 (expect (string? (seq->string '(\h \e \l \l \o \space \w \o \r \l \d))))
@@ -80,6 +97,8 @@
 (expect "abc123" (append "abc" 123))
 (expect "abc1230[1 3 4]*" (append "abc" 123 \0 nil [1 3 4] \*))
 (expect "abc1230[[1 2] 3 4]*" (append "abc" 123 \0 nil [[1 2] 3 4] \*))
+(expect  "{:one 1, :three 3, :two 2} abc do re mi"(append {:one 1 :two 2 :three 3} \space "abc" \space "do re mi"))
+(expect "#{:z :a :b :f :e :l :i}abc8q[8 5 2]" (append #{:a :b :i :f :l :z :e} "abc" nil \8 \q [8 5 2]))
 
 ; nothing should throw an assertion error because append can take anything
 
@@ -239,12 +258,10 @@
 ; the type of thing it returns - sometimes this might involve making a list, vector, etc.
 
 ; non-ASCII tests
-(expect "弟子規裡有一個字應該更正首孝悌的「悌」應該是「弟」" (seq->string '(弟子規裡有一個字應該更正首孝
-   悌的「悌」應該是「弟」)))
+(expect "弟子規裡有一個字應該更正首孝悌的「悌」應該是「弟」" (seq->string '(弟子規裡有一個字應該更正首孝悌的「悌」應該是「弟」)))
 (expect 2 (index-of "弟子規裡有一個字應該更正首孝悌的「悌」應該是「弟」" \規))
 (expect 21 (last-index-of "弟子規裡有一個字應該更正首孝悌的「悌」應該規是「弟」" \規 82))
-(expect "弟子規裡有一個字應該更正首孝悌的「悌」應該規是「弟」" (append "弟子規裡有一個字應該更"
-   "正首孝悌的「悌」應該規是「弟」"))
+(expect "弟子規裡有一個字應該更正首孝悌的「悌」應該規是「弟」" (append "弟子規裡有一個字應該更" "正首孝悌的「悌」應該規是「弟」"))
 (expect \「 (char-at "正首孝悌的「悌」應該規是「弟」" 5))
 (expect false (empty-string? "「"))
 (expect \正 (first-of-string "正首孝悌的「悌」應該規是「弟」"))
@@ -259,9 +276,9 @@
 ; If LightTable understands the non-ASCII word, then the functions will work with them.
 
 
-;#########################################################################################
-;########### these are all functions that are usually used with clojure.string ###########
-;#########################################################################################
+;#########################################################################
+;### these are all functions that are usually used with clojure.string ###
+;#########################################################################
 
 ; testing for reverse-string
 ;(expect "amme" (reverse-string "emma"))

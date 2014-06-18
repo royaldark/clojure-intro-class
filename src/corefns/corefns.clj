@@ -77,8 +77,6 @@
    		   			     (check-if-seqable? "reduce" (second args) 3))]}
    (apply clojure.core/reduce argument1 args))
 
-
-
 ;; (nth coll index)
 ;; (nth coll index not-found)
 ;; Returns the value at the index. get returns nil if index out of
@@ -88,7 +86,6 @@
 (defn nth [argument1 argument2 & args] ;; there may be an optional 3rd arg, no restrictions
    {:pre [(check-if-seqable? "nth" argument1) (check-if-number? "nth" argument2)]}
    (apply clojure.core/nth argument1 argument2 args))
-
 
 ;; (filter pred coll)
 ;; Returns a lazy sequence of the items in coll for which
@@ -115,9 +112,6 @@
   {:pre [(check-if-seqables? "concat" args 1)]}
   (apply clojure.core/concat args))
 
-
-
-
 ;;    (< x)
 ;;    (< x y)
 ;;    (< x y & more)
@@ -135,7 +129,6 @@
 (defn <= [& args]
   {:pre [(check-if-numbers? "<=" args 1)]}
   (apply clojure.core/<= args))
-
 
 ;;    (> x)
 ;;    (> x y)
@@ -164,7 +157,6 @@
 (defn add-last [argument1 argument2]
   {:pre [(check-if-seqable? "add-last" argument1)]}
   (doall (concat argument1 [argument2])))
-
 
 ;; user-friendly versions of confusing functions
 (defn contains-value? [coll x]

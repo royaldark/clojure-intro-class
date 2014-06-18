@@ -28,14 +28,6 @@
           (my-prettify-exception
             (run-and-catch '(/ 5 0))))
 
-(expect [{:msg "Attempted to use ", :stylekey :reg, :length 17}
-         {:msg "a number", :stylekey :type, :length 8}
-         {:msg ", but ", :stylekey :reg, :length 6}
-         {:msg "a collection", :stylekey :type, :length 12}
-         {:msg " was expected.", :stylekey :reg, :length 14}]
-          (my-prettify-exception
-            (run-and-catch '(into 6 [1 2]))))
-
 (expect [{:msg "An index in a sequence is out of bounds",
           :stylekey :reg,
           :length 39}]
@@ -72,13 +64,27 @@
         (my-prettify-exception
          (run-and-catch '(rest 1))))
 
-(expect [{:msg "Attempted to use ", :stylekey :reg, :length 17}
-         {:msg "a function", :stylekey :type, :length 10}
-         {:msg ", but ", :stylekey :reg, :length 6}
-         {:msg "a collection", :stylekey :type, :length 12}
-         {:msg " was expected.", :stylekey :reg, :length 14}]
+;(expect [{:stylekey :reg, :length 17, :msg "Attempted to use "}
+;         {:stylekey :type, :length 10, :msg "a function"}
+;         {:stylekey :reg, :length 6, :msg ", but "}
+;         {:stylekey :type, :length 12, :msg "a collection"}
+;         {:stylekey :reg, :length 14, :msg " was expected."}]
+;        (my-prettify-exception
+;         (run-and-catch '(conj + 1))))
+
+(expect [{:msg "Compilation error: ", :stylekey :reg, :length 19}
+         {:msg "name ", :stylekey :reg, :length 5}
+         {:msg "index-of", :stylekey :arg, :length 8}
+         {:msg " is undefined, while compiling ", :stylekey :reg, :length 31}]
+        (butlast
         (my-prettify-exception
-         (run-and-catch '(conj + 1))))
+         (run-and-catch '(index-of "emma" \e \0)))))
+
+(expect #"NO_SOURCE_PATH"
+        (:msg
+         (last
+           (my-prettify-exception
+             (run-and-catch '(index-of "emma" \e \0))))))
 
 ;; This is a group
 ;;###################################################################
