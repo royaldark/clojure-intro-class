@@ -8,28 +8,28 @@
 
 ;; as a note: all clojure characters signified with a \ are stored as java characters
 
-; testing for to-string
-(expect "hello world" (to-string '(\h \e \l \l \o \space \w \o \r \l \d)))
-(expect "" (to-string '()))
-(expect "123" (to-string [1 2 3]))
-(expect "[1][2]" (to-string [[1] [2]]))
-(expect "true" (to-string (list (odd? 3))))
-(expect "hi" (to-string "hi"))
-(expect "" (to-string nil))
+; testing for seq->string
+(expect "hello world" (seq->string '(\h \e \l \l \o \space \w \o \r \l \d)))
+(expect "" (seq->string '()))
+(expect "123" (seq->string [1 2 3]))
+(expect "[1][2]" (seq->string [[1] [2]]))
+(expect "true" (seq->string (list (odd? 3))))
+(expect "hi" (seq->string "hi"))
+(expect "" (seq->string nil))
 
-; these should throw an assertion error because to-string expects a sequence, string, or nil
-(expect AssertionError (to-string 123))
-(expect AssertionError (to-string \e))
-(expect AssertionError (to-string {:e \e :d \d :j \j}))
+; these should throw an assertion error because seq->string expects a sequence, string, or nil
+(expect AssertionError (seq->string 123))
+(expect AssertionError (seq->string \e))
+(expect AssertionError (seq->string {:e \e :d \d :j \j}))
 
-; type-checking for to-string - should return a string
-(expect (string? (to-string '(\h \e \l \l \o \space \w \o \r \l \d))))
-(expect (string? (to-string '())))
-(expect (string? (to-string [1 2 3])))
-(expect (string? (to-string [[1] [2]])))
-(expect (string? (to-string (list (odd? 3)))))
-(expect (string? (to-string "hi")))
-(expect (string? (to-string nil)))
+; type-checking for seq->string - should return a string
+(expect (string? (seq->string '(\h \e \l \l \o \space \w \o \r \l \d))))
+(expect (string? (seq->string '())))
+(expect (string? (seq->string [1 2 3])))
+(expect (string? (seq->string [[1] [2]])))
+(expect (string? (seq->string (list (odd? 3)))))
+(expect (string? (seq->string "hi")))
+(expect (string? (seq->string nil)))
 
 ; testing for index-of
 (expect 5 (index-of "emmahenryaaronelena" \e 4))
@@ -79,6 +79,7 @@
 (expect "abcdef" (append "abc" "def" nil))
 (expect "abc123" (append "abc" 123))
 (expect "abc1230[1 3 4]*" (append "abc" 123 \0 nil [1 3 4] \*))
+(expect "abc1230[[1 2] 3 4]*" (append "abc" 123 \0 nil [[1 2] 3 4] \*))
 
 ; nothing should throw an assertion error because append can take anything
 
@@ -178,22 +179,22 @@
 (expect (char? (second-of-string "Aaron")))
 (expect (char? (second-of-string "testing!")))
 
-; testing for contains-string?
-(expect true (contains-string? "Moonrise" "on"))
-(expect false (contains-string? "Moo|nrise" "on"))
-(expect true (contains-string? "Moonrise" "M"))
-(expect true (contains-string? "moonrise" \m))
+; testing for string-contains?
+(expect true (string-contains? "Moonrise" "on"))
+(expect false (string-contains? "Moo|nrise" "on"))
+(expect true (string-contains? "Moonrise" "M"))
+(expect true (string-contains? "moonrise" \m))
 
-; these should throw an assertion error because contains-string? expects two strings or a string and a character
-(expect AssertionError (contains-string? [1 2 3] 1))
-(expect AssertionError (contains-string? nil \i))
-(expect AssertionError (contains-string? "vanilla" nil))
+; these should throw an assertion error because string-contains? expects two strings or a string and a character
+(expect AssertionError (string-contains? [1 2 3] 1))
+(expect AssertionError (string-contains? nil \i))
+(expect AssertionError (string-contains? "vanilla" nil))
 
-; type-checking for contains-string? - should return either true or false
-(expect (#(or (true? %) (false? %)) (contains-string? "Moonrise" "on")))
-(expect (#(or (true? %) (false? %)) (contains-string? "Moo|nrise" "on")))
-(expect (#(or (true? %) (false? %)) (contains-string? "Moonrise" "M")))
-(expect (#(or (true? %) (false? %)) (contains-string? "moonrise" \m)))
+; type-checking for string-contains? - should return either true or false
+(expect (#(or (true? %) (false? %)) (string-contains? "Moonrise" "on")))
+(expect (#(or (true? %) (false? %)) (string-contains? "Moo|nrise" "on")))
+(expect (#(or (true? %) (false? %)) (string-contains? "Moonrise" "M")))
+(expect (#(or (true? %) (false? %)) (string-contains? "moonrise" \m)))
 
 ; testing for drop-from-string
 (expect "Lake City" (drop-from-string 5 "Salt Lake City"))
@@ -227,18 +228,18 @@
 
 ; using the functions in combinations with each other
 (expect \a (first-of-string (rest-of-string (take-from-string 8 "Salt Lake City"))))
-(expect "s" (to-string (list (char-at (drop-from-string 12 (clojure.string/reverse (append
+(expect "s" (seq->string (list (char-at (drop-from-string 12 (clojure.string/reverse (append
   "The chivalrous knight " "was super brave, " "although that's pretty expected."))) 5))))
-(expect "oo" (to-string (list (last-of-string "hello") (second-of-string "world"))))
+(expect "oo" (seq->string (list (last-of-string "hello") (second-of-string "world"))))
 (expect [1 9] (vector (index-of "hello world" \e) (last-index-of "hello world" \l)))
-(expect false (and (empty-string? "") (contains-string? "hello world" \z)))
-(expect true (or (empty-string? "") (contains-string? "hello world" \z)))
+(expect false (and (empty-string? "") (string-contains? "hello world" \z)))
+(expect true (or (empty-string? "") (string-contains? "hello world" \z)))
 
 ; Super easy to use multiple functions at the same time, you just need to watch
 ; the type of thing it returns - sometimes this might involve making a list, vector, etc.
 
 ; non-ASCII tests
-(expect "弟子規裡有一個字應該更正首孝悌的「悌」應該是「弟」" (to-string '(弟子規裡有一個字應該更正首孝
+(expect "弟子規裡有一個字應該更正首孝悌的「悌」應該是「弟」" (seq->string '(弟子規裡有一個字應該更正首孝
    悌的「悌」應該是「弟」)))
 (expect 2 (index-of "弟子規裡有一個字應該更正首孝悌的「悌」應該是「弟」" \規))
 (expect 21 (last-index-of "弟子規裡有一個字應該更正首孝悌的「悌」應該規是「弟」" \規 82))
@@ -250,8 +251,8 @@
 (expect \」 (last-of-string "正首孝悌的「悌」應該規是「弟」"))
 (expect "首孝悌的「悌」應該規是「弟」" (rest-of-string "正首孝悌的「悌」應該規是「弟」"))
 (expect \首 (second-of-string "正首孝悌的「悌」應該規是「弟」"))
-(expect true (contains-string? "正首孝悌的「悌」應該規是「弟」" \規))
-(expect false (contains-string? "正首孝悌的「悌」應該規是「弟」" \子))
+(expect true (string-contains? "正首孝悌的「悌」應該規是「弟」" \規))
+(expect false (string-contains? "正首孝悌的「悌」應該規是「弟」" \子))
 (expect "正首孝" (take-from-string 3 "正首孝悌的「悌」應該規是「弟」"))
 (expect "悌的「悌」應該規是「弟」" (drop-from-string 3 "正首孝悌的「悌」應該規是「弟」"))
 

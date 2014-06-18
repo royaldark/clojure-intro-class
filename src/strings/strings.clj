@@ -8,16 +8,15 @@
 
 ;Author: Emma Sax
 
-;;; to-string: sequence of escaped characters -> string
-(defn to-string
-  "Takes a word as a sequence of escaped characters, a string, or nil
-  and returns a string of the characters, returns an empty string if an
-  empty sequence is given; treats nil as an empty string."
-  [sequence-of-chars]
-  {:pre [(or (sequential? sequence-of-chars)
-             (string? sequence-of-chars)
-             (nil? sequence-of-chars))]}
-  (apply str sequence-of-chars))
+;;; seq->string: sequence -> string
+(defn seq->string
+  "Takes a word as a sequence, a string, or nil
+  and returns a string of the characters, returns an empty string for nil."
+  [sequence]
+  {:pre [(or (sequential? sequence)
+             (string? sequence)
+             (nil? sequence))]}
+  (apply str sequence))
 
 ;;; index-of: string, string, optional number -> number
 (defn index-of
@@ -47,8 +46,7 @@
 ;;; append: anything -> string
 (defn append
   "Takes any number of anything and returns a string which appends the arguments
-  together, returns an empty string if there are no arguments given or if empty strings
-  are given; treats nil as an empty string."
+  together, returns an empty string for nil."
   [& args]
   (apply str args))
 
@@ -98,8 +96,8 @@
   {:pre [(string? string)]}
   (second string))
 
-;;; contains-string?: string, string -> boolean
-(defn contains-string?
+;;; string-contains?: string, string -> boolean
+(defn string-contains?
   "Takes either two strings or a string and a character and returns true if the first
   string contains the second string/character, returns false otherwise."
   [string substring]
