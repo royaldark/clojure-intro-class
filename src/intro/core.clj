@@ -2,8 +2,8 @@
   (:use [errors.prettify_exception]
         [seesaw.core]
         [errors.exceptions :refer :all]))
+
 (refer 'corefns.corefns)
-        ;[turtle.extended-turtle]))
 
 (defn basic-seesaw-frame []
   (invoke-later

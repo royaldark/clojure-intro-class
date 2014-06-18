@@ -1,6 +1,6 @@
 (ns corefns.corefns_test
   (:require [expectations :refer :all]
-            [corefns.corefns :refer :all]))
+            [corefns.failed_asserts_info :refer :all]))
 
 ;; testing for the expectations framework
 (expect 4 (+ 2 2))
@@ -12,9 +12,9 @@
 (comment
   (do
     (empty-seen)
-    (expect nil (deref seen-objects))
+    (expect nil (deref seen-failed-asserts))
     (add-to-seen {:a 1})
-    (expect {:a 1} (deref seen-objects))
+    (expect {:a 1} (deref seen-failed-asserts))
     (empty-seen)))
 
 
@@ -24,8 +24,8 @@
   (do
     (empty-seen)
     (add-to-seen {:a 1})
-    (expect {:a 1} @seen-objects)
+    (expect {:a 1} @seen-failed-asserts)
     ;(add-to-seen {:b 2 :c 3})
-    ;(expect {:a 1, :b 2, :c 3} @seen-objects)
+    ;(expect {:a 1, :b 2, :c 3} @seen-failed-asserts)
     (empty-seen)
-    (expect nil @seen-objects)))
+    (expect nil @seen-failed-asserts)))

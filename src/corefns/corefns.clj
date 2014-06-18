@@ -1,6 +1,8 @@
 (ns corefns.corefns
   (:use [clojure.core.incubator])
-  (:refer-clojure :exclude [map nth]))
+  (:refer-clojure :exclude [map nth])
+  (:require [corefns.assert_handling :refer :all]
+            [corefns.failed_asserts_info :refer :all]))
 
 ;; to-do:
 ;; 1. remove references to contracts, trammel (from project.clj as well) - Done
@@ -16,66 +18,6 @@
 ;; 9. Handle anonymous functions - Done?
 ;; 10. Add a function name to the error message - Done
 ;; inf. why didn't I think of this earlier?
-
-;; a global hashmap of recorded types/messages
-(def seen-objects (atom {}))
-
-(defn add-to-seen [binds]
-  "adds bindings to seen objects"
-  (swap! seen-objects merge binds)) ; merge overwrites the same fields but adds new ones
-
-(defn empty-seen []
-  "removes all bindings from seen objects"
-  (swap! seen-objects {}))
-
-;; Functions to check pre-conditions and record the offenders for
-;; error processing
-(defn check-if-function? [fname x]
-  (if (fn? x) true
-  	      (do (add-to-seen {:check "function"
-  	      		              :class (class x)
-  	      		              :value x
-  	      		              :fname fname})
-  	      	   false)))
-
-
-(defn check-if-seqable? [fname x & [n]]
-  "returns true if x is seqable and false otherwise, sets data
-  in seen-objects. If the second argument is present, it's added
-  to the seen-objects as the number of the argument"
-  (if (seqable? x) true
-  	      (do (add-to-seen {:check "sequence"
-  	      		              :class (class x)
-  	      		              :value x
-  	      		              :fname fname})
-  	      	  (if n (add-to-seen {:arg-num n}))
-  	      	  false)))
-
-(defn check-if-number? [fname x]
-  (if (number? x) true
-  	      (do (add-to-seen {:check "number"
-  	      		              :class (class x)
-  	      		              :value x
-  	      		              :fname fname})
-  	      	  false)))
-
-;; should pass the strating arg number: it's different for different functions
-(defn check-if-seqables? [fname arguments start]
-  (loop [args arguments n start]
-    (if (empty? args) true
-      (if (not (check-if-seqable? fname (first args)))
-      	(do (add-to-seen {:arg-num n})
-            false)
-        (recur (rest args) (inc n))))))
-
-;; should pass the strating arg number: it's different for different functions
-(defn check-if-numbers? [fname arguments start]
-  (loop [args arguments n start]
-    (if (empty? args) true
-      (if (not (check-if-number? fname (first args)))
-      	(do (add-to-seen {:arg-num n})
-            false)
-        (recur (rest args) (inc n))))))
 
 ;; Including the standard Clojure documentation to make sure that asserts
 ;; and cases are consistent with the standard Clojure.

@@ -1,6 +1,7 @@
 (ns errors.dictionaries
   (:use [corefns.corefns]
-        [errors.messageobj]))
+        [errors.messageobj]
+        [corefns.failed_asserts_info]))
 
 ;; A dictionary of known types and their user-friendly representations
 ;; potentially we can have multiple dictionaries, depending on the level
@@ -133,17 +134,17 @@
 
 (defn process-asserts-obj [n]
   "Returns a msg-info-obj generated for an assert failure based on the
-	global seen-objects hashmap, clears the hashmap"
+	global seen-failed-asserts hashmap, clears the hashmap"
   ;; and perhaps need manual error handling, in case the seen-object is empty
-  (let [t (:check @seen-objects)
-        cl (:class @seen-objects)
+  (let [t (:check @seen-failed-asserts)
+        cl (:class @seen-failed-asserts)
         c (if cl (.getName cl) nil)
-        fname (:fname @seen-objects)
+        fname (:fname @seen-failed-asserts)
         c-type (if c (get-type c) "nil") ; perhaps want to rewrite this
-        v (:value @seen-objects)
+        v (:value @seen-failed-asserts)
         v-print (pretty-print-value v c c-type)
-        arg (arg-str (if n (Integer. n) (:arg-num @seen-objects)))]
-    (empty-seen) ; empty the seen-objects hashmap
+        arg (arg-str (if n (Integer. n) (:arg-num @seen-failed-asserts)))]
+    (empty-seen) ; empty the seen-failed-asserts hashmap
     (make-msg-info-hashes
      "in function " fname :arg " " arg " " v-print :arg
      " must be a " t :type " but is " c-type :type)))
