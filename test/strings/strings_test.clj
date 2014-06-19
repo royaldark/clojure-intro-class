@@ -98,7 +98,7 @@
 (expect "abc1230[1 3 4]*" (append "abc" 123 \0 nil [1 3 4] \*))
 (expect "abc1230[[1 2] 3 4]*" (append "abc" 123 \0 nil [[1 2] 3 4] \*))
 (expect  "{:one 1, :three 3, :two 2} abc do re mi"(append {:one 1 :two 2 :three 3} \space "abc" \space "do re mi"))
-(expect "#{:z :a :b :f :e :l :i}abc8q[8 5 2]" (append #{:a :b :i :f :l :z :e} "abc" nil \8 \q [8 5 2]))
+(expect "#{:e :l :z :b :f :i :a}abc8q[8 5 2]" (append #{:a :b :i :f :l :z :e} "abc" nil \8 \q [8 5 2])) ;!!!
 
 ; nothing should throw an assertion error because append can take anything
 

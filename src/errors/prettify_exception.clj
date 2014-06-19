@@ -28,14 +28,14 @@
 ;; All together:
 (defn prettify-exception [e]
   (let [e-class (class e)
-	m (.getMessage e)
-	message  (if m m "") ; converting an empty message from nil to ""
-	exc (stacktrace/parse-exception e)
-	stacktrace (:trace-elems exc)
+        m (.getMessage e)
+        message  (if m m "") ; converting an empty message from nil to ""
+        exc (stacktrace/parse-exception e)
+        stacktrace (:trace-elems exc)
         filtered-trace (filter-stacktrace stacktrace)]
     ;; create an exception object and pass it to display-error
     (display-error {:exception-class e-class
-		    :msg-info-obj (get-pretty-message e-class message)
-		    :stacktrace stacktrace
-		    :filtered-stacktrace filtered-trace
-		    :hints nil})))
+                    :msg-info-obj (get-pretty-message e-class message)
+                    :stacktrace stacktrace
+                    :filtered-stacktrace filtered-trace
+                    :hints nil})))

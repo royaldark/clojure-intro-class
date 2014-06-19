@@ -169,6 +169,5 @@
 (defn any? [pred coll]
   (not (not-any? pred coll)))
     ; yes, I know :-(
-(defn some? [pred coll]
-  (not (not-any? pred coll)))
-; is defining both some? and any? a little repetitive?
+;(defn some? [pred coll]
+;  (not (not-any? pred coll)))
