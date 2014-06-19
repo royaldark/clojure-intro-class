@@ -48,6 +48,8 @@
                       :fname fname})
       false)))
 
+;(defn check-if-predicate?)
+
 ;; should pass the starting arg number: it's different for different functions
 (defn check-if-seqables? [fname arguments start]
   (loop [args arguments n start]

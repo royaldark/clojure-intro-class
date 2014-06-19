@@ -513,11 +513,34 @@
 (defn test-our-examples []
   (test-all-and-continue
    '(
+     (contains-value? :not-a-collection 2)
+     (add-last :not-a-collection [1 2 3])
+     (add-first :not-a-collection [1 2 3])
+     (<= 4 :not-a-number)
+     (<= :twenty-two 31)
+     (>= 4 :not-a-number)
+     (>= :twenty-two 31)
+     (> 4 :not-a-number)
+     (> :twenty-two 31)
+     (< 4 :not-a-number)
+     (< :twenty-two 31)
+     (concat [1 2] [3 4] [18 22] :keyword)
+     (concat :keyword)
+     (mapcat reverse [1 2 3] :not-a-collection)
+     (mapcat reverse :not-a-collection [8 9 10])
+     (mapcat :not-a-function [1 2 3] [8 9 10])
+     (filter odd? :bar)
+     (filter :foo [1 2 3])
+     (nth [0 1 2 3 4] :keyword)
+     (nth 9 10)
+     (reduce + 2 :not-a-collection)
+     (reduce + :argument)
+     (reduce :not-a-function [1 2 3])
      (into #{} 90)(into 42 [1 2 3])
      (conj :hi)
+     (count 3)
      (map + :hello)
-     (map \o [1 2 3])
-     (count 3))))
+     (map \o [1 2 3]))))
 
 (defn -main [& args]
   (try

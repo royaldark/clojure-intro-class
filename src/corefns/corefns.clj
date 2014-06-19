@@ -32,7 +32,8 @@
 ;; exhausted. Any remaining items in other colls are ignored. Function
 ;; f should accept number-of-colls arguments.
 (defn map [argument1 & args]
- {:pre [(check-if-function? "map" argument1) (check-if-seqables? "map" args 2)]}
+ {:pre [(check-if-function? "map" argument1)
+        (check-if-seqables? "map" args 2)]}
   (apply clojure.core/map argument1 args))
 
 ;; count, into, conj, nth, drop, take, concat, filter, reduce
@@ -57,12 +58,13 @@
 
 ;;
 (defn into [argument1 argument2]
-   {:pre [(check-if-seqable? "into" argument1) (check-if-seqable? "into" argument2)]}
+   {:pre [(check-if-seqable? "into" argument1)
+          (check-if-seqable? "into" argument2)]}
    (clojure.core/into argument1 argument2))
 
 ;; (reduce f coll)
 ;; (reduce f val coll)
-;; f should be a function of 2 arguments. If val is not supplied,
+;; f should be a function of :not-a-function2 arguments. If val is not supplied,
 ;; returns the result of applying f to the first 2 items in coll, then
 ;; applying f to that result and the 3rd item, etc. If coll contains no
 ;; items, f must accept no arguments as well, and reduce returns the
@@ -71,11 +73,15 @@
 ;; result of applying f to val and the first item in coll, then
 ;; applying f to that result and the 2nd item, etc. If coll contains no
 ;; items, returns val and f is not called.
-(defn reduce [argument1 & args]
-   {:pre [(check-if-function? "reduce" argument1) (if (= (count args) 1)
-   		   			     (check-if-seqable? "reduce" (first args) 2)
-   		   			     (check-if-seqable? "reduce" (second args) 3))]}
-   (apply clojure.core/reduce argument1 args))
+(defn reduce
+  ([argument1 argument2]
+   {:pre [(check-if-function? "reduce" argument1)
+          (check-if-seqable? "reduce" argument2)]}
+   (clojure.core/reduce argument1 argument2))
+  ([argument1 argument2 argument3]
+   {:pre [(check-if-function? "reduce" argument1)
+          (check-if-seqable? "reduce" argument3)]}
+   (clojure.core/reduce argument1 argument2 argument3)))
 
 ;; (nth coll index)
 ;; (nth coll index not-found)
@@ -83,24 +89,30 @@
 ;; bounds, nth throws an exception unless not-found is supplied. nth
 ;; also works for strings, Java arrays, regex Matchers and Lists, and,
 ;; in O(n) time, for sequences.
-(defn nth [argument1 argument2 & args] ;; there may be an optional 3rd arg, no restrictions
-   {:pre [(check-if-seqable? "nth" argument1) (check-if-number? "nth" argument2)]}
-   (apply clojure.core/nth argument1 argument2 args))
+(defn nth ;; there may be an optional 3rd arg
+  ([argument1 argument2]
+   {:pre [(check-if-seqable? "nth" argument1)
+          (check-if-number? "nth" argument2)]}
+   (clojure.core/nth argument1 argument2))
+  ([argument1 argument2 argument3]
+   {:pre [(check-if-seqable? "nth" argument1)
+          (check-if-number? "nth" argument2)]}
+   (clojure.core/nth argument1 argument2 argument3)))
 
 ;; (filter pred coll)
 ;; Returns a lazy sequence of the items in coll for which
 ;; (pred item) returns true. pred must be free of side-effects.
 (defn filter [argument1 argument2]
-  {:pre [(check-if-function? "filter" argument1) (check-if-seqable? "filter" argument2)]}
+  {:pre [(check-if-function? "filter" argument1)
+         (check-if-seqable? "filter" argument2)]}
   (clojure.core/filter argument1 argument2))
 
 ;; (mapcat f & colls)
 ;; Returns the result of applying concat to the result of applying map
 ;; to f and colls. Thus function f should return a collection.
-;; !!!! TODO: add a condition for the number of args to mapcat !!!!
-;; (the error message refers to the number of args to map)
 (defn mapcat [argument1 & args]
-  {:pre [(check-if-function? "mapcat" argument1) (check-if-seqables? "mapcat" args 2)]}
+  {:pre [(check-if-function? "mapcat" argument1)
+         (check-if-seqables? "mapcat" args 2)]}
   (apply clojure.core/mapcat argument1 args))
 
 ;; (concat)
@@ -160,13 +172,18 @@
 
 ;; user-friendly versions of confusing functions
 (defn contains-value? [coll x]
+  {:pre [(check-if-seqable? "contains-value?" coll)]}
 	(let [values (if (map? coll) (vals coll) coll)]
 		(not (every? #(not= x %) values))))
 
-(def contains-key? contains?)
+(defn contains-key? [coll key]
+  {:pre [(check-if-seqable? "contains-key?" coll)]}
+  (clojure.core/contains? coll key))
 
 ;; more content tests
-(defn any? [pred coll]
+(defn any? [pred coll] ;;unsure how to check if somethings a predicate
+  {:pre [(check-if-function? "any?" pred)
+         (check-if-seqable? "any?" coll)]}
   (not (not-any? pred coll)))
     ; yes, I know :-(
 ;(defn some? [pred coll]
