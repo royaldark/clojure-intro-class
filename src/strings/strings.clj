@@ -15,7 +15,7 @@
   "Takes a word as a sequence, a string, or nil
   and returns a string of the characters, returns an empty string for nil."
   [sequence]
-  {:pre [(check-if-seqable? "seq->string" sequence 1)]}
+  {:pre [(check-if-seqable? "seq->string" sequence 0)]}
   (apply str sequence))
 
 ;;; index-of: string, string, optional number -> number
@@ -71,21 +71,21 @@
   "Takes a string and returns true if the length of the string is 0, returns false
   otherwise."
   [string]
-  {:pre [(check-if-string? "empty-string?" string 1)]}
+  {:pre [(check-if-string? "empty-string?" string 0)]}
   (zero? (count string)))
 
 ;;; first-of-string: string -> character
 (defn first-of-string
   "Takes a string and returns the first character of the string."
   [string]
-  {:pre [(check-if-string? "first-of-string" string 1)]}
+  {:pre [(check-if-string? "first-of-string" string 0)]}
   (first string))
 
 ;;; last-of-string: string -> character
 (defn last-of-string
   "Takes a string and returns the last character of the string."
   [string]
-  {:pre [(check-if-string? "last-of-string" string 1)]}
+  {:pre [(check-if-string? "last-of-string" string 0)]}
   (last string))
 
 ;;; rest-of-string: string -> string
@@ -93,14 +93,14 @@
   "Takes a string and returns a new string with all of the elements in order
   except for the first character."
   [string]
-  {:pre [(check-if-string? "rest-of-string" string 1)]}
+  {:pre [(check-if-string? "rest-of-string" string 0)]}
   (apply str (rest string)))
 
 ;;; second-of-string: string -> character
 (defn second-of-string
   "Takes a string and returns the second character of the string."
   [string]
-  {:pre [(check-if-string? "second-of-string" string 1)]}
+  {:pre [(check-if-string? "second-of-string" string 0)]}
   (second string))
 
 ;;; string-contains?: string, string -> boolean

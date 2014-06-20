@@ -182,8 +182,8 @@
 
 ;; more content tests
 (defn any? [pred coll] ;;unsure how to check if somethings a predicate
-  {:pre [(check-if-function? "any?" pred)
-         (check-if-seqable? "any?" coll)]}
+  {:pre [(check-if-function? "any?" pred 1)
+         (check-if-seqable? "any?" coll 2)]}
   (not (not-any? pred coll)))
     ; yes, I know :-(
 ;(defn some? [pred coll]

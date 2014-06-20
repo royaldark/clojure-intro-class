@@ -14,14 +14,22 @@
                       :value x
                       :fname fname})
       (if n (add-to-seen {:arg-num n}))
-      false)))
+            false)))
+    ;  (cond
+    ;   (number? n) (add-to-seen {:arg-num n})
+    ;   (string? n) (add-to-seen {:number-of-args (read-string n)}))
+    ;  (if n
+    ;    (if (number? n) (add-to-seen {:arg-num n})
+    ;      (if (string? n) (add-to-seen {:number-of-args (read-string n)})))
+    ;  (if q (add-to-seen {:number-of-args (read-string n)}))
 
-(defn check-if-function? [fname x]
+(defn check-if-function? [fname x & [n]]
   (if (fn? x) true
     (do (add-to-seen {:check "function"
                       :class (class x)
                       :value x
                       :fname fname})
+      (if n (add-to-seen {:arg-num n}))
       false)))
 
 (defn check-if-number? [fname x & [n]]
@@ -54,26 +62,26 @@
 ;; should pass the starting arg number: it's different for different functions
 (defn check-if-seqables? [fname arguments start]
   (loop [args arguments n start]
-    (if (empty? args) true
-      (if (not (check-if-seqable? fname (first args)))
-      	(do (add-to-seen {:arg-num n})
-          false)
+    (if (empty? args)
+      true
+      (if (not (check-if-seqable? fname (first args) n))
+      	false
         (recur (rest args) (inc n))))))
 
 ;; should pass the starting arg number: it's different for different functions
 (defn check-if-numbers? [fname arguments start]
   (loop [args arguments n start]
-    (if (empty? args) true
-      (if (not (check-if-number? fname (first args)))
-      	(do (add-to-seen {:arg-num n})
-          false)
+    (if (empty? args)
+      true
+      (if (not (check-if-number? fname (first args) n))
+        false
         (recur (rest args) (inc n))))))
 
 ;; should pass the starting arg number: it's different for different functions
 (defn check-if-strings? [fname arguments start]
   (loop [args arguments n start]
-    (if (empty? args) true
-      (if (not (check-if-string? fname (first args)))
-        (do (add-to-seen {:arg-num n})
-          false)
+    (if (empty? args)
+      true
+      (if (not (check-if-string? fname (first args) n))
+        false
         (recur (rest args) (inc n))))))

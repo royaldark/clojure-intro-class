@@ -123,6 +123,7 @@
 ;;; arg-str: number -> string
 (defn arg-str [n]
   (case n
+    0 "the argument" ;doesn't work for count because of the regex (see below)
     1 "first argument"
     2 "second argument"
     3 "third argument"
@@ -143,7 +144,7 @@
         c-type (if c (get-type c) "nil") ; perhaps want to rewrite this
         v (:value @seen-failed-asserts)
         v-print (pretty-print-value v c c-type)
-        arg (arg-str (if n (Integer. n) (:arg-num @seen-failed-asserts)))]
+        arg (arg-str (if n (Integer. n) (:arg-num @seen-failed-asserts)))] ; count would take a regex of 1, so it wouldn't see 0 without throwing an error
     (empty-seen) ; empty the seen-failed-asserts hashmap
     (make-msg-info-hashes
      "in function " fname :arg " " arg " " v-print :arg
