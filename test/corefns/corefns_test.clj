@@ -67,7 +67,7 @@
         (get-all-text
          (my-run-and-catch-corefns '(reduce + 2 :not-a-collection))))
 
-;;; testing for the first precondition of nth
+;;; testing for the first precondition of nth$
 (expect "in function nth first argument 9 must be a sequence but is a number"
         (get-all-text
          (my-run-and-catch-corefns '(nth 9 10))))
@@ -97,7 +97,7 @@
         (get-all-text
          (my-run-and-catch-corefns '(mapcat reverse :not-a-collection [8 9 10]))))
 
-;;; testing for the second precondition with multiple collections
+;;; testing for the second precondition of mapcat with multiple collections
 (expect "in function mapcat third argument :not-a-collection must be a sequence but is a keyword"
         (get-all-text
          (my-run-and-catch-corefns '(mapcat reverse [1 2 3] :not-a-collection))))
