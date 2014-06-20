@@ -172,12 +172,12 @@
 
 ;; user-friendly versions of confusing functions
 (defn contains-value? [coll x]
-  {:pre [(check-if-seqable? "contains-value?" coll)]}
+  {:pre [(check-if-seqable? "contains-value?" coll 1)]}
 	(let [values (if (map? coll) (vals coll) coll)]
 		(not (every? #(not= x %) values))))
 
 (defn contains-key? [coll key]
-  {:pre [(check-if-seqable? "contains-key?" coll)]}
+  {:pre [(check-if-seqable? "contains-key?" coll 1)]}
   (clojure.core/contains? coll key))
 
 ;; more content tests

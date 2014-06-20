@@ -24,28 +24,31 @@
                       :fname fname})
       false)))
 
-(defn check-if-number? [fname x]
+(defn check-if-number? [fname x & [n]]
   (if (number? x) true
     (do (add-to-seen {:check "number"
                       :class (class x)
                       :value x
                       :fname fname})
+      (if n (add-to-seen {:arg-num n}))
       false)))
 
-(defn check-if-string? [fname x]
+(defn check-if-string? [fname x & [n]]
   (if (string? x) true
     (do (add-to-seen {:check "string"
                       :class (class x)
                       :value x
                       :fname fname})
+      (if n (add-to-seen {:arg-num n}))
       false)))
 
-(defn check-if-character? [fname x]
+(defn check-if-character? [fname x & [n]]
   (if (char? x) true
     (do (add-to-seen {:check "character"
                       :class (class x)
                       :value x
                       :fname fname})
+      (if n (add-to-seen {:arg-num n}))
       false)))
 
 ;(defn check-if-predicate?)

@@ -2,7 +2,8 @@
   (:use [errors.prettify_exception]
         [seesaw.core])
   (:require [corefns.corefns :refer :all]
-            [errors.exceptions :refer :all]))
+            [errors.exceptions :refer :all]
+            [strings.strings :refer :all]))
 
 (refer 'corefns.corefns)
 
@@ -224,9 +225,9 @@
 (defn test-contains-types []
 	(test-all-and-continue
    '((contains? "abc" \a)
-     (contains? "abc" 7) ; this works and returns false - why?
-     (contains? "abc" 1) ; works, returns true
-     (contains? "abc" 1.5) ; also returns true
+     (contains? "abc" 7) ; returns false, since there is no index of 7
+     (contains? "abc" 1) ; returns true, since there is an index of 1
+     (contains? "abc" 1.5) ;returns true, since there is an index of 1 (it truncates)
      (contains? "abc" :b)
      (contains? [1 2 3] \a)
      (contains? nil 2))))
@@ -513,6 +514,14 @@
 (defn test-our-examples []
   (test-all-and-continue
    '(
+     (string-contains? "emma" :keyword)
+     (index-of "emma" "lemmon" \e)
+     (index-of "emma" \e \3)
+     (doall (concat [:banana] +))
+     (+ \a 2)
+     (any? odd? :not-a-collection)
+     (any? :not-a-predicate [1 2 3])
+     (contains-key? :not-a-collection 2)
      (contains-value? :not-a-collection 2)
      (add-last :not-a-collection [1 2 3])
      (add-first :not-a-collection [1 2 3])

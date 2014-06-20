@@ -1,5 +1,6 @@
 (ns strings.strings
-  (:require [corefns.assert_handling :refer :all]))
+  (:require [corefns.assert_handling :refer :all]
+            [corefns.failed_asserts_info :refer :all]))
 
 ;#########################
 ;### Better String Fns ###
@@ -14,7 +15,7 @@
   "Takes a word as a sequence, a string, or nil
   and returns a string of the characters, returns an empty string for nil."
   [sequence]
-  {:pre [(check-if-seqable? "seq->string" sequence)]}
+  {:pre [(check-if-seqable? "seq->string" sequence 1)]}
   (apply str sequence))
 
 ;;; index-of: string, string, optional number -> number
@@ -24,13 +25,13 @@
   substring of the first string or the index is larger than the last index of the first
   string or if the index is negative."
   ([string character]
-   {:pre [(check-if-string? "index-of" string)
-          (check-if-character? "index-of" character)]}
+   {:pre [(check-if-string? "index-of" string 1)
+          (check-if-character? "index-of" character 2)]}
    (.indexOf string (str character)))
   ([string character index]
-   {:pre [(check-if-string? "index-of" string)
-          (check-if-character? "index-of" character)
-          (check-if-number? "index-of" index)]}
+   {:pre [(check-if-string? "index-of" string 1)
+          (check-if-character? "index-of" character 2)
+          (check-if-number? "index-of" index 3)]}
    (.indexOf string (str character) index)))
 
 ;;; last-index-of: string, string, optional number -> number
@@ -39,13 +40,13 @@
   index of the last appearance of the character by searching backward through the
   string; else returns -1."
   ([string character]
-   {:pre [(check-if-string? "last-index-of" string)
-          (check-if-character? "last-index-of" character)]}
+   {:pre [(check-if-string? "last-index-of" string 1)
+          (check-if-character? "last-index-of" character 2)]}
    (.lastIndexOf string (str character)))
   ([string character index]
-   {:pre [(check-if-string? "last-index-of" string)
-          (check-if-character? "last-index-of" character)
-          (check-if-number? "last-index-of" index)]}
+   {:pre [(check-if-string? "last-index-of" string 1)
+          (check-if-character? "last-index-of" character 2)
+          (check-if-number? "last-index-of" index 3)]}
    (.lastIndexOf string (str character) index)))
 
 ;;; append: anything -> string
@@ -61,8 +62,8 @@
   nil if the index is bigger than the largest index of the string or if the index is
   negative."
   [string index]
-  {:pre [(check-if-string? "char-at" string)
-         (check-if-number? "char-at" index)]}
+  {:pre [(check-if-string? "char-at" string 1)
+         (check-if-number? "char-at" index 2)]}
   (get string index))
 
 ;;; empty-string?: string -> boolean
@@ -70,21 +71,21 @@
   "Takes a string and returns true if the length of the string is 0, returns false
   otherwise."
   [string]
-  {:pre [(check-if-string? "empty-string?" string)]}
+  {:pre [(check-if-string? "empty-string?" string 1)]}
   (zero? (count string)))
 
 ;;; first-of-string: string -> character
 (defn first-of-string
   "Takes a string and returns the first character of the string."
   [string]
-  {:pre [(check-if-string? "first-of-string" string)]}
+  {:pre [(check-if-string? "first-of-string" string 1)]}
   (first string))
 
 ;;; last-of-string: string -> character
 (defn last-of-string
   "Takes a string and returns the last character of the string."
   [string]
-  {:pre [(check-if-string? "last-of-string" string)]}
+  {:pre [(check-if-string? "last-of-string" string 1)]}
   (last string))
 
 ;;; rest-of-string: string -> string
@@ -92,14 +93,14 @@
   "Takes a string and returns a new string with all of the elements in order
   except for the first character."
   [string]
-  {:pre [(check-if-string? "rest-of-string" string)]}
+  {:pre [(check-if-string? "rest-of-string" string 1)]}
   (apply str (rest string)))
 
 ;;; second-of-string: string -> character
 (defn second-of-string
   "Takes a string and returns the second character of the string."
   [string]
-  {:pre [(check-if-string? "second-of-string" string)]}
+  {:pre [(check-if-string? "second-of-string" string 1)]}
   (second string))
 
 ;;; string-contains?: string, string -> boolean
@@ -107,9 +108,9 @@
   "Takes either two strings or a string and a character and returns true if the first
   string contains the second string/character, returns false otherwise."
   [string substring]
-   {:pre [(check-if-string? "string-contains?" string)
-          (or (check-if-string? "string-contains?" substring)
-              (check-if-character? "string-contains?" substring))]}
+   {:pre [(check-if-string? "string-contains?" string 1)
+          (or (check-if-string? "string-contains?" substring 2)
+              (check-if-character? "string-contains?" substring 2))]}
    (.contains string (str substring)))
 
 ;;; drop-from-string: number, string -> string
@@ -117,8 +118,8 @@
   "Takes an index and a string and returns a new string which drops all of
   the characters from 0-index (inclusive)."
   [index string]
-  {:pre [(check-if-number? "drop-from-string" index)
-         (check-if-string? "drop-from-string" string)]}
+  {:pre [(check-if-number? "drop-from-string" index 1)
+         (check-if-string? "drop-from-string" string 2)]}
   (apply str (drop index string)))
 
 ;;; take-from-string: number, string -> string
@@ -126,8 +127,8 @@
   "Takes a string and an index and returns a new string with only the characters
   from 0-index (exclusive)."
   [index string]
-  {:pre [(check-if-number? "take-from-string" index)
-         (check-if-string? "take-from-string" string)]}
+  {:pre [(check-if-number? "take-from-string" index 1)
+         (check-if-string? "take-from-string" string 2)]}
   (apply str (take index string)))
 
 ;#########################################################################

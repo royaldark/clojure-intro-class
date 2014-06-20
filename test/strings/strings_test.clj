@@ -1,12 +1,27 @@
 (ns strings.strings_test
   (:require [expectations :refer :all]
-            [strings.strings :refer :all]))
+            [strings.strings :refer :all]
+            [errors.messageobj :refer :all]
+            [errors.prettify_exception :refer :all]))
 
 ;Testing for our String Library
 
 ;Author: Emma Sax and Aaron Lemmon
 
 ;; as a note: all clojure characters signified with a \ are stored as java characters
+
+(defn my-prettify-exception [e]
+  (let [e-class (class e)
+        m (.getMessage e)
+        message (if m m "")] ; converting an empty message from nil to ""
+    (get-pretty-message e-class message)))
+
+(defn my-run-and-catch-strings [code]
+  "A function that takes quoted code and runs it, attempting to catch any
+  exceptions it may throw. Returns the exeception or nil."
+  (in-ns 'strings.strings)
+   (try (eval code)
+           (catch Throwable e (my-prettify-exception e))))
 
 ;#########################################
 ;### Testing for the better string fns ###
@@ -59,6 +74,20 @@
 (expect AssertionError (index-of "emma" \e \0))
 (expect AssertionError (index-of "emma" "e"))
 (expect AssertionError (index-of \e 0 "emma"))
+(expect "in function index-of second argument \"lemmon\" must be a character but is a string"
+        (get-all-text
+         (my-run-and-catch-strings '(index-of "emma" "lemmon" \e))))
+(expect [{:msg "in function ", :stylekey :reg, :length 12}
+         {:msg "index-of", :stylekey :arg, :length 8}
+         {:msg " ", :stylekey :reg, :length 1}
+         {:msg "third argument", :stylekey :reg, :length 14}
+         {:msg " ", :stylekey :reg, :length 1}
+         {:msg "3", :stylekey :arg, :length 1}
+         {:msg " must be a ", :stylekey :reg, :length 11}
+         {:msg "number", :stylekey :type, :length 6}
+         {:msg " but is ", :stylekey :reg, :length 8}
+         {:msg "a character", :stylekey :type, :length 11}]
+        (my-run-and-catch-strings '(index-of "emma" \e \3)))
 
 ; type-checking for index-of - should return a number
 (expect (number? (index-of "emmahenryaaronelena" \e 4)))
@@ -208,6 +237,9 @@
 (expect AssertionError (string-contains? [1 2 3] 1))
 (expect AssertionError (string-contains? nil \i))
 (expect AssertionError (string-contains? "vanilla" nil))
+(expect "in function string-contains? second argument :keyword must be a character but is a keyword"
+        (get-all-text
+         (my-run-and-catch-strings '(string-contains? "emma" :keyword))))
 
 ; type-checking for string-contains? - should return either true or false
 (expect (#(or (true? %) (false? %)) (string-contains? "Moonrise" "on")))
