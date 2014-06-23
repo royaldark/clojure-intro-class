@@ -415,7 +415,7 @@
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-;; testing for contains-key?
+;; testing for contains-key?    (println "matched: "matched)
 (expect "in function contains-key? first argument :not-a-collection must be a sequence but is a keyword"
         (get-all-text
          (my-run-and-catch-corefns '(contains-key? :not-a-collection 2))))
@@ -431,20 +431,3 @@
 (expect "in function any? second argument :not-a-collection must be a sequence but is a keyword"
         (get-all-text
          (my-run-and-catch-corefns '(any? odd? :not-a-collection))))
-
-
-;################################################################################
-;### A variety of other tests to see if they give us the correct msg-info-obj ###
-;################################################################################
-
-(expect [{:msg "in function ", :stylekey :reg, :length 12}
-         {:msg "concat", :stylekey :arg, :length 6}
-         {:msg " ", :stylekey :reg, :length 1}
-         {:msg "second argument", :stylekey :reg, :length 15}
-         {:msg " ", :stylekey :reg, :length 1}
-         {:msg ":not-a-collection", :stylekey :arg, :length 17}
-         {:msg " must be a ", :stylekey :reg, :length 11}
-         {:msg "sequence", :stylekey :type, :length 8}
-         {:msg " but is ", :stylekey :reg, :length 8}
-         {:msg "a keyword", :stylekey :type, :length 9}]
-        (my-run-and-catch-corefns '(doall (concat [:foo] :not-a-collection))))

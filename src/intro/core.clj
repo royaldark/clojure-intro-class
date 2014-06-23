@@ -513,8 +513,7 @@
 
 (defn test-our-examples []
   (test-all-and-continue
-   '(
-     (string-contains? "emma" :keyword)
+   '((string-contains? "emma" :keyword)
      (index-of "emma" "lemmon" \e)
      (index-of "emma" \e \3)
      (doall (concat [:banana] +))
@@ -551,9 +550,15 @@
      (map + :hello)
      (map \o [1 2 3]))))
 
+(defn try-counts []
+  (test-all-and-continue
+   '((count)
+     (count [] [] []))))
+
 (defn -main [& args]
   (try
-    (test-our-examples)
+    ;(test-our-examples)
+    (try-counts)
     ;(basic-seesaw-frame)
     ;(test-exceptions)
     ;(test-nth)

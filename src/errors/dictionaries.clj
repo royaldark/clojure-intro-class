@@ -86,7 +86,7 @@
 ;;; lookup-funct-name: predefined function name -> string
 (defn lookup-funct-name [fname]
   "looks up pre-defined function names, such as _PLUS_. If not found,
-	returns the original"2
+	returns the original"
   (let [lookup ((keyword fname) predefined-names)]
     (if lookup lookup (-> fname
                           (clojure.string/replace #"_QMARK_" "?")
@@ -97,12 +97,35 @@
                           (clojure.string/replace #"_STAR_" "*")))))
 
 ;;; get-function-name: string -> string
-(defn get-function-name [fname]
+;(defn get-function-name [fname]
+;  "extract a function name from a qualified name"
+;  (if-let [matching-name (lookup-funct-name (nth (re-matches #"(.*)\$(.*)" fname) 2))]
+;    (if (or (= matching-name "fn") (re-matches #"fn_(.*)" matching-name))
+;      "anonymous function" matching-name)
+;    fname))
+
+(defn check-if-anonymous-function [fname]
+  (if (or (= fname "fn") (re-matches #"fn_(.*)" fname))
+      "anonymous function" fname))
+
+(defn- remove-inliner [fname]
+  "If fname ends with inliner this will return everything before it"
+  (let [match (nth (re-matches #"(.*)--inliner" fname) 1)]
+    (if match match fname)))
+;  (if (re-matches ))(nth (re-matches #"(.*)--inliner" fname) 1))
+(remove-inliner "happy")
+(remove-inliner "zero?--inliner")
+
+(defn get-match-name [fname]
   "extract a function name from a qualified name"
-  (if-let [matching-name (lookup-funct-name (nth (re-matches #"(.*)\$(.*)" fname) 2))]
-    (if (or (= matching-name "fn") (re-matches #"fn_(.*)" matching-name))
-      "anonymous function" matching-name)
-    fname))
+  (let [m (nth (re-matches #"(.*)\$(.*)" fname) 2)
+        matched (if m m (nth (re-matches #"(.*)/(.*)" fname) 2))]
+    (if matched
+      (check-if-anonymous-function (lookup-funct-name matched))
+      fname)))
+
+(defn get-function-name [fname]
+  (remove-inliner (get-match-name fname)))
 
 ;;; get-macro-name: string -> string
 (defn get-macro-name [mname]
@@ -130,8 +153,6 @@
     4 "fourth argument"
     5 "fifth argument"
     (str n "th argument")))
-
-;; TODO: ADD NO SOURCE PATH FORMATTING
 
 (defn process-asserts-obj [n]
   "Returns a msg-info-obj generated for an assert failure based on the
@@ -207,6 +228,18 @@
                         :class IndexOutOfBoundsException
                         :match #"" ; an empty message
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "An index in a sequence is out of bounds"))}
+                       {:key :arity-exception-wrong-number-of-args-while-compiling
+                        :class clojure.lang.Compiler$CompilerException
+                        :match #"clojure.lang.ArityException: Wrong number of args \((.*)\) passed to: (.*), compiling:(.*)"
+                        :make-msg-info-obj (fn [matches]
+                                       (let [fstr (get-function-name (nth matches 2))
+                                             funstr (if (= fstr "anonymous function")
+                                                      "an "
+                                                      (str "a function "))]
+                                         (make-msg-info-hashes "Wrong number of arguments ("
+                                                             (nth matches 1) ") passed to " funstr fstr :arg
+                                                               ", while compiling "
+                                                                       (nth matches 3) :arg)))}
                        {:key :arity-exception-wrong-number-of-arguments
                         :class clojure.lang.ArityException
                         :match #"Wrong number of args \((.*)\) passed to: (.*)"
@@ -216,7 +249,7 @@
                                                       "an "
                                                       (str "a function "))]
                                          (make-msg-info-hashes "Wrong number of arguments ("
-                                                             (nth matches 1) ")  passed to " funstr fstr :arg)))}
+                                                             (nth matches 1) ") passed to " funstr fstr :arg)))}
                        {:key :null-pointer-non-existing-object-provided
                         :class NullPointerException
                         :match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
