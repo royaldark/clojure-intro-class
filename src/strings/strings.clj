@@ -109,8 +109,7 @@
   string contains the second string/character, returns false otherwise."
   [string substring]
    {:pre [(check-if-string? "string-contains?" string 1)
-          (or (check-if-string? "string-contains?" substring 2)
-              (check-if-character? "string-contains?" substring 2))]}
+          (check-if-string-or-character? "string-contains?" substring 2)]}
    (.contains string (str substring)))
 
 ;;; drop-from-string: number, string -> string

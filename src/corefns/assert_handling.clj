@@ -59,6 +59,15 @@
       (if n (add-to-seen {:arg-num n}))
       false)))
 
+(defn check-if-string-or-character? [fname x & [n]] ;for string-contains?
+  (if (or (string? x) (char? x)) true
+    (do (add-to-seen {:check "string or character"
+                      :class (class x)
+                      :value x
+                      :fname fname})
+      (if n (add-to-seen {:arg-num n}))
+      false)))
+
 ;; should pass the starting arg number: it's different for different functions
 (defn check-if-seqables? [fname arguments start]
   (loop [args arguments n start]

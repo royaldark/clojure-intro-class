@@ -56,7 +56,9 @@
   {:pre [(check-if-seqable? "conj" argument1)]}
   (apply clojure.core/conj argument1 args))
 
-;;
+;; (into to from)
+;; Returns a new coll consisting of to-coll with all of the items of
+;; from-coll conjoined.
 (defn into [argument1 argument2]
    {:pre [(check-if-seqable? "into" argument1)
           (check-if-seqable? "into" argument2)]}
