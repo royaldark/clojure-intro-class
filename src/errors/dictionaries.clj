@@ -300,7 +300,8 @@
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.*) Mismatched argument count to recur, expected: (.*) args, got: (.*), compiling:(.*)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: this recur is supposed to take "
-                                                                               (nth matches 2) " argument(s), but you are passing " (nth matches 3)
+                                                                               ;;TODO: handle singular/plural arguments
+                                                                               (nth matches 2) " arguments, but you are passing " (nth matches 3)
                                                                                ", while compiling " (nth matches 4)))
                         :hints "1. You are passing a wrong number of arguments to recur. Check its function or loop.
 		        		                2. recur might be outside of the scope of its function or loop"}

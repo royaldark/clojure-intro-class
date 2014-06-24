@@ -6,7 +6,10 @@
             [errors.messageobj :refer :all]
             [errors.exceptions :refer :all]))
 
-;; testing for get-function-name
+;#####################################
+;### testing for get-function-name ###
+;#####################################
+
 (expect "days" (get-function-name "happy$days"))
 (expect "days" (get-function-name "happy/days"))
 (expect "blahBlahBlahBlahNuthin'" (get-function-name "blahBlahBlahBlahNuthin'"))
@@ -72,9 +75,6 @@
 (expect "Wrong number of arguments (2) passed to a function odd?"
         (get-all-text (run-and-catch-dictionaries '(odd? 5 6))))
 
-(expect #"Compilation error: name banana is undefined, while compiling (.+)"
-        (get-all-text (run-and-catch-dictionaries '(banana 5 6))))
-
 (expect #"Compilation error: too many arguments to def, while compiling (.+)"
         (get-all-text (run-and-catch-dictionaries '(def my-var 5 6))))
 
@@ -89,3 +89,9 @@
 ;(expect #"Compilation error: there is an unmatched delimiter ), while compiling (.+)"
 ;        (get-all-text (run-and-catch-dictionaries 'defn my-string [x] (str x)))))
 ;; thinks that the unmatched delimiter is part of the expect test not the test itself
+
+(expect #"Compilation error: name banana is undefined, while compiling (.+)"
+        (get-all-text (run-and-catch-dictionaries '(banana 5 6))))
+
+(expect #"Compilation error: this recur is supposed to take 0 arguments, but you are passing 1, while compiling (.+)"
+        (get-all-text (run-and-catch-dictionaries '(recur (inc 1)))))
