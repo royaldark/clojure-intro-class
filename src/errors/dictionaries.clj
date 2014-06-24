@@ -211,6 +211,14 @@
                         :match #"Parameter declaration (.*) should be a vector"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Parameters in " "defn" :arg
                                                                                " should be a vector, but is " (nth matches 1) :arg))}
+                       {:key :illegal-argument-exactly-2-forms
+                        :class IllegalArgumentException
+                        :match #"(.+): (.*) requires exactly 2 forms in binding vector (.+)"
+                        :make-msg-info-obj make-mock-preobj}
+
+
+
+
                        {:key :index-out-of-bounds-index-provided
                         :class IndexOutOfBoundsException
                         :match #"(\d+)"
@@ -220,18 +228,6 @@
                         :class IndexOutOfBoundsException
                         :match #"" ; an empty message
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "An index in a sequence is out of bounds"))}
-                       {:key :arity-exception-wrong-number-of-args-while-compiling
-                        :class clojure.lang.Compiler$CompilerException
-                        :match #"clojure.lang.ArityException: Wrong number of args \((.*)\) passed to: (.*), compiling:(.*)"
-                        :make-msg-info-obj (fn [matches]
-                                             (let [fstr (get-function-name (nth matches 2))
-                                                   funstr (if (= fstr "anonymous function")
-                                                            "an "
-                                                            (str "a function "))]
-                                               (make-msg-info-hashes "Wrong number of arguments ("
-                                                                     (nth matches 1) ") passed to " funstr fstr :arg
-                                                                     ", while compiling "
-                                                                     (nth matches 3) :arg)))}
                        {:key :arity-exception-wrong-number-of-arguments
                         :class clojure.lang.ArityException
                         :match #"Wrong number of args \((.*)\) passed to: (.*)"
@@ -262,72 +258,105 @@
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "You cannot use " (nth matches 1) :arg
                                                                                " as a variable."))}
                        ;; Compilation errors
+                       {:key :compiler-exception-even-numbers-in-binding-vector
+                        :class clojure.lang.Compiler$CompilerException
+                        :true-exception java.lang.IllegalArgumentException
+                        :match #"(.+): (.+) requires an even number of forms in binding vector in (.+):(.+), compiling:(.+)"
+                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: " (nth matches 2)
+                                                                               " requires an even number of forms in binding vector, while compiling "
+                                                                               (nth matches 3)))}
+                       {:key :compiler-exception-wrong-number-of-arguments-to-recur
+                        :class clojure.lang.Compiler$CompilerException
+                        :true-exception java.lang.IllegalArgumentException
+                        :match #"(.*) Mismatched argument count to recur, expected: (.*) args, got: (.*), compiling:(.*)"
+                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: this recur is supposed to take "
+                                                                               (nth matches 2) " arguments, but you are passing " (nth matches 3)
+                                                                               ", while compiling " (nth matches 4)))
+                                                                    ;;TODO: handle singular/plural arguments
+                        :hints "1. You are passing a wrong number of arguments to recur. Check its function or loop.
+		        		                2. recur might be outside of the scope of its function or loop"}
+                       {:key :compiler-exception-wrong-number-of-arguments
+                        :class clojure.lang.Compiler$CompilerException
+                        :true-exception clojure.lang.ArityException
+                        :match #"(.+): Wrong number of args \((.*)\) passed to: (.*), compiling:(.*)"
+                        :make-msg-info-obj (fn [matches]
+                                             (let [fstr (get-function-name (nth matches 3))
+                                                   funstr (if (= fstr "anonymous function")
+                                                            "an "
+                                                            (str "a function "))]
+                                               (make-msg-info-hashes "Wrong number of arguments ("
+                                                                     (nth matches 2) ") passed to " funstr fstr :arg
+                                                                     ", while compiling "
+                                                                     (nth matches 4) :arg)))}
+                       {:key :compiler-exception-must-recur-from-tail-position
+                        :class clojure.lang.Compiler$CompilerException
+                        :true-exception java.lang.UnsupportedOperationException
+                        :match #"(.*) Can only recur from tail position, compiling:(.*)"
+                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: recur can only occur "
+                                                                               "as a tail call, meaning no operations can"
+                                                                               " be done after its return. Compiling "
+                                                                               (nth matches 2)))}
+                       {:key :compiler-exception-cannot-resolve-symbol
+                        :class clojure.lang.Compiler$CompilerException
+                        :true-exception java.lang.RuntimeException
+                        :match #"(.+): Unable to resolve symbol: (.+) in this context, compiling:\((.+)\)"
+		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: " "name "
+                                                                               (nth matches 2) :arg " is undefined, while compiling "
+                                                                               (nth matches 3) :arg))}
+                       {:key :compiler-exception-first-argument-must-be-symbol
+                        :class clojure.lang.Compiler$CompilerException
+                        :true-exception java.lang.RuntimeException
+                        :match #"(.*) First argument to (.*) must be a Symbol, compiling:\((.+)\)"
+                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: "
+                                                                               (nth matches 2) :arg " must be followed by a name. Compiling "
+                                                                               (nth matches 3)))}
+                       ;; This is probably somewhat fragile: it occurs in an unbounded recur, but
+                       ;; may occur elsewhere. We need to be careful to not catch a wider rnage of exceptions:
+                      ; {:key :compiler-exception-must-recur-to-function-or-loop
+                      ;  :class clojure.lang.Compiler$CompilerException
+                      ;  :true-exception make-mock-preobj
+                      ;  :match #"(.*): clojure.lang.Var\$Unbound cannot be cast to clojure.lang.IPersistentVector, compiling:(.*)"
+                      ;  :make-msg-info-obj (fn [matches] (make-msg-info-hashes "recur" :arg
+                      ;                                                         " does not refer to any function or loop."
+                      ;                                                         " Compiling " (nth matches 2)))}
+                       {:key :compiler-exception-cannot-take-value-of-macro
+                        :class clojure.lang.Compiler$CompilerException
+                        :true-exception java.lang.RuntimeException
+                        :match #"(.+): Can't take value of a macro: (.+), compiling:\((.+)\)"
+                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: "
+                                                                               (get-macro-name (nth matches 2)) :arg
+                                                                               " is a macro, cannot be passed to a function, while compiling "
+                                                                               (nth matches 3)))}
+                       {:key :compiler-exception-unmatched-delimiter
+                        :class clojure.lang.Compiler$CompilerException
+                        :true-exception java.lang.Exception
+                        :match #"(.+): Unmatched delimiter: (.+), compiling:(.+)"
+		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: there is an unmatched deliminter " (nth matches 2) :arg
+                                                                               ", while compiling " (nth matches 3) :arg))}
                        {:key :compiler-exception-too-many-arguments
                         :class clojure.lang.Compiler$CompilerException
+                        :true-exception java.lang.Exception
                         :match #"(.+): Too many arguments to (.+), compiling:(.+)"
 		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: too many arguments to "
                                                                                (nth matches 2) :arg ", while compiling "
                                                                                (nth matches 3) :arg))}
                        {:key :compiler-exception-too-few-arguments
                         :class clojure.lang.Compiler$CompilerException
+                        :true-exception java.lang.Exception
                         :match #"(.+): Too few arguments to (.+), compiling:(.+)"
 		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: too few arguments to "
                                                                                (nth matches 2) :arg  ", while compiling "
                                                                                (nth matches 3) :arg))}
                        {:key :compiler-exception-end-of-file
                         :class clojure.lang.Compiler$CompilerException
+                        :true-exception make-mock-preobj
                         :match #"(.+): EOF while reading, starting at line (.+), compiling:(.+)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: end of file, starting at line " (nth matches 2) :arg
                                                                                ", while compiling " (nth matches 3) :arg \n ". Probably a non-closing
                                                                                parentheses or bracket."))}
-                       {:key :compiler-exception-unmatched-delimiter
-                        :class clojure.lang.Compiler$CompilerException
-                        :match #"(.+): Unmatched delimiter: (.+), compiling:(.+)"
-		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: there is an unmatched deliminter " (nth matches 2) :arg
-                                                                               ", while compiling " (nth matches 3) :arg))}
-                       {:key :compiler-exception-cannot-resolve-symbol
-                        :class clojure.lang.Compiler$CompilerException
-                        :match #"(.+): Unable to resolve symbol: (.+) in this context, compiling:\((.+)\)"
-		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: " "name "
-                                                                               (nth matches 2) :arg " is undefined, while compiling "
-                                                                               (nth matches 3) :arg))}
                        {:key :compiler-exception-even-number-of-forms-needed
                         :class clojure.lang.Compiler$CompilerException
+                        :true-exception make-mock-preobj
                         :match #"(.*): (.*) requires an even number of forms, compiling:\((.+)\)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "There is an unmatched parameter in declaration of "
-                                                                               (nth matches 2) :arg ". Compiling: " (nth matches 3)))}
-                       {:key :compiler-exception-wrong-number-of-arguments-to-recur
-                        :class clojure.lang.Compiler$CompilerException
-                        :match #"(.*) Mismatched argument count to recur, expected: (.*) args, got: (.*), compiling:(.*)"
-                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: this recur is supposed to take "
-                                                                               ;;TODO: handle singular/plural arguments
-                                                                               (nth matches 2) " arguments, but you are passing " (nth matches 3)
-                                                                               ", while compiling " (nth matches 4)))
-                        :hints "1. You are passing a wrong number of arguments to recur. Check its function or loop.
-		        		                2. recur might be outside of the scope of its function or loop"}
-                       {:key :compiler-exception-first-argument-must-be-symbol
-                        :class clojure.lang.Compiler$CompilerException
-                        :match #"(.*) First argument to (.*) must be a Symbol, compiling:\((.+)\)"
-                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes (nth matches 2) :arg
-                                                                               " must be followed by a name. Compiling " (nth matches 3)))}
-                       {:key :compiler-exception-must-recur-from-tail-position
-                        :class clojure.lang.Compiler$CompilerException
-                        :match #"(.*) Can only recur from tail position, compiling:(.*)"
-                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "recur" :arg
-                                                                               " can only occur as a tail call (no operations can be done after its return)."
-                                                                               " Compiling " (nth matches 2)))}
-                       ;; This is probably somewhat fragile: it occurs in an unbounded recur, but
-                       ;; may occur elsewhere. We need to be careful to not catch a wider rnage of exceptions:
-                       {:key :compiler-exception-must-recur-to-function-or-loop
-                        :class clojure.lang.Compiler$CompilerException
-                        :match #"(.*): clojure.lang.Var\$Unbound cannot be cast to clojure.lang.IPersistentVector, compiling:(.*)"
-                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "recur" :arg
-                                                                               " does not refer to any function or loop."
-                                                                               " Compiling " (nth matches 2)))}
-                       {:key :compiler-exception-cannot-take-value-of-macro
-                        :class clojure.lang.Compiler$CompilerException
-                        :match #"(.+): Can't take value of a macro: (.+), compiling:\((.+)\)"
-                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: "
-                                                                               (get-macro-name (nth matches 2)) :arg
-                                                                               " is a macro, cannot be passed to a function, while compiling "
-                                                                               (nth matches 3)))}])
+                                                                               (nth matches 2) :arg ". Compiling: " (nth matches 3)))}])
