@@ -64,3 +64,14 @@
 
 (expect "Wrong number of arguments (3) passed to a function any?"
         (get-all-text (my-run-and-catch '(any? odd? [1 2 3] [1 2 3]))))
+
+;; Elena, testing compilation errors:
+
+(expect "Wrong number of arguments (0) passed to a function odd?"
+	(get-all-text (my-run-and-catch '(odd?))))
+
+(expect "Wrong number of arguments (2) passed to a function odd?"
+	(get-all-text (my-run-and-catch '(odd? 5 6))))
+
+(expect  #"Compilation error: name banana is undefined, while compiling (.+)"
+	 (get-all-text (my-run-and-catch '(banana 5 6))))
