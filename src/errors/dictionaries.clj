@@ -96,17 +96,12 @@
                           (clojure.string/replace #"_GT_" ">")
                           (clojure.string/replace #"_STAR_" "*")))))
 
-
-
+;;; check-if-anonymous-function: string -> string
 (defn check-if-anonymous-function [fname]
   (if (or (= fname "fn") (re-matches #"fn_(.*)" fname))
       "anonymous function" fname))
 
-(defn- remove-inliner [fname]
-  "If fname ends with inliner this will return everything before it"
-  (let [match (nth (re-matches #"(.*)--inliner" fname) 1)]
-    (if match match fname)))
-
+;;; get-match-name: string -> string
 (defn get-match-name [fname]
   "extract a function name from a qualified name"
   (let [m (nth (re-matches #"(.*)\$(.*)" fname) 2)
@@ -115,7 +110,13 @@
       (check-if-anonymous-function (lookup-funct-name matched))
       fname)))
 
-;;; get-function-name: string -> string (uses get-match-name, remove-inliner, and check-if-anonymous-function above)
+;;; remove-inliner: string -> string
+(defn- remove-inliner [fname]
+  "If fname ends with inliner this will return everything before it"
+  (let [match (nth (re-matches #"(.*)--inliner" fname) 1)]
+    (if match match fname)))
+
+;;; get-function-name: string -> string
 (defn get-function-name [fname]
   (remove-inliner (get-match-name fname)))
 
@@ -138,7 +139,6 @@
 ;;; arg-str: number -> string
 (defn arg-str [n]
   (case n
-    0 "the argument" ;doesn't work for count because of the regex (see below)
     1 "first argument"
     2 "second argument"
     3 "third argument"
@@ -146,6 +146,7 @@
     5 "fifth argument"
     (str n "th argument")))
 
+;;; process-asserts-obj: string or nil -> string
 (defn process-asserts-obj [n]
   "Returns a msg-info-obj generated for an assert failure based on the
 	global seen-failed-asserts hashmap, clears the hashmap"
@@ -157,7 +158,7 @@
         c-type (if c (get-type c) "nil") ; perhaps want to rewrite this
         v (:value @seen-failed-asserts)
         v-print (pretty-print-value v c c-type)
-        arg (arg-str (if n (Integer. n) (:arg-num @seen-failed-asserts)))] ; count would take a regex of 1, so it wouldn't see 0 without throwing an error
+        arg (arg-str (if n (Integer. n) (:arg-num @seen-failed-asserts)))]
     (empty-seen) ; empty the seen-failed-asserts hashmap
     (make-msg-info-hashes
      "in function " fname :arg " " arg " " v-print :arg
@@ -175,47 +176,46 @@
                         :class ClassCastException
                         :match #"(.*) cannot be cast to (.*)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Attempted to use "
-                                                                       (get-type (nth matches 1)) :type ", but "
-                                                                       (get-type (nth matches 2)) :type " was expected."))}
+                                                                               (get-type (nth matches 1)) :type ", but "
+                                                                               (get-type (nth matches 2)) :type " was expected."))}
                        {:key :illegal-argument-cannot-convert-type
                         :class IllegalArgumentException
                         :match #"Don't know how to create (.*) from: (.*)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Don't know how to create "
-                                                                       (get-type (nth matches 1)) :type
-                                                                       " from "(get-type (nth matches 2)) :type))}
+                                                                               (get-type (nth matches 1)) :type
+                                                                               " from "(get-type (nth matches 2)) :type))}
                        {:key :illegal-argument-even-number-of-forms
                         :class IllegalArgumentException
                         :match #"(.*) requires an even number of forms"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "There is an unmatched parameter in declaration of "
-                                                                       (nth matches 1) :arg))}
+                                                                               (nth matches 1) :arg))}
                        {:key :illegal-argument-even-number-of-forms-in-binding-vector
                         :class IllegalArgumentException
                         :match #"(.*) requires an even number of forms in binding vector in (.*):(.*)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "A parameter for a " (nth matches 1)
-                                                                       " is missing a binding on line "
-                                                                       (nth matches 3) " in the file " (nth matches 2)))}
+                                                                               " is missing a binding on line "
+                                                                               (nth matches 3) " in the file " (nth matches 2)))}
                        {:key :illegal-argument-needs-vector-when-binding
                         :class IllegalArgumentException
                         :match #"(.*) requires a vector for its binding in (.*):(.*)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "When declaring a " (nth matches 1)
-                                                                       ", you need to pass it a vector of arguments. Line "
-                                                                       (nth matches 3) " in the file " (nth matches 2)))}
+                                                                               ", you need to pass it a vector of arguments. Line "
+                                                                               (nth matches 3) " in the file " (nth matches 2)))}
                        {:key :illegal-argument-type-not-supported
                         :class IllegalArgumentException
                         :match #"(.*) not supported on type: (.*)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Function " (nth matches 1) :arg
-                                                                       " does not allow " (get-type (nth matches 2)) :type " as an argument"))}
+                                                                               " does not allow " (get-type (nth matches 2)) :type " as an argument"))}
                        {:key :illegal-argument-parameters-must-be-in-vector
                         :class IllegalArgumentException
                         :match #"Parameter declaration (.*) should be a vector"
-                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Parameters in " "defn" :arg " should be a vector, but is " (nth matches 1) :arg))}
+                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Parameters in " "defn" :arg
+                                                                               " should be a vector, but is " (nth matches 1) :arg))}
                        {:key :index-out-of-bounds-index-provided
                         :class IndexOutOfBoundsException
                         :match #"(\d+)"
-                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes
-                                                    "An index in a sequence is out of bounds."
-                                                    "The index is:"
-                                                    (nth matches 0) :arg))}
+                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "An index in a sequence is out of bounds."
+                                                                               "The index is:" (nth matches 0) :arg))}
                        {:key :index-out-of-bounds-index-not-provided
                         :class IndexOutOfBoundsException
                         :match #"" ; an empty message
@@ -224,29 +224,29 @@
                         :class clojure.lang.Compiler$CompilerException
                         :match #"clojure.lang.ArityException: Wrong number of args \((.*)\) passed to: (.*), compiling:(.*)"
                         :make-msg-info-obj (fn [matches]
-                                       (let [fstr (get-function-name (nth matches 2))
-                                             funstr (if (= fstr "anonymous function")
-                                                      "an "
-                                                      (str "a function "))]
-                                         (make-msg-info-hashes "Wrong number of arguments ("
-                                                             (nth matches 1) ") passed to " funstr fstr :arg
-                                                               ", while compiling "
-                                                                       (nth matches 3) :arg)))}
+                                             (let [fstr (get-function-name (nth matches 2))
+                                                   funstr (if (= fstr "anonymous function")
+                                                            "an "
+                                                            (str "a function "))]
+                                               (make-msg-info-hashes "Wrong number of arguments ("
+                                                                     (nth matches 1) ") passed to " funstr fstr :arg
+                                                                     ", while compiling "
+                                                                     (nth matches 3) :arg)))}
                        {:key :arity-exception-wrong-number-of-arguments
                         :class clojure.lang.ArityException
                         :match #"Wrong number of args \((.*)\) passed to: (.*)"
                         :make-msg-info-obj (fn [matches]
-                                       (let [fstr (get-function-name (nth matches 2))
-                                             funstr (if (= fstr "anonymous function")
-                                                      "an "
-                                                      (str "a function "))]
-                                         (make-msg-info-hashes "Wrong number of arguments ("
-                                                             (nth matches 1) ") passed to " funstr fstr :arg)))}
+                                             (let [fstr (get-function-name (nth matches 2))
+                                                   funstr (if (= fstr "anonymous function")
+                                                            "an "
+                                                            (str "a function "))]
+                                               (make-msg-info-hashes "Wrong number of arguments ("
+                                                                     (nth matches 1) ") passed to " funstr fstr :arg)))}
                        {:key :null-pointer-non-existing-object-provided
                         :class NullPointerException
                         :match #"(.+)" ; for some reason (.*) matches twice. Since we know there is at least one symbol, + is fine
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "An attempt to access a non-existing object: "
-                                                                       (nth matches 1) :arg "\n(NullPointerException)"))}
+                                                                               (nth matches 1) :arg "\n(NullPointerException)"))}
                        {:key :null-pointer-non-existing-object-not-provided
                         :class NullPointerException
                         :match  #""
@@ -255,77 +255,78 @@
                         :class UnsupportedOperationException
                         :match #"(.*) not supported on this type: (.*)"
 		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Function " (nth matches 1) :arg
-                                                                       " does not allow " (get-type (nth matches 2)) :type " as an argument"))}
+                                                                               " does not allow " (get-type (nth matches 2)) :type " as an argument"))}
                        {:key :java.lang.Exception-improper-identifier
                         :class java.lang.Exception
                         :match #"Unsupported binding form: (.*)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "You cannot use " (nth matches 1) :arg
-                                                                       " as a variable."))}
+                                                                               " as a variable."))}
                        ;; Compilation errors
                        {:key :compiler-exception-too-many-arguments
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.+): Too many arguments to (.+), compiling:(.+)"
-		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: Too many arguments to "
-                                                                       (nth matches 2) :arg ", while compiling "
-                                                                       (nth matches 3) :arg))}
+		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: too many arguments to "
+                                                                               (nth matches 2) :arg ", while compiling "
+                                                                               (nth matches 3) :arg))}
                        {:key :compiler-exception-too-few-arguments
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.+): Too few arguments to (.+), compiling:(.+)"
-		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: Too few arguments to "
-                                                                       (nth matches 2) :arg  ", while compiling "
-                                                                       (nth matches 3) :arg))}
+		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: too few arguments to "
+                                                                               (nth matches 2) :arg  ", while compiling "
+                                                                               (nth matches 3) :arg))}
                        {:key :compiler-exception-end-of-file
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.+): EOF while reading, starting at line (.+), compiling:(.+)"
-                        :replace "Compilation error: end of file, starting at line $2, while compiling $3.\nProbabbly a non-closing parentheses or bracket."
-                        :make-msg-info-obj make-mock-preobj}
+                        :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: end of file, starting at line " (nth matches 2) :arg
+                                                                               ", while compiling " (nth matches 3) :arg \n ". Probably a non-closing
+                                                                               parentheses or bracket."))}
                        {:key :compiler-exception-unmatched-delimiter
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.+): Unmatched delimiter: (.+), compiling:(.+)"
-		                    :make-msg-info-obj make-mock-preobj}
+		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: there is an unmatched deliminter " (nth matches 2) :arg
+                                                                               ", while compiling " (nth matches 3) :arg))}
                        {:key :compiler-exception-cannot-resolve-symbol
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.+): Unable to resolve symbol: (.+) in this context, compiling:\((.+)\)"
 		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: " "name "
-                                                                       (nth matches 2) :arg " is undefined, while compiling "
-                                                                       (nth matches 3) :arg))}
+                                                                               (nth matches 2) :arg " is undefined, while compiling "
+                                                                               (nth matches 3) :arg))}
                        {:key :compiler-exception-even-number-of-forms-needed
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.*): (.*) requires an even number of forms, compiling:\((.+)\)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "There is an unmatched parameter in declaration of "
-                                                                       (nth matches 2) :arg ". Compiling: " (nth matches 3)))}
+                                                                               (nth matches 2) :arg ". Compiling: " (nth matches 3)))}
                        {:key :compiler-exception-wrong-number-of-arguments-to-recur
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.*) Mismatched argument count to recur, expected: (.*) args, got: (.*), compiling:(.*)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: this recur is supposed to take "
-                                                                       ;; TODO: handle singular/plural arguments
-                                                                       (nth matches 2) " arguments, but you are passing " (nth matches 3)
-                                                                       ", while compiling " (nth matches 4)))
+                                                                               (nth matches 2) " argument(s), but you are passing " (nth matches 3)
+                                                                               ", while compiling " (nth matches 4)))
                         :hints "1. You are passing a wrong number of arguments to recur. Check its function or loop.
 		        		                2. recur might be outside of the scope of its function or loop"}
                        {:key :compiler-exception-first-argument-must-be-symbol
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.*) First argument to (.*) must be a Symbol, compiling:\((.+)\)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes (nth matches 2) :arg
-                                                                       " must be followed by a name. Compiling " (nth matches 3)))}
+                                                                               " must be followed by a name. Compiling " (nth matches 3)))}
                        {:key :compiler-exception-must-recur-from-tail-position
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.*) Can only recur from tail position, compiling:(.*)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "recur" :arg
-                                                                       " can only occur as a tail call (no operations can be done after its return)."
-                                                                       " Compiling " (nth matches 2)))}
+                                                                               " can only occur as a tail call (no operations can be done after its return)."
+                                                                               " Compiling " (nth matches 2)))}
                        ;; This is probably somewhat fragile: it occurs in an unbounded recur, but
                        ;; may occur elsewhere. We need to be careful to not catch a wider rnage of exceptions:
                        {:key :compiler-exception-must-recur-to-function-or-loop
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.*): clojure.lang.Var\$Unbound cannot be cast to clojure.lang.IPersistentVector, compiling:(.*)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "recur" :arg
-                                                                       " does not refer to any function or loop."
-                                                                       " Compiling " (nth matches 2)))}
+                                                                               " does not refer to any function or loop."
+                                                                               " Compiling " (nth matches 2)))}
                        {:key :compiler-exception-cannot-take-value-of-macro
                         :class clojure.lang.Compiler$CompilerException
                         :match #"(.+): Can't take value of a macro: (.+), compiling:\((.+)\)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: "
-                                                                       (get-macro-name (nth matches 2)) :arg
-                                                                       " is a macro, cannot be passed to a function, while compiling "
-                                                                       (nth matches 3)))}])
+                                                                               (get-macro-name (nth matches 2)) :arg
+                                                                               " is a macro, cannot be passed to a function, while compiling "
+                                                                               (nth matches 3)))}])

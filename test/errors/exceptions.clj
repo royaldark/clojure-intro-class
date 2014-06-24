@@ -1,6 +1,7 @@
 (ns errors.exceptions
   (:require [expectations :refer :all]
-            [clj-stacktrace.core :as stacktrace])
+            [clj-stacktrace.core :as stacktrace]
+            [errors.prettify_exception :refer :all])
   (:import [java.io.FileInputStream]
            [java.io.ObjectInputStream]
            [java.io.FileOutputStream]
@@ -84,8 +85,29 @@
 (defn run-and-catch
   "A function that takes quoted code and runs it, attempting to catch any exceptions it may throw. Returns the exeception or nil."
   [code] (try
-             (eval code)
-             (catch Exception e e)))
+           (eval code)
+           (catch Exception e e)))
+
+(defn run-and-catch-dictionaries [code]
+  "A function that takes quoted code and runs it, attempting to catch any
+  exceptions it may throw. Returns the exeception or nil."
+  (in-ns 'intro.core)
+   (try (eval code)
+           (catch Throwable e (prettify-exception-no-stacktrace e))))
+
+(defn run-and-catch-strings [code]
+  "A function that takes quoted code and runs it, attempting to catch any
+  exceptions it may throw. Returns the exeception or nil."
+  (in-ns 'strings.strings)
+   (try (eval code)
+           (catch Throwable e (prettify-exception-no-stacktrace e))))
+
+(defn run-and-catch-corefns [code]
+  "A function that takes quoted code and runs it, attempting to catch any
+  exceptions it may throw. Returns the exeception or nil."
+  (in-ns 'intro.core)
+   (try (eval code)
+           (catch Throwable e (prettify-exception-no-stacktrace e))))
 
 (defn exception->string
   "Converts exceptions to strings, returning a string or the original e if it is not an exception"
