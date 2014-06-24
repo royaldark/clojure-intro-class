@@ -64,3 +64,12 @@
 
 (expect "Wrong number of arguments (3) passed to a function any?"
         (get-all-text (my-run-and-catch '(any? odd? [1 2 3] [1 2 3]))))
+
+;###############################################
+;### Testing for check-if-anonymous-function ###
+;###############################################
+
+(expect "anonymous function" (check-if-anonymous-function "fn"))
+(expect "anonymous function" (check-if-anonymous-function "fn_test"))
+(expect "anonymous function" (check-if-anonymous-function "fn_"))
+(expect "random_function" (check-if-anonymous-function "random_function"))

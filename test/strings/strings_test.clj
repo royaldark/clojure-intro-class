@@ -221,7 +221,7 @@
 ;##########################################################
 
 ;; assert-checking for seq->string
-(expect "in function seq->string the argument :not-a-sequence must be a sequence but is a keyword"
+(expect "in function seq->string first argument :not-a-sequence must be a sequence but is a keyword"
         (get-all-text
          (my-run-and-catch-strings '(seq->string :not-a-sequence))))
 
@@ -298,35 +298,35 @@
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;; assert-checking for empty-string?
-(expect "in function empty-string? the argument :not-a-string must be a string but is a keyword"
+(expect "in function empty-string? first argument :not-a-string must be a string but is a keyword"
         (get-all-text
          (my-run-and-catch-strings '(empty-string? :not-a-string))))
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;; assert-checking for first-of-string
-(expect "in function first-of-string the argument :not-a-string must be a string but is a keyword"
+(expect "in function first-of-string first argument :not-a-string must be a string but is a keyword"
         (get-all-text
          (my-run-and-catch-strings '(first-of-string :not-a-string))))
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;; assert-checking for last-of-string
-(expect "in function last-of-string the argument :not-a-string must be a string but is a keyword"
+(expect "in function last-of-string first argument :not-a-string must be a string but is a keyword"
         (get-all-text
          (my-run-and-catch-strings '(last-of-string :not-a-string))))
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;; assert-checking for rest-of-string
-(expect "in function rest-of-string the argument :not-a-string must be a string but is a keyword"
+(expect "in function rest-of-string first argument :not-a-string must be a string but is a keyword"
         (get-all-text
          (my-run-and-catch-strings '(rest-of-string :not-a-string))))
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;; assert-checking for second-of-string
-(expect "in function second-of-string the argument :not-a-string must be a string but is a keyword"
+(expect "in function second-of-string first argument :not-a-string must be a string but is a keyword"
         (get-all-text
          (my-run-and-catch-strings '(second-of-string :not-a-string))))
 
