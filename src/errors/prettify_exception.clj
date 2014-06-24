@@ -46,3 +46,9 @@
                     :stacktrace stacktrace
                     :filtered-stacktrace filtered-trace
                     :hints nil})))
+
+(defn prettify-exception-no-stacktrace [e]
+  (let [e-class (class e)
+        m (.getMessage e)
+        message (if m m "")] ; converting an empty message from nil to ""
+    (get-pretty-message e-class message)))

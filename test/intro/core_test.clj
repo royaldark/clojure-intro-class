@@ -1,16 +1,12 @@
 (ns intro.core_test
   (:require [expectations :refer :all]
-            [errors.prettify_exception :refer :all]
-            [errors.exceptions :refer :all]
             [corefns.corefns :refer :all]
             [strings.strings :refer :all]
-            [errors.dictionaries :refer :all]))
+            [errors.dictionaries :refer :all]
+            [errors.exceptions :refer :all]))
 
-(defn my-prettify-exception [e]
-  (let [e-class (class e)
-        m (.getMessage e)
-        message (if m m "")] ; converting an empty message from nil to ""
-    (get-pretty-message e-class message)))
+;;; EVERYTHING BELOW WE'VE EITHER MOVED OR IS UNIMPORTANT, BUT WE'LL KEEP IT HERE
+;;; FOR SAFE-KEEPING FOR NOW
 
 ;(expect [{:msg "Attempted to use ", :stylekey :reg, :length 17}
 ;         {:msg "a character", :stylekey :type, :length 11}

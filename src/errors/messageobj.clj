@@ -39,7 +39,6 @@
       	     (+ start (:length (first hashes)))
       	     (conj res (assoc (first hashes) :start start))))))
 
-
 (defn get-all-text [msg-obj]
    "concatenate all text from a message object into a string"
    (reduce #(str %1 (:msg %2)) "" msg-obj))
