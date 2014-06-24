@@ -557,7 +557,7 @@
 
 (defn -main [& args]
   (try
-    (test-our-examples)
+    ;(test-our-examples)
     ;(try-counts)
     ;(basic-seesaw-frame)
     ;(test-exceptions)
@@ -596,8 +596,8 @@
     ;(test-reversible)
     ;(test-arity)
     ;(test-sorted-collections)
-    ;(test-asserts)
-    ;(test-drop-while)
+    (test-asserts)
+    (test-drop-while)
     ;(test-asserts-multiple-args)
     ;(test-asserts-multiple-args-map)
     ;(test-filter)
