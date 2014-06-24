@@ -557,8 +557,8 @@
 
 (defn -main [& args]
   (try
-    ;(test-our-examples)
-    (try-counts)
+    (test-our-examples)
+    ;(try-counts)
     ;(basic-seesaw-frame)
     ;(test-exceptions)
     ;(test-nth)
