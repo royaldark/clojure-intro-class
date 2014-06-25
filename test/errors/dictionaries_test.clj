@@ -121,8 +121,3 @@
 
 (expect "in function into second argument [[2] [4 5]] must be either a hashmap, or a collection of vectors or hashmaps of length 2, but is a vector"
         (get-all-text (run-and-catch-corefns '(into {} [[2] [4 5]]))))
-
-;; throws Illegal Argument Exception saying that it doesn't know how to create ISeq from: java.lang.IllegalArgumentException
-;; in repl it says that No value supplied for key
-;(expect ""
-;        (get-all-text (run-and-catch '(hash-map [[1 2] [3 4] ;[5]]))))
