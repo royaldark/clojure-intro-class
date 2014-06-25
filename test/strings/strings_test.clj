@@ -325,7 +325,7 @@
          (run-and-catch-strings '(string-contains? :not-a-string "hello world"))))
 
 ;; assert-checking for string-contains?, second precondition
-(expect "in function string-contains? second argument :not-a-string-or-character must be a string or character but is a keyword"
+(expect "in function string-contains? second argument :not-a-string-or-character must be either a string or character but is a keyword"
         (get-all-text
          (run-and-catch-strings '(string-contains? "hello world" :not-a-string-or-character))))
 

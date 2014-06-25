@@ -166,4 +166,5 @@
 
 (def ex1 (run-and-catch '(+ 2 "pie")))
 
+; THIS TEST CURRENTLY FAIL
 (expect "eval" (first (get-fns-in-stacktrace (stacktrace/parse-exception ex1))))

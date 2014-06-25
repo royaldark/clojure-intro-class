@@ -119,7 +119,7 @@
 (expect #"when-let requires exactly 2 forms in binding vector in (.+)"
         (get-all-text (run-and-catch-dictionaries '(when-let [num1 1 num2 2] "hello"))))
 
-(expect "Vector arg to map conj must be a pair"
+(expect "in function into second argument [[2] [4 5]] must be either a hashmap, or a collection of vectors or hashmaps of length 2, but is a vector"
         (get-all-text (run-and-catch-corefns '(into {} [[2] [4 5]]))))
 
 ;; throws Illegal Argument Exception saying that it doesn't know how to create ISeq from: java.lang.IllegalArgumentException

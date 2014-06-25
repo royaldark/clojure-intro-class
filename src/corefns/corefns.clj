@@ -61,7 +61,8 @@
 ;; from-coll conjoined.
 (defn into [argument1 argument2]
    {:pre [(check-if-seqable? "into" argument1)
-          (check-if-seqable? "into" argument2)]}
+          (check-if-seqable? "into" argument2)
+          (check-if-can-convert-to-hashmap "into" argument1 argument2)]}
    (clojure.core/into argument1 argument2))
 
 ;; (reduce f coll)

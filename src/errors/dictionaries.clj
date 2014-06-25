@@ -162,7 +162,7 @@
     (empty-seen) ; empty the seen-failed-asserts hashmap
     (make-msg-info-hashes
      "in function " fname :arg " " arg " " v-print :arg
-     " must be a " t :type " but is " c-type :type)))
+     " must be " t :type " but is " c-type :type)))
 
 (def error-dictionary [{:key :assertion-error-with-argument
                         :class AssertionError
@@ -215,10 +215,6 @@
                         :class IllegalArgumentException
                         :match #"(.+): (.*) requires exactly 2 forms in binding vector (.+)"
                         :make-msg-info-obj make-mock-preobj}
-
-
-
-
                        {:key :index-out-of-bounds-index-provided
                         :class IndexOutOfBoundsException
                         :match #"(\d+)"
@@ -310,15 +306,7 @@
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: "
                                                                                (nth matches 2) :arg " must be followed by a name. Compiling "
                                                                                (nth matches 3)))}
-                       ;; This is probably somewhat fragile: it occurs in an unbounded recur, but
-                       ;; may occur elsewhere. We need to be careful to not catch a wider rnage of exceptions:
-                      ; {:key :compiler-exception-must-recur-to-function-or-loop
-                      ;  :class clojure.lang.Compiler$CompilerException
-                      ;  :true-exception make-mock-preobj
-                      ;  :match #"(.*): clojure.lang.Var\$Unbound cannot be cast to clojure.lang.IPersistentVector, compiling:(.*)"
-                      ;  :make-msg-info-obj (fn [matches] (make-msg-info-hashes "recur" :arg
-                      ;                                                         " does not refer to any function or loop."
-                      ;                                                         " Compiling " (nth matches 2)))}
+
                        {:key :compiler-exception-cannot-take-value-of-macro
                         :class clojure.lang.Compiler$CompilerException
                         :true-exception java.lang.RuntimeException
@@ -359,4 +347,14 @@
                         :true-exception make-mock-preobj
                         :match #"(.*): (.*) requires an even number of forms, compiling:\((.+)\)"
                         :make-msg-info-obj (fn [matches] (make-msg-info-hashes "There is an unmatched parameter in declaration of "
-                                                                               (nth matches 2) :arg ". Compiling: " (nth matches 3)))}])
+                                                                               (nth matches 2) :arg ". Compiling: " (nth matches 3)))}
+                       ;; This is probably somewhat fragile: it occurs in an unbounded recur, but
+                       ;; may occur elsewhere. We need to be careful to not catch a wider rnage of exceptions:
+                      ; {:key :compiler-exception-must-recur-to-function-or-loop
+                      ;  :class clojure.lang.Compiler$CompilerException
+                      ;  :true-exception make-mock-preobj
+                      ;  :match #"(.*): clojure.lang.Var\$Unbound cannot be cast to clojure.lang.IPersistentVector, compiling:(.*)"
+                      ;  :make-msg-info-obj (fn [matches] (make-msg-info-hashes "recur" :arg
+                      ;                                                         " does not refer to any function or loop."
+                      ;                                                         " Compiling " (nth matches 2)))}
+                       ])

@@ -9,7 +9,7 @@
   in seen-failed-asserts. If the second argument is present, it's added
   to the seen-failed-asserts as the number of the argument"
   (if (seqable? x) true
-    (do (add-to-seen {:check "sequence"
+    (do (add-to-seen {:check "a sequence"
                       :class (class x)
                       :value x
                       :fname fname})
@@ -25,7 +25,7 @@
 
 (defn check-if-function? [fname x & [n]]
   (if (fn? x) true
-    (do (add-to-seen {:check "function"
+    (do (add-to-seen {:check "a function"
                       :class (class x)
                       :value x
                       :fname fname})
@@ -34,7 +34,7 @@
 
 (defn check-if-number? [fname x & [n]]
   (if (number? x) true
-    (do (add-to-seen {:check "number"
+    (do (add-to-seen {:check "a number"
                       :class (class x)
                       :value x
                       :fname fname})
@@ -43,7 +43,7 @@
 
 (defn check-if-string? [fname x & [n]]
   (if (string? x) true
-    (do (add-to-seen {:check "string"
+    (do (add-to-seen {:check "a string"
                       :class (class x)
                       :value x
                       :fname fname})
@@ -52,7 +52,7 @@
 
 (defn check-if-character? [fname x & [n]]
   (if (char? x) true
-    (do (add-to-seen {:check "character"
+    (do (add-to-seen {:check "a character"
                       :class (class x)
                       :value x
                       :fname fname})
@@ -61,7 +61,7 @@
 
 (defn check-if-string-or-character? [fname x & [n]] ;for string-contains?
   (if (or (string? x) (char? x)) true
-    (do (add-to-seen {:check "string or character"
+    (do (add-to-seen {:check "either a string or character"
                       :class (class x)
                       :value x
                       :fname fname})
@@ -94,3 +94,29 @@
       (if (not (check-if-string? fname (first args) n))
         false
         (recur (rest args) (inc n))))))
+
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+(defn all-elems-are-map-or-vector [coll]
+  (every? #(or (vector? %) (map? %)) coll))
+
+(defn all-elems-have-length-two [coll]
+  (every? #(= (count %) 2) coll))
+
+(defn all-elems-are-map-or-vector-with-length-2? [fname coll & [n]]
+  (if (and (all-elems-are-map-or-vector coll)
+           (all-elems-have-length-two coll))
+      true ;return true
+      (do (add-to-seen {:check "either a hashmap, or a collection of vectors or hashmaps of length 2,"
+                        :class (class coll) ;else add-to seen
+                        :value coll
+                        :fname fname})
+        (if n (add-to-seen {:arg-num n}))
+        false))) ;and return false
+
+(defn check-if-can-convert-to-hashmap [fname arg1 arg2 & [n]]
+  (if (map? arg1) ;is arg1 a hashmap?
+    (if (map? arg2) ;if so, is arg2 a hashmap?
+      true ;if both args are hashmaps, return true
+      (all-elems-are-map-or-vector-with-length-2? fname arg2 n)) ;if arg1 is a hashmap, but not arg2, do all-elems-are-map-or-vector-with-length-2?
+    true)) ;if arg1 is NOT a hashamp, return true
