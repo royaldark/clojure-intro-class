@@ -97,15 +97,17 @@
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-(defn all-elems-are-map-or-vector [coll]
+(defn all-elems-are-map-or-vector? [coll]
   (every? #(or (vector? %) (map? %)) coll))
 
-(defn all-elems-have-length-two [coll]
-  (every? #(= (count %) 2) coll))
+(defn all-elems-have-length-two? [coll]
+  (every? #(= (count %) 2) coll)) ;with hashmaps, this function will ALWAYS return true because it breaks up hashmaps into
+                                  ;vectors of 2, so it will only return false if the hashmap is not a valid hashmap, since
+                                  ;hashmaps always are built up of pairs of 2
 
 (defn all-elems-are-map-or-vector-with-length-2? [fname coll & [n]]
-  (if (and (all-elems-are-map-or-vector coll)
-           (all-elems-have-length-two coll))
+  (if (and (all-elems-are-map-or-vector? coll)
+           (all-elems-have-length-two? coll))
       true ;return true
       (do (add-to-seen {:check "either a hashmap, or a collection of vectors or hashmaps of length 2,"
                         :class (class coll) ;else add-to seen

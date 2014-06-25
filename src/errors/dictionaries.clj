@@ -292,13 +292,6 @@
                                                                                "as a tail call, meaning no operations can"
                                                                                " be done after its return. Compiling "
                                                                                (nth matches 2)))}
-                       {:key :compiler-exception-cannot-resolve-symbol
-                        :class clojure.lang.Compiler$CompilerException
-                        :true-exception java.lang.RuntimeException
-                        :match #"(.+): Unable to resolve symbol: (.+) in this context, compiling:\((.+)\)"
-		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: " "name "
-                                                                               (nth matches 2) :arg " is undefined, while compiling "
-                                                                               (nth matches 3) :arg))}
                        {:key :compiler-exception-first-argument-must-be-symbol
                         :class clojure.lang.Compiler$CompilerException
                         :true-exception java.lang.RuntimeException
@@ -315,6 +308,13 @@
                                                                                (get-macro-name (nth matches 2)) :arg
                                                                                " is a macro, cannot be passed to a function, while compiling "
                                                                                (nth matches 3)))}
+                        {:key :compiler-exception-cannot-resolve-symbol
+                        :class clojure.lang.Compiler$CompilerException
+                        :true-exception java.lang.RuntimeException
+                        :match #"(.+): Unable to resolve symbol: (.+) in this context, compiling:\((.+)\)"
+		                    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: " "name "
+                                                                               (nth matches 2) :arg " is undefined, while compiling "
+                                                                               (nth matches 3) :arg))}
                        {:key :compiler-exception-unmatched-delimiter
                         :class clojure.lang.Compiler$CompilerException
                         :true-exception java.lang.Exception
