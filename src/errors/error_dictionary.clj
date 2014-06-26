@@ -80,7 +80,7 @@
                                                            " should be a vector, but is " (nth matches 1) :arg))}
    {:key :illegal-argument-exactly-2-forms
     :class IllegalArgumentException
-    :match #"(.+): (.*) requires exactly 2 forms in binding vector (.+)"
+    :match #"(.*) requires exactly 2 forms in binding vector(.*)"
     :make-msg-info-obj make-mock-preobj}
 
    ;######################################
