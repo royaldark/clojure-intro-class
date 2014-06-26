@@ -101,8 +101,8 @@
 ;***Testing make-mock-preobj***
 
 (expect (make-mock-preobj ["anything" "will be ignored"])
-	[{:msg "This is a" :stylekey :reg :length 9}
-	 {:msg "test" :stylekey :arg :length 4}])
+	[{:msg "This is a " :stylekey :reg :length 10}
+	 {:msg "test." :stylekey :arg :length 5}])
 
 ;####################################
 ;### 4. errors.exceptionobj tests ###
