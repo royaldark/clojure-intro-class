@@ -72,7 +72,7 @@
 ;##################################################
 
 ;; testing for :index-out-of-bounds-index-provided
-;(expect "An index in a sequence is out of bounds or invalid"
+;(expect "An index in a sequence is out of bounds. The index is: (.*)"
 ;        (get-all-text
 ;         (run-and-catch-dictionaries '(nth [0 1 2 3 4 5] 10))))
 
@@ -81,48 +81,41 @@
         (get-all-text
          (run-and-catch-dictionaries '(nth [0 1 2 3 4 5] 10))))
 
+;###################################
+;### Testing for Arity Exceptions###
+;###################################
 
-;#######################################################################################
-;### Checking if functions realize when too many or too little args are being passed ###
-;#######################################################################################
-
-(expect "Wrong number of arguments (3) passed to a function count"
-        (get-all-text
-         (run-and-catch-dictionaries '(count [] [] []))))
-
-(expect "Wrong number of arguments (3) passed to a function into"
-        (get-all-text
-         (run-and-catch-dictionaries '(into [] '(5 10 15) [2 4 6]))))
-
-(expect "Wrong number of arguments (0) passed to a function zero?, while compiling "
-        (get-all-text (butlast (run-and-catch-dictionaries '(zero?)))))
-
+;; testing for :arity-exception-wrong-number-of-arguments
 (expect "Wrong number of arguments (3) passed to a function even?"
         (get-all-text (run-and-catch-dictionaries '(even? 3 6 1))))
 
-(expect "Wrong number of arguments (0) passed to a function reduce"
-        (get-all-text (run-and-catch-dictionaries '(reduce))))
+;##########################################
+;### Testing for Null Pointer Exceptions###
+;##########################################
 
-(expect "Wrong number of arguments (0) passed to a function nth"
-        (get-all-text (run-and-catch-dictionaries '(nth))))
+;; testing for :null-pointer-non-existing-object-provided
+;(expect "An attempt to access a non-existing object: "
+;        (get-all-text (run-and-catch-dictionaries '(nth [1 2 3] 3))))
 
-(expect "Wrong number of arguments (0) passed to a function filter"
-        (get-all-text (run-and-catch-dictionaries '(filter))))
+;; testing for :null-pointer-non-existing-object-not-provided
+(expect "An attempt to access a non-existing object. \n(NullPointerException)"
+        (get-all-text (run-and-catch-dictionaries '(+ nil 2))))
 
-(expect "Wrong number of arguments (3) passed to a function add-first"
-        (get-all-text (run-and-catch-dictionaries '(add-first [1 2 3] 0 0))))
+;###################################################
+;### Testing for Unsupported Operation Exceptions###
+;###################################################
 
-(expect "Wrong number of arguments (3) passed to a function add-last"
-        (get-all-text (run-and-catch-dictionaries '(add-last [:a :b :c] :d :e))))
+;; testing for :unsupported-operation-wrong-type-of-argument
+;(expect "Function does not allow as an argument"
+;        (get-all-text (run-and-catch-dictionaries '(sort :not-a-sequence))))
 
-(expect "Wrong number of arguments (3) passed to a function contains-key?"
-        (get-all-text (run-and-catch-dictionaries '(contains-key? {:a 1 :b 2 :c 3} 1 true))))
+;##################################
+;### Testing for Java Exceptions###
+;##################################
 
-(expect "Wrong number of arguments (3) passed to a function contains-value?"
-        (get-all-text (run-and-catch-dictionaries '(contains-value? {:a 1 :b 2 :c 3} :c true))))
-
-(expect "Wrong number of arguments (3) passed to a function any?"
-        (get-all-text (run-and-catch-dictionaries '(any? odd? [1 2 3] [1 2 3]))))
+;; testing for :java.lang.Exception-improper-identifier
+(expect "You cannot use 7 as a variable."
+        (get-all-text (run-and-catch-dictionaries '(let [x :two 7 :seven]))))
 
 ;######################################
 ;### Testing for compilation errors ###

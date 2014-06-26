@@ -91,7 +91,7 @@
     :class IndexOutOfBoundsException
     :match #"(\d+)"
     :make-msg-info-obj (fn [matches] (make-msg-info-hashes "An index in a sequence is out of bounds."
-                                                           "The index is:" (nth matches 0) :arg))}
+                                                           "The index is: " (nth matches 0) :arg))}
    {:key :index-out-of-bounds-index-not-provided
     :class IndexOutOfBoundsException
     :match #"" ; an empty message
@@ -132,7 +132,7 @@
 
    {:key :unsupported-operation-wrong-type-of-argument
     :class UnsupportedOperationException
-    :match #"(.*) not supported on this type: (.*)"
+    :match #"(.*) not supported on this type:(.*)"
     :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Function " (nth matches 1) :arg
                                                            " does not allow " (get-type (nth matches 2)) :type " as an argument"))}
 
