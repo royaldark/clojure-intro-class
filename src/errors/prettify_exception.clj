@@ -1,5 +1,6 @@
 (ns errors.prettify_exception
-  (:require [clj-stacktrace.core :as stacktrace])
+  (:require [clj-stacktrace.core :as stacktrace]
+            [errors.error_dictionary :refer :all])
   (:use [errors.dictionaries]
 	      [errors.messageobj]
 	      [errors.errorgui]

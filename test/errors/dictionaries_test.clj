@@ -119,5 +119,5 @@
 (expect #"when-let requires exactly 2 forms in binding vector in (.+)"
         (get-all-text (run-and-catch-dictionaries '(when-let [num1 1 num2 2] "hello"))))
 
-(expect "in function into second argument [[2] [4 5]] must be either a hashmap, or a collection of vectors or hashmaps of length 2, but is a vector"
-        (get-all-text (run-and-catch-corefns '(into {} [[2] [4 5]]))))
+;(expect "in function into second argument [[2] [4 5]] must be either a hashmap, or a collection of vectors or hashmaps of length 2, but is a vector"
+;        (get-all-text (run-and-catch-corefns '(into {} [[2] [4 5]]))))

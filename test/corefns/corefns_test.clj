@@ -252,9 +252,9 @@
          (run-and-catch-corefns '(into #{} :not-a-collection))))
 
 ;; testing for the third precondition of into
-(expect "in function into second argument [[1 2] [3]] must be either a hashmap, or a collection of vectors or hashmaps of length 2, but is a vector"
-        (get-all-text
-         (run-and-catch-corefns '(into {} [[1 2] [3]]))))
+;(expect "in function into second argument [[1 2] [3]] must be either a hashmap, or a collection of vectors or hashmaps of length 2, but is a vector"
+;        (get-all-text
+;         (run-and-catch-corefns '(into {} [[1 2] [3]]))))
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

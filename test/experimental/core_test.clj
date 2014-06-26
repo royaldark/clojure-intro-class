@@ -67,8 +67,8 @@
 ;### Other testing in instarepl ###
 ;##################################
 
-(comment
 
+(comment
 (hash-map [1 2] [3 4] [5])
 (hash-map [1 2] [3 4] [5 6] [7 8])
 (hash-map 1 2 3)
@@ -121,4 +121,4 @@
 (group-by count {"9sd" "dsdf" "6sdfi" "qsdficsg"})
 (group-by #(odd? (first %)) {2 4 8 9 1 3})
 (group-by #(odd? (second %)) {2 4 8 9 1 3})
-       )
+)
