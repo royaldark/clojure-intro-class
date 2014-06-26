@@ -9,7 +9,6 @@
 ;;(def ignore-nses #"(clojure|java)\..*")
 ;;(def ignore-nses #"(user|clojure|java)\..*")
 ;; We should think of making this customizable: building blocks???
-(def ignore-nses #"clojure\.main(\.|/)(.*)|clojure.lang(\.|/)(.*)|java\.(.*)")
 
 (defn first-match [e-class message]
 	(first (filter #(and (= (:class %) e-class) (re-matches (:match %) message))
@@ -24,14 +23,19 @@
     ;; else just make a msg-info-obj out the message itself
     (make-msg-info-hashes message)))
 
-(defn match-stack-trace-elem [st-elem]
+;; namespaces to ignore:
+(def ignore-nses #"(clojure\.main(((\.|/)(.*))?))|(clojure\.lang(\.|/)(.*))|(java\.(.*))|(clojure\.tools(.*))")
+
+(defn keep-stack-trace-elem [st-elem]
   "returns true if the stack trace element should be kept
    and false otherwise"
-  (and (:clojure st-elem) (not (re-matches ignore-nses (:ns st-elem)))))
+  (let [ns (:ns st-elem)
+	namespace (if ns ns "")] ;; in case there's no :ns element
+  (and (:clojure st-elem) (not (re-matches ignore-nses namespace)))))
 
 (defn filter-stacktrace [stacktrace]
-  "takes a stack trace and fileters out unnneeded elements"
-  (filter match-stack-trace-elem stacktrace))
+  "takes a stack trace and filters out unneeded elements"
+  (filter keep-stack-trace-elem stacktrace))
 
 ;; All together:
 (defn prettify-exception [e]
