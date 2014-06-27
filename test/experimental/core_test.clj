@@ -28,11 +28,11 @@
 
 ;(def fst1 (map #(str "\t" (:ns %) "/" (:fn %) " (" (:file %) " line " (:line %) ")")(filter #(and (:clojure %) (not (re-matches ignore-nses (:ns %)))) (:trace-elems st1))))
 
+ (comment
+
 ;########################################
 ;### Testing for errors with hashmaps ###
 ;########################################
-
- (comment
 
 ;(every? #(= (count %) 2) coll)
 (every? #(= (count %) 2) [{:one 1 :two 2} {:three 3 :four 4}])
@@ -66,7 +66,6 @@
 ;##################################
 ;### Other testing in instarepl ###
 ;##################################
-
 
 (comment
 (hash-map [1 2] [3 4] [5])

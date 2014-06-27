@@ -91,7 +91,7 @@
     :class IndexOutOfBoundsException
     :match #"(\d+)"
     :make-msg-info-obj (fn [matches] (make-msg-info-hashes "An index in a sequence is out of bounds."
-                                                           "The index is: " (nth matches 0) :arg))}
+                                                           " The index is: " (nth matches 0) :arg))}
    {:key :index-out-of-bounds-index-not-provided
     :class IndexOutOfBoundsException
     :match #"" ; an empty message
@@ -132,7 +132,7 @@
 
    {:key :unsupported-operation-wrong-type-of-argument
     :class UnsupportedOperationException
-    :match #"(.*) not supported on this type:(.*)"
+    :match #"(.*) not supported on this type: (.*)"
     :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Function " (nth matches 1) :arg
                                                            " does not allow " (get-type (nth matches 2)) :type " as an argument"))}
 
@@ -167,6 +167,12 @@
     ;;TODO: handle singular/plural arguments
     :hints "1. You are passing a wrong number of arguments to recur. Check its function or loop.
     2. recur might be outside of the scope of its function or loop"}
+   {:key :compiler-exception-even-number-of-forms-needed
+    :class clojure.lang.Compiler$CompilerException
+    :true-exception java.lang.IllegalArgumentException
+    :match #"(.*): (.*) requires an even number of forms, compiling:\((.+)\)"
+    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: there is an unmatched parameter in declaration of "
+                                                           (nth matches 2) :arg ", while compiling: " (nth matches 3)))}
 
    ;############################################
    ;### Compilation Errors: Arity Exceptions ###
@@ -181,7 +187,7 @@
                                funstr (if (= fstr "anonymous function")
                                         "an "
                                         (str "a function "))]
-                           (make-msg-info-hashes "Wrong number of arguments ("
+                           (make-msg-info-hashes "Compilation error: wrong number of arguments ("
                                                  (nth matches 2) ") passed to " funstr fstr :arg
                                                  ", while compiling "
                                                  (nth matches 4) :arg)))}
@@ -196,7 +202,7 @@
     :match #"(.*) Can only recur from tail position, compiling:(.*)"
     :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: recur can only occur "
                                                            "as a tail call, meaning no operations can"
-                                                           " be done after its return. Compiling "
+                                                           " be done after its return, while compiling "
                                                            (nth matches 2)))}
 
    ;##############################################
@@ -208,7 +214,7 @@
     :true-exception java.lang.RuntimeException
     :match #"(.*) First argument to (.*) must be a Symbol, compiling:\((.+)\)"
     :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: "
-                                                           (nth matches 2) :arg " must be followed by a name. Compiling "
+                                                           (nth matches 2) :arg " must be followed by a name, while compiling "
                                                            (nth matches 3)))}
    {:key :compiler-exception-cannot-take-value-of-macro
     :class clojure.lang.Compiler$CompilerException
@@ -262,12 +268,7 @@
     :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Compilation error: end of file, starting at line " (nth matches 2) :arg
                                                            ", while compiling " (nth matches 3) :arg \n ". Probably a non-closing
                                                            parentheses or bracket."))}
-   {:key :compiler-exception-even-number-of-forms-needed
-    :class clojure.lang.Compiler$CompilerException
-    :true-exception :unknown
-    :match #"(.*): (.*) requires an even number of forms, compiling:\((.+)\)"
-    :make-msg-info-obj (fn [matches] (make-msg-info-hashes "There is an unmatched parameter in declaration of "
-                                                           (nth matches 2) :arg ". Compiling: " (nth matches 3)))}])
+   ])
 
 ;; This is probably somewhat fragile: it occurs in an unbounded recur, but
 ;; may occur elsewhere. We need to be careful to not catch a wider rnage of exceptions:
