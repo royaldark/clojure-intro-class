@@ -95,6 +95,13 @@
    (try (eval code)
            (catch Throwable e (prettify-exception-no-stacktrace e))))
 
+(defn run-and-catch-student-code-examples [code]
+  "A function that takes quoted code and runs it, attempting to catch any
+  exceptions it may throw. Returns the exeception or nil."
+  (in-ns 'errors.student_code_examples)
+   (try (eval code)
+           (catch Throwable e (prettify-exception-no-stacktrace e))))
+
 (defn run-and-catch-strings [code]
   "A function that takes quoted code and runs it, attempting to catch any
   exceptions it may throw. Returns the exeception or nil."
