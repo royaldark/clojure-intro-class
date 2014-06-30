@@ -24,6 +24,12 @@
     (make-msg-info-hashes message)))
 
 ;; namespaces to ignore:
+
+;; regular expressions for namespaces to be ignored. Any namespace equal to
+;; or contaning these regexps would be ignored
+(def namespaces-to-ignore
+     ["clojure\\.main" "clojure\\.lang" "java" "clojure\\.tools" "user"])
+(def dot-or-slash-or-nothing "((\\.|/)(.*)?)")
 (def ignore-nses #"(clojure\.main(((\.|/)(.*))?))|(clojure\.lang(\.|/)(.*))|(java\.(.*))|(clojure\.tools(.*))")
 
 (defn keep-stack-trace-elem [st-elem]
@@ -35,6 +41,8 @@
 
 (defn filter-stacktrace [stacktrace]
   "takes a stack trace and filters out unneeded elements"
+  ;(println stacktrace)
+  ;(println (filter keep-stack-trace-elem stacktrace))
   (filter keep-stack-trace-elem stacktrace))
 
 ;; All together:
