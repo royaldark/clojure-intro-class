@@ -39,6 +39,15 @@
 (expect not-true? (keep-stack-trace-elem {:method "main", :ns "clojure.main",
 					  :clojure true, :file "main.java", :line 37}))
 
+(expect not-true?  (keep-stack-trace-elem
+                    {:anon-fn false, :fn "main", :ns "clojure.main", :clojure true,
+                     :file "main.clj", :line 420}))
+
+(expect not-true?  (keep-stack-trace-elem
+                    {:anon-fn false, :fn "main", :ns "clojure.lang", :clojure true,
+                     :file "main.clj", :line 420}))
+
+
 
 ;;****************************************************
 ;;********** Testing filtering stacktrace ************
@@ -82,11 +91,11 @@
 
 ;; a stacktrace object copied from a run:
 (def complete-stack
-  [{:anon-fn false, :fn "map", :ns "corefns.corefns", :clojure true, :file "corefns.clj", :line 34} 
-   {:method "invoke", :class clojure.lang.RestFn, :java true, :file "RestFn.java", :line 423} 
+  [{:anon-fn false, :fn "map", :ns "corefns.corefns", :clojure true, :file "corefns.clj", :line 34}
+   {:method "invoke", :class clojure.lang.RestFn, :java true, :file "RestFn.java", :line 423}
    {:anon-fn false, :fn "eval6415", :ns "intro.core", :clojure true, :file "NO_SOURCE_FILE", :line 302}
    {:method "eval", :class clojure.lang.Compiler, :java true, :file "Compiler.java", :line 6703}
-   {:method "eval", :class clojure.lang.Compiler, :java true, :file "Compiler.java", :line 6666} 
+   {:method "eval", :class clojure.lang.Compiler, :java true, :file "Compiler.java", :line 6666}
    {:anon-fn false, :fn "eval", :ns "clojure.core", :clojure true, :file "core.clj", :line 2927}
    {:anon-fn false, :fn "test-and-continue", :ns "intro.core", :clojure true, :file "core.clj", :line 22}
    {:anon-fn true, :fn "map", :ns "clojure.core", :clojure true, :file "core.clj", :line 2559}
@@ -116,7 +125,7 @@
    {:method "applyTo", :class clojure.lang.Var, :java true, :file "Var.java", :line 700}
    {:method "main", :class clojure.main, :java true, :file "main.java", :line 37}])
 
-(def filtered-stack 
+(def filtered-stack
   [{:anon-fn false, :fn "map", :ns "corefns.corefns", :clojure true, :file "corefns.clj", :line 34}
    {:anon-fn false, :fn "eval6415", :ns "intro.core", :clojure true, :file "NO_SOURCE_FILE", :line 302}
    {:anon-fn false, :fn "eval", :ns "clojure.core", :clojure true, :file "core.clj", :line 2927}
@@ -146,6 +155,5 @@
 (expect filtered-stack (filter-stacktrace complete-stack))
 
 ;; we can combine conditions if we want to, do we want to?
-(expect (more filtered-stack (check-stack-count? 13))
-	(filter-stacktrace complete-stack))
-			  
+;(expect (more filtered-stack (check-stack-count? 13))
+;	(filter-stacktrace complete-stack))

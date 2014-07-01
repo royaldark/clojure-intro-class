@@ -1,5 +1,6 @@
 (ns errors.prettify_exception
   (:require [clj-stacktrace.core :as stacktrace]
+            [expectations :refer :all]
             [errors.error_dictionary :refer :all])
   (:use [errors.dictionaries]
 	      [errors.messageobj]
@@ -28,16 +29,50 @@
 ;; regular expressions for namespaces to be ignored. Any namespace equal to
 ;; or contaning these regexps would be ignored
 (def namespaces-to-ignore
-     ["clojure\\.main" "clojure\\.lang" "java" "clojure\\.tools" "user"])
-(def dot-or-slash-or-nothing "((\\.|/)(.*)?)")
-(def ignore-nses #"(clojure\.main(((\.|/)(.*))?))|(clojure\.lang(\.|/)(.*))|(java\.(.*))|(clojure\.tools(.*))")
+     ["clojure\\.main" "clojure\\.lang" "java" "clojure\\.tools"]); "user"])
+
+(defn- surround-by-parens [strings]
+  (map #(str "(" % ")") strings))
+
+(expect ["(aaa)" "(bbb)"] (surround-by-parens ["aaa" "bbb"]))
+
+(defn- add-postfix [strings postfix]
+  (map #(str % postfix) strings))
+
+(expect ["aaa((\\.|/)?(.*))" "bbb((\\.|/)?(.*))"] (add-postfix ["aaa" "bbb"] "((\\.|/)?(.*))"))
+
+(defn- add-symbol-except-last [strings]
+  (let [or-sym "|"]
+    (conj (vec (add-postfix (butlast strings) or-sym)) (last strings))))
+
+(expect ["aaa|" "bbb|" "ccc"] (add-symbol-except-last ["aaa" "bbb" "ccc"]))
+
+
+(defn- make-pattern-string [to-ignore]
+  (let [dot-or-slash-or-nothing "((\\.|/)?(.*))"]
+    (apply str (add-symbol-except-last (surround-by-parens (add-postfix to-ignore dot-or-slash-or-nothing))))))
+
+
+(expect "(aaa((\\.|/)?(.*)))|(bbb((\\.|/)?(.*)))"
+        (make-pattern-string ["aaa" "bbb"]))
+
+(def ns-pattern
+  (re-pattern (make-pattern-string namespaces-to-ignore)))
+
+
+;; first is needed in tests when multiple matches are returned
+(expect "clojure.main" (first (re-matches ns-pattern "clojure.main")))
+(expect "clojure.main" (re-matches (re-pattern "clojure\\.main") "clojure.main"))
+(expect "clojure.main" (first (re-matches (re-pattern "clojure\\.main((\\.|/)?(.*))") "clojure.main")))
+
+;(def ignore-nses #"(clojure\.main(((\\.|/)(.*)?)))|(clojure\.lang(\.|/)(.*))|(java\.(.*))|(clojure\.tools(.*))")
 
 (defn keep-stack-trace-elem [st-elem]
   "returns true if the stack trace element should be kept
    and false otherwise"
   (let [ns (:ns st-elem)
 	namespace (if ns ns "")] ;; in case there's no :ns element
-  (and (:clojure st-elem) (not (re-matches ignore-nses namespace)))))
+  (and (:clojure st-elem) (not (re-matches ns-pattern namespace)))))
 
 (defn filter-stacktrace [stacktrace]
   "takes a stack trace and filters out unneeded elements"
