@@ -242,8 +242,7 @@
    {:anon-fn false, :fn  "load-libs", :ns "clojure.core", :clojure true, :file "core.clj", :line 5413}
    {:anon-fn false, :fn "apply", :ns "clojure.core", :clojure true, :file "core.clj", :line 619}
    {:anon-fn false, :fn "require", :ns "clojure.core", :clojure true, :file "core.clj", :line 5496}
-   {:anon-fn false, :fn "alter-var-root", :ns "clojure.core", :clojure
-    true, :file "core.clj", :line 4946}
+   {:anon-fn false, :fn "alter-var-root", :ns "clojure.core", :clojure true, :file "core.clj", :line 4946}
    ])
 
 (def complete-stack2
@@ -327,7 +326,7 @@
 ;; testing for filter-stacktrace
 (expect filtered-stack (filter-stacktrace complete-stack))
 (expect filtered-stack2 (filter-stacktrace complete-stack2))
-(expect (check-stack-count? 13) (filter-stacktrace complete-stack2))
+(expect (check-stack-count? 5) (filter-stacktrace complete-stack2))
 
 (expect {:anon-fn true, :fn "map", :ns "clojure.core", :clojure true, :file "core.clj", :line 2559}
 	(in (filter-stacktrace complete-stack)))

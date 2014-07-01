@@ -85,13 +85,14 @@
 (expect "load5" (ignore-function? #"load.*" "load5"))
 
 (defn- ignored-function? [nspace fname]
-  (let [names (some #(not (nil? ((keyword nspace) %))) ignore-functions)]
+  (let [names ((keyword nspace) (some #(not (nil? ((keyword nspace) %))) ignore-functions))]
     (if (nil? names) false (not (nil? (filter #(ignore-function? % fname) names))))))
 
 (expect true (ignored-function? "clojure.core" "require"))
 (expect false (ignored-function? "clojure.lang" "require"))
-(expect true (ignored-function? "clojure.core" "require5"))
+(expect false (ignored-function? "clojure.core" "require5"))
 (expect true (ignored-function? "clojure.core" "load-one"))
+
 
 (defn keep-stack-trace-elem [st-elem]
   "returns true if the stack trace element should be kept
@@ -99,7 +100,7 @@
   (let [nspace (:ns st-elem)
 	      namespace (if nspace nspace "") ;; in case there's no :ns element
         fname (:fn st-elem)]
-  (and (:clojure st-elem) (not (re-matches ns-pattern namespace)))))
+  (and (:clojure st-elem) (not (re-matches ns-pattern namespace))))) ;(not (ignored-function? namespace fname)))))
 
 (defn filter-stacktrace [stacktrace]
   "takes a stack trace and filters out unneeded elements"
