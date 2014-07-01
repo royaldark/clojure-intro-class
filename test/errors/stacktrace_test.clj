@@ -39,6 +39,15 @@
 (expect not-true? (keep-stack-trace-elem {:method "main", :ns "clojure.main",
 					  :clojure true, :file "main.java", :line 37}))
 
+(expect not-true?  (keep-stack-trace-elem
+                    {:anon-fn false, :fn "main", :ns "clojure.main", :clojure true,
+                     :file "main.clj", :line 420}))
+
+(expect not-true?  (keep-stack-trace-elem
+                    {:anon-fn false, :fn "main", :ns "clojure.lang", :clojure true,
+                     :file "main.clj", :line 420}))
+
+
 
 ;;****************************************************
 ;;********** Testing filtering stacktrace ************
@@ -310,5 +319,7 @@
 ;(expect false (doesnt-have-pair? :clojure true) (filter-stacktrace complete-stack))
 
 ;; we can combine conditions if we want to, do we want to?
-(expect (more filtered-stack (check-stack-count? 13))
-	(filter-stacktrace complete-stack))
+
+;(expect (more filtered-stack (check-stack-count? 13))
+;	(filter-stacktrace complete-stack))
+
