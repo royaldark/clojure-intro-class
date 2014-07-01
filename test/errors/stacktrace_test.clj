@@ -61,7 +61,7 @@
 (defn- trace-elem-has-function? [fun]
   (partial helper-trace-elem-has-function? fun))
 
-;~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 (defn- helper-trace-elem-has-pair? [k v trace-elem]
   (= v (k trace-elem)))
@@ -69,7 +69,7 @@
 (defn- trace-elem-has-pair? [k v]
   (partial helper-trace-elem-has-pair? k v))
 
-;~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 (defn- helper-trace-elem-has-all-pairs? [kv-pairs trace-elem]
   "checks that every binding in kv-pairs also appears in trace-elem"
@@ -80,58 +80,31 @@
 
 ;### Doesn't have ###
 
-;(defn- helper-trace-elem-doesnt-have-function? [fun trace-elem]
-;  (not= fun (:fn trace-elem)))
+(defn- helper-trace-elem-doesnt-have-function? [fun trace-elem]
+  (not (helper-trace-elem-has-function? fun trace-elem)))
 
-;(defn- trace-elem-doesnt-have-function? [fun]
-;  (partial helper-trace-elem-doesnt-have-function? fun))
+(defn- trace-elem-doesnt-have-function? [fun]
+  (partial helper-trace-elem-doesnt-have-function? fun))
 
-;~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-;(defn- helper-trace-elem-doesnt-have-pair? [k v trace-elem]
-;  (not= v (k trace-elem)))
+(defn- helper-trace-elem-doesnt-have-pair? [k v trace-elem]
+  (not (helper-trace-elem-has-pair? k v trace-elem)))
 
-;(defn- trace-elem-doesnt-have-pair? [k v]
-;  (partial helper-trace-elem-doesnt-have-pair? k v))
+(defn- trace-elem-doesnt-have-pair? [k v]
+  (partial helper-trace-elem-doesnt-have-pair? k v))
 
-;~~~~~~~~~~~~~~~~
-;(helper-doesnt-all-pairs)
-;(doesnt-all-pairs)
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+(defn- helper-trace-elem-doesnt-have-all-pairs? [kv-pairs trace-elem]
+  "checks that every binding in kv-pairs also appears in trace-elem"
+  (not (helper-trace-elem-has-all-pairs? kv-pairs trace-elem)))
 
+(defn- trace-elem-doesnt-have-all-pairs? [kv-pairs]
+  (partial helper-trace-elem-doesnt-have-all-pairs? kv-pairs))
 
 ;#################################
 ;### Checks a whole stacktrace ###
 ;#################################
-
-;(helper-count)
-;(count)
-
-
-;### Does have ###
-;(helper-fn)
-;(fn)
-;~~~~~~~~~~~~~~~~
-;(helper-pair)
-;(pair)
-;~~~~~~~~~~~~~~~~
-;(helper-all-pairs)
-;(all-pairs)
-
-
-
-;### Doesn't have ###
-;(helper-doesnt-fn)
-;(doesnt-fn)
-;~~~~~~~~~~~~~~~~
-;(helper-doesnt-pair)
-;(doesnt-pair)
-;~~~~~~~~~~~~~~~~
-;(helper-doesnt-all-pairs)
-;(doesnt-all-pairs)
-
-
-
-
 
 ;; a helper function to test the size of a stacktrace
 (defn- helper-stack-count? [n stacktrace]
@@ -140,8 +113,35 @@
 (defn- check-stack-count? [n]
   (partial helper-stack-count? n))
 
-;; testing a count-checking function itself:
-(expect (check-stack-count? 3) [3 6 7])
+;### Does have ###
+
+(defn- helper-trace-has-function? [fun trace]
+  (if (empty? trace) false
+    (if (helper-trace-elem-has-function? fun (first trace)) true
+      (helper-trace-has-function? fun (rest trace)))))
+  ;(any? (trace-elem-has-function? fun) trace))
+
+;(defn- trace-has-function? [fun]
+;  (partial helper-trace-elem-has-function? fun))
+
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;(helper-pair)
+;(pair)
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;(helper-all-pairs)
+;(all-pairs)
+
+
+
+;### Doesn't have ###
+;(helper-doesnt-fn)
+;(doesnt-fn)
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;(helper-doesnt-pair)
+;(doesnt-pair)
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;(helper-doesnt-all-pairs)
+;(doesnt-all-pairs)
 
 
 ;; testing the helper function:
@@ -151,19 +151,19 @@
 (expect false (helper-trace-elem-has-all-pairs? {:fn "map" :ns "corefns.corefns"}
 					       {:fn :dontcare :junk "map" :ns "corefns.corefns"}))
 
-;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ;(defn helper-doesnt-have-pair? [k v stacktrace]
 ;  (every? (not (= v (k trace-elem))) stacktrace))
 
-(defn- helper-trace-elem-doesnt-have-pair? [k v trace-elem]
-  (not= v (k trace-elem)))
+;(defn- helper-trace-elem-doesnt-have-pair? [k v trace-elem]
+;  (not= v (k trace-elem)))
 
-(defn helper-trace-doesnt-have-pair? [k v stacktrace]
-  (every? #(helper-trace-elem-doesnt-have-pair? k v %) stacktrace))
+;(defn helper-trace-doesnt-have-pair? [k v stacktrace]
+;  (every? #(helper-trace-elem-doesnt-have-pair? k v %) stacktrace))
 
-(defn- trace-doesnt-have-pair? [k v]
-  (partial helper-trace-doesnt-have-pair? k v))
+;(defn- trace-doesnt-have-pair? [k v]
+;  (partial helper-trace-doesnt-have-pair? k v))
 
 ;(defn- doesnt-have-pair? [k v]
 ;  (partial helper-doesnt-have-pair? k v))
@@ -223,6 +223,10 @@
 ;### Tests ###
 ;#############
 
+;; testing for filter-stacktrace
+(expect filtered-stack (filter-stacktrace complete-stack))
+(expect {:anon-fn true, :fn "map", :ns "clojure.core", :clojure true, :file "core.clj", :line 2559}
+	(in (filter-stacktrace complete-stack)))
 
 ;; testing for helper-trace-elem-has-function?
 (expect true (helper-trace-elem-has-function? "map" {:fn "map" :ns "corefns.corefns"}))
@@ -233,23 +237,72 @@
 (expect true ((trace-elem-has-function? "map") {:fn "map" :ns "corefns.corefns"}))
 (expect false ((trace-elem-has-function? "donkey") {:fn "map" :ns "corefns.corefns"}))
 
+;; testing for helper-trace-elem-has-pair?
+(expect true (helper-trace-elem-has-pair? :ns "corefns.corefns" {:fn "map" :ns "corefns.corefns"}))
+(expect false (helper-trace-elem-has-pair? :emma "lemmon" {:fn "map" :ns "corefns.corefns"}))
 
+;; testing for trace-elem-has-pair?
+(expect (trace-elem-has-pair? :fn "-main") (in (filter-stacktrace complete-stack)))
+(expect true ((trace-elem-has-pair? :ns "corefns.corefns") {:fn "map" :ns "corefns.corefns"}))
+(expect false ((trace-elem-has-pair? :emma "lemmon") {:fn "map" :ns "corefns.corefns"}))
 
+;; testing for helper-trace-elem-has-all-pairs?
+(expect true (helper-trace-elem-has-all-pairs? {:ns "corefns.corefns", :fn "map"} {:fn "map" :ns "corefns.corefns"}))
+(expect false (helper-trace-elem-has-all-pairs? {:emma "lemmon", :not "pass"} {:fn "map" :ns "corefns.corefns"}))
 
+;; testing for trace-elem-has-all-pairs?
+(expect (trace-elem-has-all-pairs? {:fn "test-and-continue", :ns "intro.core"}) (in (filter-stacktrace complete-stack)))
+(expect true ((trace-elem-has-all-pairs? {:ns "corefns.corefns" :fn "map"}) {:fn "map" :ns "corefns.corefns"}))
+(expect false ((trace-elem-has-all-pairs? {:emma "lemmon" :not "pass"}) {:fn "map" :ns "corefns.corefns"}))
 
+;; testing for helper-trace-elem-doesnt-have-function?
+(expect false (helper-trace-elem-doesnt-have-function? "map" {:fn "map" :ns "corefns.corefns"}))
+(expect true (helper-trace-elem-doesnt-have-function? "soup" {:fn "map" :ns "corefns.corefns"}))
+
+;; testing for trace-elem-doesnt-have-function?
+(expect (trace-elem-doesnt-have-function? "smooth") (in (filter-stacktrace complete-stack)))
+(expect false ((trace-elem-doesnt-have-function? "map") {:fn "map" :ns "corefns.corefns"}))
+(expect true ((trace-elem-doesnt-have-function? "donkey") {:fn "map" :ns "corefns.corefns"}))
+
+;; testing for helper-trace-elem-doesnt-have-pair?
+(expect false (helper-trace-elem-doesnt-have-pair? :ns "corefns.corefns" {:fn "map" :ns "corefns.corefns"}))
+(expect true (helper-trace-elem-doesnt-have-pair? :emma "lemmon" {:fn "map" :ns "corefns.corefns"}))
+
+;; testing for trace-elem-doesnt-have-pair?
+(expect (trace-elem-doesnt-have-pair? :fn "hippo") (in (filter-stacktrace complete-stack)))
+(expect false ((trace-elem-doesnt-have-pair? :ns "corefns.corefns") {:fn "map" :ns "corefns.corefns"}))
+(expect true ((trace-elem-doesnt-have-pair? :emma "lemmon") {:fn "map" :ns "corefns.corefns"}))
+
+;; testing for helper-trace-elem-doesnt-have-all-pairs?
+(expect false (helper-trace-elem-doesnt-have-all-pairs? {:ns "corefns.corefns", :fn "map"} {:fn "map" :ns "corefns.corefns"}))
+(expect true (helper-trace-elem-doesnt-have-all-pairs? {:emma "lemmon", :not "pass"} {:fn "map" :ns "corefns.corefns"}))
+
+;; testing for trace-elem-doesnt-have-all-pairs?
+(expect (trace-elem-doesnt-have-all-pairs? {:fn "test-and-continue", :ns "rhino.squirrel"}) (in (filter-stacktrace complete-stack)))
+(expect false ((trace-elem-doesnt-have-all-pairs? {:ns "corefns.corefns" :fn "map"}) {:fn "map" :ns "corefns.corefns"}))
+(expect true ((trace-elem-doesnt-have-all-pairs? {:emma "lemmon" :not "pass"}) {:fn "map" :ns "corefns.corefns"}))
+
+;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+;; testing for helper-stack-count?
+(expect (helper-stack-count? 2 [:z :q]))
+(expect (helper-stack-count? 0 []))
+
+;; testing for check-stack-count?
+(expect (check-stack-count? 3) [3 6 7])
+(expect (check-stack-count? 0) [])
 (expect (check-stack-count? 13) (filter-stacktrace complete-stack))
 
-(expect {:anon-fn true, :fn "map", :ns "clojure.core", :clojure true, :file "core.clj", :line 2559}
-	(in (filter-stacktrace complete-stack)))
+;; testing for helper-trace-has-function?
+(expect true (helper-trace-has-function? "map" filtered-stack))
+(expect false (helper-trace-has-function? "soup" filtered-stack))
 
-(expect (trace-elem-has-function? "map") (in (filter-stacktrace complete-stack)))
+;; testing for trace-elem-has-function?
+;(expect (trace-elem-has-function? "map") (in (filter-stacktrace complete-stack)))
+;(expect true ((trace-elem-has-function? "map") {:fn "map" :ns "corefns.corefns"}))
+;(expect false ((trace-elem-has-function? "donkey") {:fn "map" :ns "corefns.corefns"}))
 
-(expect (trace-elem-has-pair? :fn "-main") (in (filter-stacktrace complete-stack)))
 
-(expect (trace-elem-has-all-pairs? {:fn "test-and-continue", :ns "intro.core"})
-				   (in (filter-stacktrace complete-stack)))
-
-(expect filtered-stack (filter-stacktrace complete-stack))
 
 ;(expect (doesnt-have-pair? :walrus "monkey") (filter-stacktrace complete-stack))
 
