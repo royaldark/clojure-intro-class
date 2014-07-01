@@ -28,8 +28,15 @@
 
 ;; regular expressions for namespaces to be ignored. Any namespace equal to
 ;; or contaning these regexps would be ignored
-(def namespaces-to-ignore
-     ["clojure\\.main" "clojure\\.lang" "java" "clojure\\.tools"]); "user"])
+(def ignored-namespaces ["clojure.main" "clojure.lang" "java" "clojure.tools"])
+
+(defn- replace-dots [strings]
+  (map #(clojure.string/replace % #"\." "\\\\.") strings))
+
+
+(def namespaces-to-ignore (replace-dots ignored-namespaces))
+
+(expect (seq namespaces-to-ignore) (replace-dots ["clojure.main" "clojure.lang" "java" "clojure.tools"]))
 
 (defn- surround-by-parens [strings]
   (map #(str "(" % ")") strings))
