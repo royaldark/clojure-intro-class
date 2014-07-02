@@ -51,7 +51,7 @@
    {:anon-fn false, :fn "test-all-and-continue", :ns "intro.core", :clojure true, :file "core.clj", :line 28}
    {:anon-fn false, :fn "test-asserts", :ns "intro.core", :clojure true, :file "core.clj", :line 301}
    {:anon-fn false, :fn "-main", :ns "intro.core", :clojure true, :file "core.clj", :line 599}
-   {:anon-fn false, :fn "eval6408", :ns "user", :clojure true, :file "NO_SOURCE_FILE", :line 1}
+   ;{:anon-fn false, :fn "eval6408", :ns "user", :clojure true, :file "NO_SOURCE_FILE", :line 1}
    {:anon-fn false, :fn "eval", :ns "clojure.core", :clojure true, :file "core.clj", :line 2927}])
 
 ;##############################################
@@ -96,10 +96,108 @@
 ;### Tests for functions that check filtered stacktraces ###
 ;###########################################################
 
+(def filtered-stack2
+  [{:anon-fn false, :fn "eval9481", :ns "experimental.core-test", :clojure true,
+:file "core_test.clj", :line 57}
+   {:anon-fn false, :fn "eval", :ns "clojure.core", :clojure true, :file "core.clj", :line 2852}
+   {:anon-fn false, :fn "run-and-catch", :ns "experimental.core-test", :clojure true, :file "core_test.clj", :line 38}
+   {:anon-fn true, :fn "load", :ns "clojure.core", :clojure true, :file "core.clj", :line 5530}
+   {:anon-fn false, :fn "load", :ns "clojure.core", :clojure true, :file "core.clj", :line 5529}
+   {:anon-fn false, :fn "load-one", :ns "clojure.core", :clojure true, :file "core.clj", :line 5336}
+   {:anon-fn true, :fn "load-lib", :ns "clojure.core", :clojure true, :file "core.clj", :line 5375}
+   {:anon-fn false, :fn "load-lib", :ns "clojure.core", :clojure true, :file "core.clj", :line 5374}
+   {:anon-fn false, :fn "apply", :ns "clojure.core", :clojure true, :file "core.clj", :line 619}
+   {:anon-fn false, :fn  "load-libs", :ns "clojure.core", :clojure true, :file "core.clj", :line 5413}
+   {:anon-fn false, :fn "apply", :ns "clojure.core", :clojure true, :file "core.clj", :line 619}
+   {:anon-fn false, :fn "require", :ns "clojure.core", :clojure true, :file "core.clj", :line 5496}
+   {:anon-fn false, :fn "alter-var-root", :ns "clojure.core", :clojure true, :file "core.clj", :line 4946}
+   ])
+
+(def complete-stack2
+[{:method "add", :class "clojure.lang.Numbers", :java true, :file "Numbers.java", :line 126}
+{:method "add", :class "clojure.lang.Numbers", :java true, :file "Numbers.java", :line 3523}
+{:anon-fn false, :fn "eval9481", :ns "experimental.core-test", :clojure true,
+:file "core_test.clj", :line 57}
+{:method "eval", :class "clojure.lang.Compiler"
+, :java true, :file "Compiler.java", :line 6619}
+{:method "eval", :class "clojure.lang.Compiler", :java true, :file "Compiler.java", :line 6582}
+{:anon-fn false, :fn "eval", :ns "clojure.core", :clojure true, :file "core.clj", :line 2852}
+{:anon-fn false, :fn "run-and-catch", :ns "experimental.core-test", :clojure true, :file "core_test.clj", :line 38}
+{:method "applyToHelper", :class "clojure.lang.AFn", :java true, :file "AFn.java", :line 161}
+{:method "applyTo", :class "clojure.lang.AFn", :java true, :file "AFn.java", :line 151}
+{:method "eval", :class
+ "clojure.lang.Compiler$InvokeExpr", :java true, :file "Compiler.java", :line 3458}
+{:method "eval", :class "clojure.lang.Compiler$DefExpr", :java true, :file "Compiler.java", :line 408}
+{:method "eval", :class "clojure.lang.Compiler", :java true, :file "Compiler.java", :line 6624}
+{:method "load", :class "clojure.lang.Compiler", :java true, :file "Compiler.java", :line 7064}
+{:method "loadResourceScript", :class "clojure.lang.RT", :java true, :file "RT.java", :line 370}
+{:method "loadResourceScript", :class "clojure.lang.RT", :java true, :file "RT.java", :line 361}
+{:method "load", :class "clojure.lang.RT", :java true, :file "RT.java", :line 440}
+{:method "load", :class "clojure.lang.RT", :java true, :file "RT.java", :line 411}
+{:anon-fn true, :fn "load", :ns "clojure.core", :clojure true, :file "core.clj", :line 5530}
+{:anon-fn false, :fn "load", :ns "clojure.core",
+ :clojure true, :file "core.clj", :line 5529}
+{:method "invoke", :class "clojure.lang.RestFn", :java true, :file "RestFn.java", :line 408}
+{:anon-fn false, :fn "load-one", :ns "clojure.core", :clojure true, :file "core.clj", :line 5336}
+{:anon-fn true, :fn "load-lib", :ns "clojure.core", :clojure true, :file "core.clj"
+, :line 5375}
+{:anon-fn false, :fn "load-lib", :ns "clojure.core", :clojure true, :file "core.clj", :line 5374}
+{:method "applyTo", :class "clojure.lang.RestFn"
+, :java true, :file "RestFn.java", :line 142}
+{:anon-fn false, :fn "apply", :ns "clojure.core", :clojure true, :file "core.clj", :line 619}
+{:anon-fn false, :fn  "load-libs", :ns "clojure.core", :clojure true, :file "core.clj", :line 5413}
+{:method "applyTo", :class "clojure.lang.RestFn", :java true, :file "RestFn.java"
+, :line 137}
+{:anon-fn false, :fn "apply", :ns "clojure.core", :clojure true, :file "core.clj", :line 619}
+{:anon-fn false, :fn "require", :ns "clojure.core", :clojure true, :file "core.clj", :line 5496}
+{:method "invoke", :class "clojure.lang.RestFn", :java true, :file "RestFn.java", :line 421}
+{:anon-fn false, :fn "track-reload-one", :ns "clojure.tools.namespace.reload", :clojure true, :file "reload.clj", :line 35}
+{:anon-fn false, :fn "track-reload", :ns "clojure.tools.namespace.reload", :clojure true, :file "reload.clj", :line 52}
+{:method "applyToHelper", :class "clojure.lang.AFn", :java true, :file "AFn.java", :line 161}
+{:method "applyTo", :class "clojure.lang.AFn", :java true, :file "AFn.java", :line 151}
+{:method "alterRoot", :class "clojure.lang.Var", :java true, :file "Var.java"
+, :line 336}
+{:anon-fn false, :fn "alter-var-root", :ns "clojure.core", :clojure
+ true, :file "core.clj", :line 4946}
+{:method "invoke", :class "clojure.lang.RestFn", :java true, :file "RestFn.java", :line 425}
+{:anon-fn false, :fn "do-refresh", :ns "clojure.tools.namespace.repl", :clojure true, :file "repl.clj", :line 94}
+{:anon-fn false, :fn "refresh", :ns "clojure.tools.namespace.repl", :clojure
+ true, :file "repl.clj", :line 142}
+{:method "invoke", :class "clojure.lang.RestFn", :java true, :file "RestFn.java", :line 397}
+{:anon-fn false, :fn "refresh-environment", :ns "autoexpect.runner", :clojure true, :file "runner.clj", :line 23}
+{:anon-fn true, :fn "run-tests", :ns "autoexpect.runner", :clojure true, :file "runner.clj", :line 50}
+{:anon-fn false, :fn "run-tests", :ns "autoexpect.runner", :clojure true, :file "runner.clj", :line 50}
+{:anon-fn true, :fn "monitor-project", :ns "autoexpect.runner", :clojure true, :file "runner.clj", :line 69}
+{:anon-fn true, :fn "monitor-project", :ns "autoexpect.runner", :clojure true, :file "runner.clj", :line 68}
+{:anon-fn false, :fn "monitor-project", :ns "autoexpect.runner", :clojure true, :file "runner.clj", :line 66}
+{:anon-fn false, :fn "eval1187", :ns "user", :clojure true, :file "form-init6834699387848419871.clj",
+:line 1}
+{:method "eval", :class "clojure.lang.Compiler", :java true, :file "Compiler.java", :line 6619}
+{:method "eval", :class "clojure.lang.Compiler", :java true, :file "Compiler.java", :line 6609}
+{:method "load", :class "clojure.lang.Compiler", :java true, :file "Compiler.java", :line 7064}
+{:method "loadFile", :class "clojure.lang.Compiler", :java true, :file "Compiler.java", :line 7020}
+{:anon-fn false, :fn "load-script", :ns "clojure.main", :clojure true, :file "main.clj", :line 294}
+{:anon-fn false, :fn "init-opt", :ns "clojure.main", :clojure true, :file "main.clj", :line 299}
+{:anon-fn false, :fn "initialize", :ns "clojure.main", :clojure true, :file "main.clj", :line 327}
+{:anon-fn false, :fn "null-opt", :ns "clojure.main", :clojure true, :file "main.clj", :line 362}
+{:anon-fn false, :fn "main", :ns "clojure.main", :clojure true, :file "main.clj", :line 440}
+{:method "invoke", :class "clojure.lang.RestFn", :java true, :file "RestFn.java", :line 421}
+{:method "invoke", :class "clojure.lang.Var", :java true, :file "Var.java", :line 419}
+{:method "applyToHelper", :class "clojure.lang.AFn", :java true, :file "AFn.java", :line 163}
+{:method "applyTo", :class "clojure.lang.Var", :java true, :file "Var.java", :line 532}
+{:method "main", :class "clojure.main", :java true, :file "main.java", :line 37}])
+
 ;; testing for filter-stacktrace
 (expect filtered-stack (filter-stacktrace complete-stack))
+(expect filtered-stack2 (filter-stacktrace complete-stack2))
+(expect (check-stack-count? 5) (filter-stacktrace complete-stack2))
+
 (expect {:anon-fn true, :fn "map", :ns "clojure.core", :clojure true, :file "core.clj", :line 2559}
 	(in (filter-stacktrace complete-stack)))
+
+;#############
+;### Tests ###
+;#############
 
 ;; testing for helper-trace-elem-has-function?
 (expect true (helper-trace-elem-has-function? "map" {:fn "map" :ns "corefns.corefns"}))
@@ -180,7 +278,8 @@
 ;; testing for check-stack-count?
 (expect (check-stack-count? 3) [3 6 7])
 (expect (check-stack-count? 0) [])
-(expect (check-stack-count? 13) filtered-stack)
+(expect (check-stack-count? 12) (filter-stacktrace complete-stack))
+
 
 ;; testing for helper-trace-has-function?
 (expect true (helper-trace-has-function? "map" filtered-stack))

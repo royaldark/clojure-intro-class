@@ -28,7 +28,7 @@
 
 ;; regular expressions for namespaces to be ignored. Any namespace equal to
 ;; or contaning these regexps would be ignored
-(def ignored-namespaces ["clojure.main" "clojure.lang" "java" "clojure.tools"])
+(def ignored-namespaces ["clojure.main" "clojure.lang" "java" "clojure.tools" "user" "autoexpect.runner"])
 
 (defn- replace-dots [strings]
   (map #(clojure.string/replace % #"\." "\\\\.") strings))
@@ -36,7 +36,7 @@
 
 (def namespaces-to-ignore (replace-dots ignored-namespaces))
 
-(expect (seq namespaces-to-ignore) (replace-dots ["clojure.main" "clojure.lang" "java" "clojure.tools"]))
+(expect ["clojure\\.main" "clojure\\.lang" "java" "clojure\\.tools"] (replace-dots ["clojure.main" "clojure.lang" "java" "clojure.tools"]))
 
 (defn- surround-by-parens [strings]
   (map #(str "(" % ")") strings))
@@ -72,14 +72,35 @@
 (expect "clojure.main" (re-matches (re-pattern "clojure\\.main") "clojure.main"))
 (expect "clojure.main" (first (re-matches (re-pattern "clojure\\.main((\\.|/)?(.*))") "clojure.main")))
 
-;(def ignore-nses #"(clojure\.main(((\\.|/)(.*)?)))|(clojure\.lang(\.|/)(.*))|(java\.(.*))|(clojure\.tools(.*))")
+;; specify namespaces and function names or patterns
+(def ignore-functions [{:clojure.core [#"load.*" "require" "alter-root-var"]}])
+
+(defn- ignore-function? [str-or-regex fname]
+  (if (string? str-or-regex) (= str-or-regex fname)
+                             (re-matches str-or-regex fname)))
+
+(expect true (ignore-function? "require" "require"))
+(expect false (ignore-function? "require" "require5"))
+(expect "load" (ignore-function? #"load" "load"))
+(expect "load5" (ignore-function? #"load.*" "load5"))
+
+(defn- ignored-function? [nspace fname]
+  (let [names ((keyword nspace) (some #(not (nil? ((keyword nspace) %))) ignore-functions))]
+    (if (nil? names) false (not (nil? (filter #(ignore-function? % fname) names))))))
+
+(expect true (ignored-function? "clojure.core" "require"))
+(expect false (ignored-function? "clojure.lang" "require"))
+(expect false (ignored-function? "clojure.core" "require5"))
+(expect true (ignored-function? "clojure.core" "load-one"))
+
 
 (defn keep-stack-trace-elem [st-elem]
   "returns true if the stack trace element should be kept
    and false otherwise"
-  (let [ns (:ns st-elem)
-	namespace (if ns ns "")] ;; in case there's no :ns element
-  (and (:clojure st-elem) (not (re-matches ns-pattern namespace)))))
+  (let [nspace (:ns st-elem)
+	      namespace (if nspace nspace "") ;; in case there's no :ns element
+        fname (:fn st-elem)]
+  (and (:clojure st-elem) (not (re-matches ns-pattern namespace))))) ;(not (ignored-function? namespace fname)))))
 
 (defn filter-stacktrace [stacktrace]
   "takes a stack trace and filters out unneeded elements"
