@@ -136,6 +136,15 @@
     :make-msg-info-obj (fn [matches] (make-msg-info-hashes "Function " (nth matches 1) :arg
                                                            " does not allow " (get-type (nth matches 2)) :type " as an argument"))}
 
+   ;############################
+   ;### Stack Overflow Error ###
+   ;############################
+
+   {:key make-mock-preobj
+    :class StackOverflowError
+    :match "????????"
+    :make-msg-info-obj make-mock-preobj}
+
    ;#######################
    ;### Java Exceptions ###
    ;#######################
