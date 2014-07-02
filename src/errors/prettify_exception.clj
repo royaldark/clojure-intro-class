@@ -85,8 +85,12 @@
 (expect "load5" (ignore-function? #"load.*" "load5"))
 
 (defn- ignored-function? [nspace fname]
-  (let [names ((keyword nspace) (some #(not (nil? ((keyword nspace) %))) ignore-functions))]
-    (if (nil? names) false (not (nil? (filter #(ignore-function? % fname) names))))))
+  (let [key-ns (keyword nspace)
+        ;; There should be only one match for filter
+        functions-for-namespace (first (filter #(not (nil? (key-ns %))) ignore-functions))
+        names (key-ns functions-for-namespace)]
+    (println (str fname ": "   (nil? (first (filter #(ignore-function? % fname) names)))))
+    (if (nil? names) false (not (empty? (filter #(ignore-function? % fname) names))))))
 
 (expect true (ignored-function? "clojure.core" "require"))
 (expect false (ignored-function? "clojure.lang" "require"))
