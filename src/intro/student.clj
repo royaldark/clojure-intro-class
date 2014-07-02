@@ -28,6 +28,9 @@
 ;### 4clojure and beginner problems like students would do ###
 ;#############################################################
 
+;; 4clojure Problem 44
+(declare prob44)
+
 (defn prob44-helper-positive [n coll]
   (let [result (add-last (rest coll) (first coll))]
     (prob44 (- n 1) result)))
@@ -42,3 +45,12 @@
    (> n 0) (prob44-helper-positive n coll) ;n is positive
    (< n 0) (prob44-helper-negative n coll))) ;n is negative
 
+;; DrRacket Excercise 2 - exception in exceptions/DrRacket-Exercise2-ClassCast.ser
+(defn exercise2 [str1 str2]
+ (conj str1 str2))
+
+;; DrRacket Exercise 3
+(defn exercise3 [a-string index]
+  (str (subs a-string 0 index) "_" (subs a-string index (+ 2 (count a-string)))))
+
+;(expect "hello_world" (exercise3 "helloworld" 5))

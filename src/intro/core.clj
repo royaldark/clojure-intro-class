@@ -621,9 +621,11 @@
     ;(prob120 (range 10))
     ;(prob120 (range 100))
     ;(prob120 (range 1000))
-    (prob44 2 [1 2 3 4 5]) ;this is supposed to work, no pop-ups should appear
+    ;(do (eval '(prob44 2 [1 2 3 4 5])))
+    ;(exercise2 "hello " "world")
+    (exercise3 "helloworld" 5)
     ;(test-cond)
     ;(def classcast-exc (import-from-file (str path "classcast1.ser")))
     ;(throw classcast-exc)
     (catch Throwable e (display-error (prettify-exception e)))))
-    ;(catch Throwable e (write-objects-local e "RuntimeException-1.ser"))))
+    ;(catch Throwable e (write-objects-local e ""))))
