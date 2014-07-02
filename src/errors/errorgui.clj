@@ -67,7 +67,7 @@
 	   ;; forming graphical elements of the swing panel
 	         errormsg (styled-text :wrap-lines? true :text (str (get-all-text msg-filtered-trace))
 				                         :styles styles)
-	         stacktrace (text :multi-line? true :editable? false :rows 12 :text
+	         stacktrace (text :multi-line? true :editable? false :rows 16 :text
 			                      (trace->string trace trace-elems-separator trace-lines-separator))
 	         d (dialog :title "Clojure Error",
 		                 :content (tabbed-panel :placement :bottom

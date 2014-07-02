@@ -3,7 +3,8 @@
         [seesaw.core])
   (:require [corefns.corefns :refer :all]
             [errors.exceptions :refer :all]
-            [strings.strings :refer :all]))
+            [strings.strings :refer :all]
+            [errors.errorgui :refer :all]))
 
 (refer 'corefns.corefns)
 
@@ -20,7 +21,7 @@
   (try
    ;(println quoted-exp)
     (eval quoted-exp)
-    (catch Throwable e (println (prettify-exception e)))
+    (catch Throwable e (println (display-error (prettify-exception e))))
     (finally (println "Are there any exceptions left?"))))
 
 (defn test-all-and-continue [quoted-exps]
@@ -499,7 +500,7 @@
 
 (defn erun  []
 	(try (load-reader (java.io.FileReader. "src/intro/student.clj"))
-		(catch Throwable e (prettify-exception e))))
+		(catch Throwable e (display-error (prettify-exception e)))))
 
 
 (defn third [coll]
@@ -588,7 +589,7 @@
     ;(test-contains-types)
     ;(test-recur 1)
     ;(pack-a-seq [1 1 2 1 1 1 3 3])
-    ;(test-wrong-arg-type)
+    (test-wrong-arg-type)
     ;(test-contains-types)
     ;(test-unsupported-ops)
     ;(test-pop-peek)
@@ -596,8 +597,8 @@
     ;(test-reversible)
     ;(test-arity)
     ;(test-sorted-collections)
-    (test-asserts)
-    (test-drop-while)
+    ;(test-asserts)
+    ;(test-drop-while)
     ;(test-asserts-multiple-args)
     ;(test-asserts-multiple-args-map)
     ;(test-filter)
@@ -622,4 +623,4 @@
     ;(test-cond)
     ;(def classcast-exc (import-from-file (str path "classcast1.ser")))
     ;(throw classcast-exc)
-    (catch Throwable e (println (prettify-exception e)))))
+    (catch Throwable e (display-error (prettify-exception e)))))
