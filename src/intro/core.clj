@@ -4,7 +4,8 @@
   (:require [corefns.corefns :refer :all]
             [errors.exceptions :refer :all]
             [strings.strings :refer :all]
-            [errors.errorgui :refer :all]))
+            [errors.errorgui :refer :all]
+            [intro.student :refer :all]))
 
 (refer 'corefns.corefns)
 
@@ -589,7 +590,7 @@
     ;(test-contains-types)
     ;(test-recur 1)
     ;(pack-a-seq [1 1 2 1 1 1 3 3])
-    (test-wrong-arg-type)
+    ;(test-wrong-arg-type)
     ;(test-contains-types)
     ;(test-unsupported-ops)
     ;(test-pop-peek)
@@ -620,7 +621,9 @@
     ;(prob120 (range 10))
     ;(prob120 (range 100))
     ;(prob120 (range 1000))
+    (prob44 2 [1 2 3 4 5]) ;this is supposed to work, no pop-ups should appear
     ;(test-cond)
     ;(def classcast-exc (import-from-file (str path "classcast1.ser")))
     ;(throw classcast-exc)
     (catch Throwable e (display-error (prettify-exception e)))))
+    ;(catch Throwable e (write-objects-local e "RuntimeException-1.ser"))))
