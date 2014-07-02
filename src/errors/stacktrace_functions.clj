@@ -138,16 +138,16 @@
 (defn helper-nth-elem-has-pair? [n k v trace]
   (helper-trace-elem-has-pair? k v (nth trace n)))
 
-;(defn nth-elem-has-pair? [k v]
-;  (partial helper-nth-elem-has-pair? k v))
+(defn nth-elem-has-pair? [n k v]
+  (partial helper-nth-elem-has-pair? n k v))
 
 ;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-;(defn helper-nth-elem-has-all-pairs? [kv-pairs trace]
-;  (helper-trace-elem-has-all-pairs? kv-pairs (first trace)))
+(defn helper-nth-elem-has-all-pairs? [n kv-pairs trace]
+  (helper-trace-elem-has-all-pairs? kv-pairs (nth trace n)))
 
-;(defn nth-elem-has-all-pairs? [kv-pairs]
-;  (partial helper-nth-elem-has-all-pairs? kv-pairs))
+(defn nth-elem-has-all-pairs? [n kv-pairs]
+  (partial helper-nth-elem-has-all-pairs? n kv-pairs))
 
 ;### Item doesn't exists in stacktrace ###
 

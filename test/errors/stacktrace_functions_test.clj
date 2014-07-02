@@ -139,39 +139,34 @@
 ;### Testing individual stacktrace elements ###
 ;##############################################
 
-(expect not-true? (keep-stack-trace-elem {:method "add",
-				     :class "clojure.lang.Numbers",
-				     :java true, :file "Numbers.java", :line 126}))
+(expect not-true? (keep-stack-trace-elem {:method "add", :class "clojure.lang.Numbers",
+				                                  :java true, :file "Numbers.java", :line 126}))
 
 (expect not-true? (keep-stack-trace-elem {:method "eval", :class "clojure.lang.Compiler",
-				     :java true, :file "Compiler.java", :line 6619}))
+				                                  :java true, :file "Compiler.java", :line 6619}))
 
-(expect true? (keep-stack-trace-elem {:anon-fn true, :fn "load",
-				      :ns "clojure.core", :clojure true,
-				      :file "core.clj", :line 5530}))
+(expect true? (keep-stack-trace-elem {:anon-fn true, :fn "load", :ns "clojure.core",
+                                      :clojure true, :file "core.clj", :line 5530}))
 
-(expect not-true? (keep-stack-trace-elem {:anon-fn false, :fn "track-reload",
-				     :ns "clojure.tools.namespace.reload", :clojure true,
-				     :file "reload.clj", :line 52}))
+(expect not-true? (keep-stack-trace-elem {:anon-fn false, :fn "track-reload", :ns "clojure.tools.namespace.reload",
+                                          :clojure true, :file "reload.clj", :line 52}))
 
-(expect not-true? (keep-stack-trace-elem {:method "main", :class "clojure.main",
-					  :java true, :file "main.java", :line 37}))
+(expect not-true? (keep-stack-trace-elem {:method "main", :class "clojure.main", :java true,
+                                          :file "main.java", :line 37}))
 
 ;; Artificial example (in reality :java true) to test filtering
 ;; Note: this returns true since "clojure.main" is a class, not a namespace
 (expect true? (keep-stack-trace-elem {:method "main", :class "clojure.main",
-				      :clojure true, :file "main.java", :line 37}))
+				                              :clojure true, :file "main.java", :line 37}))
 
 (expect not-true? (keep-stack-trace-elem {:method "main", :ns "clojure.main",
-					  :clojure true, :file "main.java", :line 37}))
+					                                :clojure true, :file "main.java", :line 37}))
 
-(expect not-true?  (keep-stack-trace-elem
-                    {:anon-fn false, :fn "main", :ns "clojure.main", :clojure true,
-                     :file "main.clj", :line 420}))
+(expect not-true? (keep-stack-trace-elem {:anon-fn false, :fn "main", :ns "clojure.main",
+                                          :clojure true, :file "main.clj", :line 420}))
 
-(expect not-true?  (keep-stack-trace-elem
-                    {:anon-fn false, :fn "main", :ns "clojure.lang", :clojure true,
-                     :file "main.clj", :line 420}))
+(expect not-true? (keep-stack-trace-elem {:anon-fn false, :fn "main", :ns "clojure.lang",
+                                          :clojure true, :file "main.clj", :line 420}))
 
 ;###########################################################
 ;### Tests for functions that check filtered stacktraces ###
@@ -367,22 +362,22 @@
 (expect false (helper-nth-elem-has-pair? 1 :emma "lemmon" filtered-stack))
 
 ;; testing for nth-elem-has-pair?
-;(expect (nth-elem-has-pair? :fn "map") filtered-stack)
-;(expect true ((nth-elem-has-pair? :ns  "corefns.corefns") [{:fn "map" :ns "corefns.corefns"}
-;                                                           {:something "else" :whatever "computer science"}]))
-;(expect false ((nth-elem-has-pair? :emma "lemmon") [{:fn "map" :ns "corefns.corefns"}
-;                                                    {:something "else" :emma "lemmon"}]))
+(expect (nth-elem-has-pair? 4 :fn "map") filtered-stack)
+(expect true ((nth-elem-has-pair? 0 :ns  "corefns.corefns") [{:fn "map" :ns "corefns.corefns"}
+                                                             {:something "else" :whatever "computer science"}]))
+(expect false ((nth-elem-has-pair? 0 :emma "lemmon") [{:fn "map" :ns "corefns.corefns"}
+                                                      {:something "else" :emma "lemmon"}]))
 
 ;; testing for helper-nth-elem-has-all-pairs?
-;(expect true (helper-nth-elem-has-all-pairs? {:ns "corefns.corefns", :fn "map"} filtered-stack))
-;(expect false (helper-nth-elem-has-all-pairs? {:emma "lemmon", :not "pass"} filtered-stack))
+(expect true (helper-nth-elem-has-all-pairs? 4 {:ns "clojure.core", :fn "map"} filtered-stack))
+(expect false (helper-nth-elem-has-all-pairs? 4 {:emma "lemmon", :not "pass"} filtered-stack))
 
 ;; testing for nth-elem-has-all-pairs?
-;(expect (nth-elem-has-all-pairs? {:ns "corefns.corefns", :fn "map"}) filtered-stack)
-;(expect true ((nth-elem-has-all-pairs? {:ns "corefns.corefns" :fn "map"}) [{:fn "map" :ns "corefns.corefns"}
-;                                                                           {:something "else" :emma "lemmon"}]))
-;(expect false ((nth-elem-has-all-pairs? {:emma "lemmon" :not "pass"}) [{:fn "map" :ns "corefns.corefns"}
-;                                                                       {:something "else" :emma "lemmon"}]))
+(expect (nth-elem-has-all-pairs? 4 {:ns "clojure.core", :fn "map"}) filtered-stack)
+(expect true ((nth-elem-has-all-pairs? 0 {:ns "corefns.corefns" :fn "map"}) [{:fn "map" :ns "corefns.corefns"}
+                                                                             {:something "else" :emma "lemmon"}]))
+(expect false ((nth-elem-has-all-pairs? 1 {:emma "lemmon" :not "pass"}) [{:fn "map" :ns "corefns.corefns"}
+                                                                         {:something "else" :emma "lemmon"}]))
 
 ;; testing for helper-trace-doesnt-have-function?
 (expect false (helper-trace-doesnt-have-function? "map" filtered-stack))
