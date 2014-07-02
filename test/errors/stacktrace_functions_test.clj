@@ -124,16 +124,16 @@
   [{:anon-fn false, :fn "eval9481", :ns "experimental.core-test", :clojure true, :file "core_test.clj", :line 57}
    {:anon-fn false, :fn "eval", :ns "clojure.core", :clojure true, :file "core.clj", :line 2852}
    {:anon-fn false, :fn "run-and-catch", :ns "experimental.core-test", :clojure true, :file "core_test.clj", :line 38}
-   {:anon-fn true, :fn "load", :ns "clojure.core", :clojure true, :file "core.clj", :line 5530}
-   {:anon-fn false, :fn "load", :ns "clojure.core", :clojure true, :file "core.clj", :line 5529}
-   {:anon-fn false, :fn "load-one", :ns "clojure.core", :clojure true, :file "core.clj", :line 5336}
-   {:anon-fn true, :fn "load-lib", :ns "clojure.core", :clojure true, :file "core.clj", :line 5375}
-   {:anon-fn false, :fn "load-lib", :ns "clojure.core", :clojure true, :file "core.clj", :line 5374}
+   ;{:anon-fn true, :fn "load", :ns "clojure.core", :clojure true, :file "core.clj", :line 5530}
+   ;{:anon-fn false, :fn "load", :ns "clojure.core", :clojure true, :file "core.clj", :line 5529}
+   ;{:anon-fn false, :fn "load-one", :ns "clojure.core", :clojure true, :file "core.clj", :line 5336}
+   ;{:anon-fn true, :fn "load-lib", :ns "clojure.core", :clojure true, :file "core.clj", :line 5375}
+   ;{:anon-fn false, :fn "load-lib", :ns "clojure.core", :clojure true, :file "core.clj", :line 5374}
    {:anon-fn false, :fn "apply", :ns "clojure.core", :clojure true, :file "core.clj", :line 619}
-   {:anon-fn false, :fn  "load-libs", :ns "clojure.core", :clojure true, :file "core.clj", :line 5413}
-   {:anon-fn false, :fn "apply", :ns "clojure.core", :clojure true, :file "core.clj", :line 619}
-   {:anon-fn false, :fn "require", :ns "clojure.core", :clojure true, :file "core.clj", :line 5496}
-   {:anon-fn false, :fn "alter-var-root", :ns "clojure.core", :clojure true, :file "core.clj", :line 4946}])
+   ;{:anon-fn false, :fn  "load-libs", :ns "clojure.core", :clojure true, :file "core.clj", :line 5413}
+   {:anon-fn false, :fn "apply", :ns "clojure.core", :clojure true, :file "core.clj", :line 619}])
+   ;{:anon-fn false, :fn "require", :ns "clojure.core", :clojure true, :file "core.clj", :line 5496}
+   ;{:anon-fn false, :fn "alter-var-root", :ns "clojure.core", :clojure true, :file "core.clj", :line 4946}])
 
 ;##############################################
 ;### Testing individual stacktrace elements ###
@@ -145,7 +145,8 @@
 (expect not-true? (keep-stack-trace-elem {:method "eval", :class "clojure.lang.Compiler",
 				                                  :java true, :file "Compiler.java", :line 6619}))
 
-(expect true? (keep-stack-trace-elem {:anon-fn true, :fn "load", :ns "clojure.core",
+; "load" in clojure.core is explicitly ignored
+(expect not-true? (keep-stack-trace-elem {:anon-fn true, :fn "load", :ns "clojure.core",
                                       :clojure true, :file "core.clj", :line 5530}))
 
 (expect not-true? (keep-stack-trace-elem {:anon-fn false, :fn "track-reload", :ns "clojure.tools.namespace.reload",
@@ -175,7 +176,7 @@
 ;; testing for filter-stacktrace
 (expect filtered-stack (filter-stacktrace complete-stack))
 (expect filtered-stack2 (filter-stacktrace complete-stack2))
-(expect (check-stack-count? 13) (filter-stacktrace complete-stack2))
+(expect (check-stack-count? 5) (filter-stacktrace complete-stack2))
 (expect {:anon-fn true, :fn "map", :ns "clojure.core", :clojure true, :file "core.clj", :line 2559}
 	(in (filter-stacktrace complete-stack)))
 

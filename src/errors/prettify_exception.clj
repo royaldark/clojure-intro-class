@@ -73,7 +73,7 @@
 (expect "clojure.main" (first (re-matches (re-pattern "clojure\\.main((\\.|/)?(.*))") "clojure.main")))
 
 ;; specify namespaces and function names or patterns
-(def ignore-functions [{:clojure.core [#"load.*" "require" "alter-root-var"]}])
+(def ignore-functions [{:clojure.core [#"load.*" "require" "alter-var-root"]}])
 
 (defn- ignore-function? [str-or-regex fname]
   (if (string? str-or-regex) (= str-or-regex fname)
@@ -103,7 +103,8 @@
   (let [nspace (:ns st-elem)
 	      namespace (if nspace nspace "") ;; in case there's no :ns element
         fname (:fn st-elem)]
-  (and (:clojure st-elem) (not (re-matches ns-pattern namespace))))) ;(not (ignored-function? namespace fname)))))
+  (and (:clojure st-elem) (not (re-matches ns-pattern namespace))
+       (not (ignored-function? namespace fname)))))
 
 (defn filter-stacktrace [stacktrace]
   "takes a stack trace and filters out unneeded elements"
