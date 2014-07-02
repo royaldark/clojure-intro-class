@@ -88,10 +88,10 @@
   (let [names ((keyword nspace) (some #(not (nil? ((keyword nspace) %))) ignore-functions))]
     (if (nil? names) false (not (nil? (filter #(ignore-function? % fname) names))))))
 
-;(expect true (ignored-function? "clojure.core" "require"))
+(expect true (ignored-function? "clojure.core" "require"))
 (expect false (ignored-function? "clojure.lang" "require"))
 (expect false (ignored-function? "clojure.core" "require5"))
-;(expect true (ignored-function? "clojure.core" "load-one"))
+(expect true (ignored-function? "clojure.core" "load-one"))
 
 
 (defn keep-stack-trace-elem [st-elem]
