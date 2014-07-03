@@ -1,7 +1,9 @@
 (ns errors.exceptions
   (:require [expectations :refer :all]
             [clj-stacktrace.core :as stacktrace]
-            [errors.prettify_exception :refer :all])
+            [errors.prettify_exception :refer :all]
+            [errors.messageobj :refer :all]
+            [errors.stacktrace_functions :refer :all])
   (:import [java.io.FileInputStream]
            [java.io.ObjectInputStream]
            [java.io.FileOutputStream]
@@ -174,3 +176,38 @@
 (def ex1 (run-and-catch '(+ 2 "pie")))
 
 (expect "eval" (first (get-fns-in-stacktrace (stacktrace/parse-exception ex1))))
+
+;##################################
+;## 4. More real-life exceptions ##
+;##################################
+
+
+;;; We actually might want to change this exception by adding or changing a pre-condition for conj
+
+(def dr-racket-exercise-class-cast (read-objects-local "DrRacket-Exercise2-ClassCast.ser"))
+
+(def prettified-class-cast (prettify-exception dr-racket-exercise-class-cast))
+
+(expect ClassCastException (:exception-class prettified-class-cast))
+
+(expect "Attempted to use a string, but a collection was expected." (get-all-text (:msg-info-obj prettified-class-cast)))
+
+(expect (trace-has-pair? :fn "exercise2") (:stacktrace prettified-class-cast))
+
+(expect (trace-has-pair? :fn "exercise2") (:filtered-stacktrace prettified-class-cast))
+
+(expect (trace-has-all-pairs? {:fn "exercise2" :ns "intro.student" :file "student.clj" :line 50})
+        (:filtered-stacktrace prettified-class-cast))
+
+(expect (trace-has-all-pairs? {:fn "-main" :ns "intro.core" :file "core.clj"})
+        (:filtered-stacktrace prettified-class-cast))
+
+(expect (trace-doesnt-have-all-pairs? {:ns "core.main"}) prettified-class-cast)
+
+(expect (check-stack-count? 6) (:filtered-stacktrace prettified-class-cast))
+
+(expect (trace-has-all-pairs? {:fn "apply" :ns "clojure.core"}) (:filtered-stacktrace prettified-class-cast))
+
+(expect (top-elem-has-all-pairs? {:fn "conj" :ns "clojure.core"}) (:filtered-stacktrace prettified-class-cast))
+
+(expect (trace-has-all-pairs? {:fn "conj" :ns "corefns.corefns"}) (:filtered-stacktrace prettified-class-cast))

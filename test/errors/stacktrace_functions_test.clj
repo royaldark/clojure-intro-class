@@ -135,6 +135,7 @@
    ;{:anon-fn false, :fn "require", :ns "clojure.core", :clojure true, :file "core.clj", :line 5496}
    ;{:anon-fn false, :fn "alter-var-root", :ns "clojure.core", :clojure true, :file "core.clj", :line 4946}])
 
+
 ;##############################################
 ;### Testing individual stacktrace elements ###
 ;##############################################
