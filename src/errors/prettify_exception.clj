@@ -124,7 +124,7 @@
         msg-info-obj (get-pretty-message e-class message)
         key-for-hints (:key (first-match e-class message))] ;; Elena isn't thrilled about the need to match twice
     ;; create an exception object and pass it to display-error
-    (println msg-info-obj)
+    ;(println msg-info-obj)
     {:exception-class e-class
      :msg-info-obj msg-info-obj
      :stacktrace stacktrace
