@@ -124,16 +124,8 @@
   [{:anon-fn false, :fn "eval9481", :ns "experimental.core-test", :clojure true, :file "core_test.clj", :line 57}
    {:anon-fn false, :fn "eval", :ns "clojure.core", :clojure true, :file "core.clj", :line 2852}
    {:anon-fn false, :fn "run-and-catch", :ns "experimental.core-test", :clojure true, :file "core_test.clj", :line 38}
-   ;{:anon-fn true, :fn "load", :ns "clojure.core", :clojure true, :file "core.clj", :line 5530}
-   ;{:anon-fn false, :fn "load", :ns "clojure.core", :clojure true, :file "core.clj", :line 5529}
-   ;{:anon-fn false, :fn "load-one", :ns "clojure.core", :clojure true, :file "core.clj", :line 5336}
-   ;{:anon-fn true, :fn "load-lib", :ns "clojure.core", :clojure true, :file "core.clj", :line 5375}
-   ;{:anon-fn false, :fn "load-lib", :ns "clojure.core", :clojure true, :file "core.clj", :line 5374}
    {:anon-fn false, :fn "apply", :ns "clojure.core", :clojure true, :file "core.clj", :line 619}
-   ;{:anon-fn false, :fn  "load-libs", :ns "clojure.core", :clojure true, :file "core.clj", :line 5413}
-   {:anon-fn false, :fn "apply", :ns "clojure.core", :clojure true, :file "core.clj", :line 619}])
-   ;{:anon-fn false, :fn "require", :ns "clojure.core", :clojure true, :file "core.clj", :line 5496}
-   ;{:anon-fn false, :fn "alter-var-root", :ns "clojure.core", :clojure true, :file "core.clj", :line 4946}])
+   {:anon-fn false, :fn "apply", :ns "clojure.core", :clojure true, :file "core.clj", :line 619}])])
 
 
 ;##############################################

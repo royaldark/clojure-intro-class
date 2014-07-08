@@ -33,13 +33,16 @@
 (expect 0
         (count []))
 (expect 3
-        (count [1 2 3]))
+        (count [4 5 6]))
 (expect 2
         (count {:one 1 :two 2}))
 (expect 5
         (count [1 \a "string" [1 2] {:foo :bar}]))
 (expect 6
         (count "string"))
+
+(expect 7
+        (add-two 5))
 
 ;; testing for conj
 (expect [1 2 3 4]

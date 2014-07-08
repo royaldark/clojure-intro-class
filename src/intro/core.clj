@@ -557,8 +557,14 @@
    '((count)
      (count [] [] []))))
 
+(defn HHMI-showing []
+  (test-all-and-continue
+   '((+ 2 "apple")
+     )))
+
 (defn -main [& args]
   (try
+    (HHMI-showing)
     ;(test-our-examples)
     ;(try-counts)
     ;(basic-seesaw-frame)
@@ -623,7 +629,7 @@
     ;(prob120 (range 1000))
     ;(do (eval '(prob44 2 [1 2 3 4 5])))
     ;(exercise2 "hello " "world")
-    (exercise3 "helloworld" 5)
+    ;(exercise3 "helloworld" 5)
     ;(test-cond)
     ;(def classcast-exc (import-from-file (str path "classcast1.ser")))
     ;(throw classcast-exc)
