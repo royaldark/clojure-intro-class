@@ -16,6 +16,10 @@
 	(first (filter #(and (= (:class %) e-class) (re-matches (:match %) message))
 			error-dictionary)))
 
+(defn msg-from-matched-entry [entry message]
+  (if entry ((:make-msg-info-obj entry) (re-matches (:match entry) message))
+            (make-msg-info-hashes message)))
+
 ;; Putting together a message (perhaps should be moved to errors.dictionaries?
 (defn get-pretty-message [e-class message]
   (if-let [entry (first-match e-class message)]
@@ -121,10 +125,11 @@
         exc (stacktrace/parse-exception e)
         stacktrace (:trace-elems exc)
         filtered-trace (filter-stacktrace stacktrace)
-        msg-info-obj (get-pretty-message e-class message)
-        key-for-hints (:key (first-match e-class message))
+        entry (first-match e-class message)
+        msg-info-obj (msg-from-matched-entry entry message)
+        key-for-hints (:key entry)
         lookup-hint (if key-for-hints (key-for-hints hints) "")
-        hint-message (if lookup-hint lookup-hint "")] ;; Elena isn't thrilled about the need to match twice
+        hint-message (if lookup-hint lookup-hint "")]
     ;; create an exception object and pass it to display-error
     (println msg-info-obj)
     {:exception-class e-class
