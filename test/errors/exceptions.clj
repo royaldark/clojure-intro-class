@@ -88,7 +88,16 @@
   "A function that takes quoted code and runs it, attempting to catch any exceptions it may throw. Returns the exeception or nil."
   [code] (try
            (eval code)
-           (catch Exception e e)))
+           (catch Throwable e e)))
+
+(defn run-and-catch-corefns-exc
+  "A function that takes quoted code and runs in the corefns namespace,
+  attempting to catch any exceptions it may throw. Returns the exeception or nil."
+  [code]
+  (in-ns 'intro.core)
+  (try
+           (eval code)
+           (catch Throwable e e)))
 
 (defn run-and-catch-dictionaries [code]
   "A function that takes quoted code and runs it, attempting to catch any
@@ -129,6 +138,7 @@
 (expect "java.lang.Long cannot be cast to clojure.lang.IFn"
         (exception->string (run-and-catch '(1 3))))
 
+;; Hmmm??? - there's no exception here, is there?
 (expect 3
         (exception->string (run-and-catch '(+ 1 2))))
 
@@ -178,7 +188,23 @@
 (expect "eval" (first (get-fns-in-stacktrace (stacktrace/parse-exception ex1))))
 
 ;##################################
-;## 4. More real-life exceptions ##
+;## 4. Testing for hints         ##
+;##################################
+
+(expect :class-cast-exception (:key (first-match ClassCastException
+                                                 "java.lang.String cannot be cast to clojure.core.Number")))
+
+(expect #"Error example for \(\+ 1 :two\)" (:hints (prettify-exception (run-and-catch '(+ 2 "string")))))
+
+(expect #"Make sure you have the correct number of arguments"
+         (:hints (prettify-exception (run-and-catch '(assoc {1 2} 3)))))
+
+(expect :assertion-error-with-argument (:key (first-match AssertionError "Assert failed: (check-if-sequable? \"filter\" argument2)")))
+
+(expect "" (:hints (prettify-exception (run-and-catch-corefns-exc '(filter odd? 5)))))
+
+;##################################
+;## 5. More real-life exceptions ##
 ;##################################
 
 
@@ -186,28 +212,29 @@
 
 (def dr-racket-exercise-class-cast (read-objects-local "DrRacket-Exercise2-ClassCast.ser"))
 
-(def prettified-class-cast (prettify-exception dr-racket-exercise-class-cast))
+;(def prettified-class-cast (prettify-exception dr-racket-exercise-class-cast))
 
-(expect ClassCastException (:exception-class prettified-class-cast))
+;(expect ClassCastException (:exception-class prettified-class-cast))
 
-(expect "Attempted to use a string, but a collection was expected." (get-all-text (:msg-info-obj prettified-class-cast)))
+;(expect "Attempted to use a string, but a collection was expected." (get-all-text (:msg-info-obj prettified-class-cast)))
 
-(expect (trace-has-pair? :fn "exercise2") (:stacktrace prettified-class-cast))
+;(expect (trace-has-pair? :fn "exercise2") (:stacktrace prettified-class-cast))
 
-(expect (trace-has-pair? :fn "exercise2") (:filtered-stacktrace prettified-class-cast))
+;(expect (trace-has-pair? :fn "exercise2") (:filtered-stacktrace prettified-class-cast))
 
-(expect (trace-has-all-pairs? {:fn "exercise2" :ns "intro.student" :file "student.clj" :line 50})
-        (:filtered-stacktrace prettified-class-cast))
+;(expect (trace-has-all-pairs? {:fn "exercise2" :ns "intro.student" :file "student.clj" :line 50})
+;        (:filtered-stacktrace prettified-class-cast))
 
-(expect (trace-has-all-pairs? {:fn "-main" :ns "intro.core" :file "core.clj"})
-        (:filtered-stacktrace prettified-class-cast))
+;(expect (trace-has-all-pairs? {:fn "-main" :ns "intro.core" :file "core.clj"})
+;        (:filtered-stacktrace prettified-class-cast))
 
-(expect (trace-doesnt-have-all-pairs? {:ns "core.main"}) prettified-class-cast)
+;(expect (trace-doesnt-have-all-pairs? {:ns "core.main"}) prettified-class-cast)
 
-(expect (check-stack-count? 6) (:filtered-stacktrace prettified-class-cast))
+;(expect (check-stack-count? 6) (:filtered-stacktrace prettified-class-cast))
 
-(expect (trace-has-all-pairs? {:fn "apply" :ns "clojure.core"}) (:filtered-stacktrace prettified-class-cast))
+;(expect (trace-has-all-pairs? {:fn "apply" :ns "clojure.core"}) (:filtered-stacktrace prettified-class-cast))
 
-(expect (top-elem-has-all-pairs? {:fn "conj" :ns "clojure.core"}) (:filtered-stacktrace prettified-class-cast))
+;(expect (top-elem-has-all-pairs? {:fn "conj" :ns "clojure.core"}) (:filtered-stacktrace prettified-class-cast))
 
-(expect (trace-has-all-pairs? {:fn "conj" :ns "corefns.corefns"}) (:filtered-stacktrace prettified-class-cast))
+;(expect (trace-has-all-pairs? {:fn "conj" :ns "corefns.corefns"}) (:filtered-stacktrace prettified-class-cast))
+
