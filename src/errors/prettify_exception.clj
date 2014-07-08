@@ -1,7 +1,8 @@
 (ns errors.prettify_exception
   (:require [clj-stacktrace.core :as stacktrace]
             [expectations :refer :all]
-            [errors.error_dictionary :refer :all])
+            [errors.error_dictionary :refer :all]
+            [errors.error_hints :refer :all])
   (:use [errors.dictionaries]
 	      [errors.messageobj]
 	      [errors.errorgui]
@@ -119,13 +120,16 @@
         message  (if m m "") ; converting an empty message from nil to ""
         exc (stacktrace/parse-exception e)
         stacktrace (:trace-elems exc)
-        filtered-trace (filter-stacktrace stacktrace)]
+        filtered-trace (filter-stacktrace stacktrace)
+        msg-info-obj (get-pretty-message e-class message)
+        key-for-hints (:key (first-match e-class message))] ;; Elena isn't thrilled about the need to match twice
     ;; create an exception object and pass it to display-error
+    (println msg-info-obj)
     {:exception-class e-class
-     :msg-info-obj (get-pretty-message e-class message)
+     :msg-info-obj msg-info-obj
      :stacktrace stacktrace
      :filtered-stacktrace filtered-trace
-     :hints nil}))
+     :hints (if key-for-hints (key-for-hints hints) "")}))
 
 (defn prettify-exception-no-stacktrace [e]
   (let [e-class (class e)
