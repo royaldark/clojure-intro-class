@@ -194,7 +194,8 @@
 (expect :class-cast-exception (:key (first-match ClassCastException
                                                  "java.lang.String cannot be cast to clojure.core.Number")))
 
-(expect #"Error example for \(\+ 1 :two\)" (:hints (prettify-exception (run-and-catch '(+ 2 "string")))))
+(expect #"The error happens when a function's argument is not of the type for which the function is defined."
+	(:hints (prettify-exception (run-and-catch '(+ 2 "string")))))
 
 (expect #"Make sure you have the correct number of arguments"
          (:hints (prettify-exception (run-and-catch '(assoc {1 2} 3)))))

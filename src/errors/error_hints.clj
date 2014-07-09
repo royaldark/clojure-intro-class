@@ -1,13 +1,19 @@
 (ns errors.error_hints)
 
 (def hints
-  {:class-cast-exception "The ___ function on line ___ was expecting ____ but was given _______.\n
-                          Error example for (+ 1 :two):\n
-                          \"The + function on line 7 was expecting a number but was given a keyword.\"\n
-                          Error example for(< 8 \"12\"):\n
-                          \"The < function on line 52 was expecting a number but was given a string.\"\n
-                          Error example for (num \"ten\"):\n
-                          \"The num function on line 42 was expecting a number but was given a string.\""
+     {:class-cast-exception "Attempted to use a <type1>, but a <type2> was expected.\n
+The error happens when a function's argument is not of the type for which the function is defined.\n
+For instance, (+ 1 \"2\") results in this error because \"2\" is not a number, but a string.\n
+Likewise, (< 1 :two) would cause this error because :two is a keyword, and not a number. \n"
+					;This error may happen if you were using a variable and had a wrong value in the variable
+      ; or if you have switched the order of arguments in a function. 
+      
+    ;                      Error example for (+ 1 :two):\n
+    ;                      \"The + function on line 7 was expecting a number but was given a keyword.\"\n
+    ;                      Error example for(< 8 \"12\"):\n
+    ;                      \"The < function on line 52 was expecting a number but was given a string.\"\n
+    ;                      Error example for (num \"ten\"):\n
+    ;                      \"The num function on line 42 was expecting a number but was given a string.\""
    :illegal-argument-cannot-convert-type "The ___ function on line ___ was expecting ___ but was given ___.\n
                                           Error example for (cons 1 2):\n
                                           \"The cons function on line 4 was expecting a sequence but was given a number.\"\n
