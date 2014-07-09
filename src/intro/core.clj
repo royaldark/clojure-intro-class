@@ -203,7 +203,7 @@
      (our-map inc [1 2 3])
      (our-map inc '(1 2 3)))))
 
-(defn test-seq []
+(defn test-seq [](filter odd? 5)
   (test-all-and-continue
    '((doall (concat [1 2] 5))
      (seq 2)
@@ -218,7 +218,7 @@
      (any? #(+ % 2) [1 2 5])
     ;(some? #(+ % 2) [:k :v]) ; the point is that it's a wrong type of argument
     ;(some? [1 2] [3 4])
-     (contains-value? {:a :b :c :d} :a)
+     (contains-value? {:a :b :c :d} :a)(filter odd? 5)
      (contains-value? {:a :b :c :d} :b)
      (contains-value? [1 2 3 4] +)
      (contains-value? + 1)
@@ -557,8 +557,14 @@
    '((count)
      (count [] [] []))))
 
+(defn HHMI-showing []
+  (test-all-and-continue
+   '((+ 2 "apple")
+     )))
+
 (defn -main [& args]
   (try
+    ;(HHMI-showing)
     ;(test-our-examples)
     ;(try-counts)
     ;(basic-seesaw-frame)
@@ -623,7 +629,10 @@
     ;(prob120 (range 1000))
     ;(do (eval '(prob44 2 [1 2 3 4 5])))
     ;(exercise2 "hello " "world")
-    (exercise3 "helloworld" 5)
+    ;(exercise3 "helloworld" 5)
+    (+ 2 "apple")
+    ;(assoc {1 2} 3)
+    ;(filter odd? 5)
     ;(test-cond)
     ;(def classcast-exc (import-from-file (str path "classcast1.ser")))
     ;(throw classcast-exc)

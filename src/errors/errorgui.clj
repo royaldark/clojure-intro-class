@@ -69,6 +69,8 @@
 				                         :styles styles)
 	         stacktrace (text :multi-line? true :editable? false :rows 16 :text
 			                      (trace->string trace trace-elems-separator trace-lines-separator))
+           hints (text :multi-line? true :editable? false :rows 16 :text
+                       (:hints exc-obj))
 	         d (dialog :title "Clojure Error",
 		                 :content (tabbed-panel :placement :bottom
 					                                  :overflow :scroll
@@ -78,7 +80,10 @@
                                                                  (scrollable errormsg))}
                                                    {:title "Stacktrace"
                                                     :tip "The full Java stacktrace of the error"
-                                                    :content (scrollable stacktrace)}]))]
+                                                    :content (scrollable stacktrace)}
+                                                   {:title "Common sources of error"
+                                                    :tip "Reasons why this error may have happened"
+                                                    :content (scrollable hints)}]))]
 	(invoke-now
    (scroll! errormsg :to :top) ;; Scrollboxes default to being scrolled to the bottom - not what we want
 	 (scroll! stacktrace :to :top)

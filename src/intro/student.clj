@@ -2,8 +2,8 @@
 	;(:use [corefns.corefns]
    ;     [seesaw.core])
   (:require [expectations :refer :all]
-            [corefns.corefns :refer :all]
-            [strings.strings :refer :all]))
+            [corefns.corefns :refer :all]))
+            ;[strings.strings :refer :all]))
 
 ;##################################
 ;### Testing compilation errors ###

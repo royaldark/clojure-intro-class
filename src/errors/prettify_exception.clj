@@ -1,7 +1,8 @@
 (ns errors.prettify_exception
   (:require [clj-stacktrace.core :as stacktrace]
             [expectations :refer :all]
-            [errors.error_dictionary :refer :all])
+            [errors.error_dictionary :refer :all]
+            [errors.error_hints :refer :all])
   (:use [errors.dictionaries]
 	      [errors.messageobj]
 	      [errors.errorgui]
@@ -14,6 +15,15 @@
 (defn first-match [e-class message]
 	(first (filter #(and (= (:class %) e-class) (re-matches (:match %) message))
 			error-dictionary)))
+
+(defn msg-from-matched-entry [entry message]
+  (if entry ((:make-msg-info-obj entry) (re-matches (:match entry) message))
+            (make-msg-info-hashes message)))
+
+(defn hints-for-matched-entry [entry]
+  (let [key-for-hints (:key entry)
+        lookup-hint (if key-for-hints (key-for-hints hints) "")]
+        (if lookup-hint lookup-hint "")))
 
 ;; Putting together a message (perhaps should be moved to errors.dictionaries?
 (defn get-pretty-message [e-class message]
@@ -119,14 +129,20 @@
         message  (if m m "") ; converting an empty message from nil to ""
         exc (stacktrace/parse-exception e)
         stacktrace (:trace-elems exc)
-        filtered-trace (filter-stacktrace stacktrace)]
+        filtered-trace (filter-stacktrace stacktrace)
+        entry (first-match e-class message)
+        msg-info-obj (msg-from-matched-entry entry message)
+        hint-message (hints-for-matched-entry entry)]
     ;; create an exception object and pass it to display-error
     {:exception-class e-class
-     :msg-info-obj (get-pretty-message e-class message)
+     :msg-info-obj msg-info-obj
      :stacktrace stacktrace
      :filtered-stacktrace filtered-trace
-     :hints nil}))
+     :hints hint-message}))
 
+;;; Elena's note: we are not using get-pretty-message anymore
+;;; in prettify-exception, so we need to retire it, but it seems
+;;; to be used in some tests.....
 (defn prettify-exception-no-stacktrace [e]
   (let [e-class (class e)
         m (.getMessage e)
